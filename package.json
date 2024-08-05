@@ -1,0 +1,75 @@
+{
+    "name": "sakai-react",
+    "version": "7.0.2",
+    "homepage": ".",
+    "private": false,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/primefaces/sakai-react.git"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "@emotion/react": "^11.11.4",
+        "@emotion/styled": "^11.11.5",
+        "@fontsource/roboto": "^5.0.13",
+        "@fullcalendar/core": "^6.1.14",
+        "@fullcalendar/daygrid": "^6.1.14",
+        "@fullcalendar/interaction": "^6.1.14",
+        "@fullcalendar/react": "^6.1.14",
+        "@fullcalendar/timegrid": "^6.1.14",
+        "@material-table/core": "^6.2.3",
+        "@material-table/exporters": "^1.2.19",
+        "@mui/icons-material": "^5.15.20",
+        "@mui/material": "^5.15.20",
+        "@react-oauth/google": "^0.12.1",
+        "@tanstack/react-query": "^5.45.1",
+        "@tanstack/react-query-devtools": "^5.45.1",
+        "axios": "^1.7.2",
+        "bootstrap": "^5.3.3",
+        "chart.js": "^4.4.3",
+        "classnames": "^2.5.1",
+        "dotenv": "^16.4.5",
+        "final-form": "^4.20.10",
+        "final-form-set-field-touched": "^1.0.1",
+        "formik": "^2.4.6",
+        "jwt-decode": "^4.0.0",
+        "lottie-react": "^2.4.0",
+        "moment": "^2.30.1",
+        "primeflex": "^3.3.1",
+        "primeicons": "^7.0.0",
+        "primereact": "^10.6.6",
+        "react": "^18.3.1",
+        "react-app-polyfill": "^3.0.0",
+        "react-bootstrap": "^2.10.3",
+        "react-dom": "^18.3.1",
+        "react-final-form": "^6.5.9",
+        "react-icons": "^5.2.1",
+        "react-router-dom": "^6.23.1",
+        "react-scripts": "^5.0.1",
+        "react-toastify": "^10.0.5",
+        "react-transition-group": "^4.4.5",
+        "sass": "^1.77.6",
+        "styled-components": "^6.1.11",
+        "yup": "^1.4.0"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app"
+        ]
+    },
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not ie <= 11",
+        "not op_mini all"
+    ],
+    "devDependencies": {
+        "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "iss": "https://accounts.google.com",
+    "azp": "971618121935-ggpqtf90r7ijgccoq21h3oog114h7itf.apps.googleusercontent.com",
+    "aud": "971618121935-ggpqtf90r7ijgccoq21h3oog114h7itf.apps.googleusercontent.com",
+    "sub": "110181975560235824549",
+    "email": "kimerafarouk8@gmail.com",
+    "email_verified": true,
+    "nbf": 1715514592,
+    "name": "kimera farouk",
+    "picture": "https://lh3.googleusercontent.com/a/ACg8ocK1w4Spm8WdiBXlAwP6PrTD7b9z7PyEb-_qgJQ5zbktFLRPYTI=s96-c",
+    "given_name": "kimera",
+    "family_name": "farouk",
+    "iat": 1715514892,
+    "exp": 1715518492,
+    "jti": "4db69591fbf0561c8302e9b206a86bfae48b3e01"
+}
