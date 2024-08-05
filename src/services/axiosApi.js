@@ -1,13 +1,14 @@
 import axios from "axios";
 
-export const imageBaseUrl = "http://127.0.0.1:8000/api";
-const baseURL = "http://127.0.0.1:8000/api";
+export const imageBaseUrl = process.env.REACT_APP_IMAGE_BASE_URL;
+const baseURL = process.env.REACT_APP_BASE_URL;
+console.log("🚀 ~ baseURL :", baseURL);
 
 const accessToken = localStorage.getItem("access_token");
 
 const axiosAPI = axios.create({
     baseURL: baseURL,
-    timeout: 50000,
+    // timeout: 50000,
     withCredentials: false,
     headers: {
         Authorization: accessToken ? "Bearer " + accessToken : null,
