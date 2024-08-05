@@ -1,9 +1,9 @@
 {
-    "rewrites": [
-    {
-    "source": "/(.*)",
-    "destination": "/index.html"
-    }
+    "routes": [
+        {
+            "src": "/[^.]+",
+            "dest": "/"
+        }
     ],
     "env": {
         "REACT_APP_API_BASE_URL": "https://pesa-back.vercel.app",
