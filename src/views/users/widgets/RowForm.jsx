@@ -196,7 +196,8 @@ function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
                                     {({ input, meta }) => (
                                         <div className="p-field m-4">
                                             <label htmlFor="role">Role</label>
-                                            <Dropdown {...input} options={getAllRolesQuery?.data?.data?.map((role) => ({ label: role, value: role }))} placeholder="Select a Role" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                            <Dropdown {...input} options={getAllRolesQuery?.data?.data?.map((role) => ({ label: role, value: role })) || []} placeholder="Select a Role" disabled={getAllRolesQuery?.isLoading} className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                            {getAllRolesQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
                                             {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                         </div>
                                     )}

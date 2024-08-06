@@ -8,7 +8,7 @@ import { Panel } from "primereact/panel";
 import RolesList from "./old-components/roles/RolesList";
 import PermissionsList from "./old-components/permissions/PermissionsList.js";
 // import ActivityLogsList from "./ActivityLogsList";
-import "primereact/resources/themes/lara-light-indigo/theme.css";
+// import "primereact/resources/themes/lara-light-indigo/theme.css";
 // import "primereact/resources/themes/lara-light-green/theme.css";
 import RolesPage from "./roles/RolesPage";
 import PermissionsPage from "./permissions/PermissionsPage";

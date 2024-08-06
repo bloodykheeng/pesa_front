@@ -60,7 +60,8 @@ const LoginPage = () => {
     const validate = (values) => {
         const errors = {};
         if (!values.email) {
-            errors.email = "Email / Phone Number is required";
+            // errors.email = "Email / Phone Number is required";
+            errors.email = "Email is required";
         }
         // else if (!/\S+@\S+\.\S+/.test(values.email)) {
         //   errors.email = "Email is invalid";
@@ -131,7 +132,7 @@ const LoginPage = () => {
                 <div className="flex justify-content-center" style={{ zIndex: 2, position: "relative" }}>
                     <div className="card p-fluid">
                         <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <img src="assets/pesa_photos/mockups-logos-13.png" alt="logo" style={{ width: "200px" }} />
+                            <img src="assets/pesa_photos/pesa_with_green_bg.jpg" alt="logo" style={{ height: "100px" }} />
                         </div>
                         <h5 className="text-center">Login</h5>
                         <Form
@@ -142,7 +143,8 @@ const LoginPage = () => {
                                     <Field name="email">
                                         {({ input, meta }) => (
                                             <div className="m-4 p-field">
-                                                <label htmlFor="email">Email / Phone Number</label>
+                                                {/* <label htmlFor="email">Email / Phone Number</label> */}
+                                                <label htmlFor="email">Email</label>
                                                 <InputText
                                                     id="email"
                                                     {...input}
@@ -179,7 +181,7 @@ const LoginPage = () => {
                                     <div className="m-1 p-field">
                                         {/* <Button type="button" label="Forgot Password" className="p-button-text p-field" onClick={() => navigate("/reset-password")} /> */}
                                         <center>
-                                            <p className="p-button-text p-field" style={{ display: "inline", cursor: "pointer", color: "blue", fontWeight: "700" }} onClick={() => navigate("/reset-password")}>
+                                            <p className="p-button-text p-field" style={{ display: "inline", cursor: "pointer", color: "var(--primary-color)", fontWeight: "700" }} onClick={() => navigate("/reset-password")}>
                                                 Forgot Password
                                             </p>
                                         </center>

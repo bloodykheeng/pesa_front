@@ -93,8 +93,8 @@ export const AppTopbar = (props) => {
     return (
         <div className="layout-topbar">
             <Link className="layout-topbar-logo">
-                <img src={props.layoutColorMode === "light" ? "assets/pesa_photos/mockups-logos-13.png" : "assets/pesa_photos/mockups-logos-13.png"} alt="logo" style={{ width: "200px" }} />
-                {/* <span>NICE HOUSE OF PLASTICS</span> */}
+                <img src={props.layoutColorMode === "light" ? "assets/pesa_photos/pesa_with_green_bg.jpg" : "assets/pesa_photos/pesa_with_green_bg.jpg"} alt="logo" style={{ height: "50px" }} />
+                <span style={{ textDecoration: "!important none", cursor: "auto", color: "var(--primary-color)", fontWeight: "700" }}>ELEVATE PESA</span>
             </Link>
 
             <button type="button" className="p-link layout-menu-button layout-topbar-button" onClick={props.onToggleMenuClick}>

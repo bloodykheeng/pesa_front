@@ -10,7 +10,7 @@ import ListRecords from "./ListRecords";
 function PermissionsPage() {
     return (
         <div className="card">
-            <h2>List Of all Permissions</h2>
+            <h2>List of all Permissions</h2>
 
             <ListRecords />
         </div>

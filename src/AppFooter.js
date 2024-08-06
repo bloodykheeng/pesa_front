@@ -4,14 +4,16 @@ export const AppFooter = (props) => {
     return (
         <div className="layout-footer">
             <img
-                src={props.layoutColorMode === "light" ? "assets/pesa_photos/mockups-logos-13.png" : "assets/pesa_photos/mockups-logos-13.png"}
+                src={props.layoutColorMode === "light" ? "assets/pesa_photos/pesa_with_green_bg.jpg" : "assets/pesa_photos/pesa_with_green_bg.jpg"}
                 alt="Logo"
                 //  height="20"
-                style={{ height: "20px" }}
+                style={{ height: "50px" }}
                 className="mr-2"
             />
             by
-            <span className="font-medium ml-2">ELEVATE PESA</span>
+            <span className="font-medium ml-2" style={{ cursor: "auto", color: "var(--primary-color)", fontWeight: "700" }}>
+                ELEVATE PESA
+            </span>
         </div>
     );
 };

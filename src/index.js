@@ -6,6 +6,9 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import ScrollToTop from "./ScrollToTop";
 
+//prime react
+// import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/themes/lara-light-green/theme.css";
 //
 import "./index.css";
 

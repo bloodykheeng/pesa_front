@@ -96,7 +96,7 @@ const ResetPasswordPage = () => {
                                         {" "}
                                         <p className="p-mt-2">
                                             Remembered your password?{" "}
-                                            <span style={{ color: "tomato", cursor: "pointer" }} onClick={() => navigate("/login")}>
+                                            <span style={{ color: "var(--primary-color)", cursor: "pointer" }} onClick={() => navigate("/login")}>
                                                 Login
                                             </span>
                                         </p>{" "}
