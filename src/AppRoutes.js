@@ -2,9 +2,7 @@ import React, { lazy, Suspense, useState } from "react";
 
 //==================== my car routes ====================
 import NewUsersPage from "./views/users/UserPage";
-import NewVendorsPage from "./views/vendors/VendorsPage";
-import NewProductTypesPage from "./views/settings/product-types/ProductTypesPage";
-import NewServiceTypesPage from "./views/settings/service-types/ServiceTypesPage";
+import ProductCategoriesPage from "./views/product-categories/ProductCategoriesPage";
 
 // ============ Customm component routes ========================
 const DashboardPage = lazy(() => import("./components/Dashboard"));
@@ -151,7 +149,7 @@ function AppRoutes() {
             layout: "/private",
         },
 
-        // ============================= My Car Routes ==================================
+        // ============================= Pesa Routes ==================================
 
         {
             path: "/users",
@@ -160,21 +158,9 @@ function AppRoutes() {
             layout: "/admin",
         },
         {
-            path: "/vendors",
-            name: "vendors",
-            element: NewVendorsPage,
-            layout: "/admin",
-        },
-        {
-            path: "/product_types",
-            name: "product types",
-            element: NewProductTypesPage,
-            layout: "/admin",
-        },
-        {
-            path: "/service_types",
-            name: "service types",
-            element: NewServiceTypesPage,
+            path: "/product-categories",
+            name: "product-categories",
+            element: ProductCategoriesPage,
             layout: "/admin",
         },
     ];

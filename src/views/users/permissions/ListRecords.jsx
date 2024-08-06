@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useEffect, useState, useRef, useMemo } from "react";
 
-import { getAllPermissionsService } from "../../../services/permissions/permission-service";
+import { getAllPermissions } from "../../../services/permissions/permission-service";
 // import EditRecord from "./EditRecord";
 // import CreateRecord from './CreateRecord';
 
@@ -54,7 +54,7 @@ function ListRecords() {
 
     const getListOfPermissionServices = useQuery({
         queryKey: ["permissions"],
-        queryFn: () => getAllPermissionsService(),
+        queryFn: () => getAllPermissions(),
     });
 
     // //=================== handle table server side rendering ==================

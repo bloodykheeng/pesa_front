@@ -20,7 +20,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { toast } from "react-toastify";
 import { Password } from "primereact/password";
 import { Dropdown } from "primereact/dropdown";
-import { getAllVendors, getVendorById, postVendor, updateVendor, deleteVendorById } from "../../services/vendors/vendors-service.js";
+// import { getAllVendors, getVendorById, postVendor, updateVendor, deleteVendorById } from "../../services/vendors/vendors-service.js";
 
 import { postThirdPartyRegisterAuth } from "../../services/auth/auth-api.js";
 
@@ -138,17 +138,17 @@ const SignUpPage = () => {
     const [selectedVendor, setSelectedVendor] = useState();
     const [filteredVendor, setFilteredVendor] = useState();
 
-    const getListOfVendors = useQuery({
-        queryKey: ["vendors"],
-        queryFn: () => getAllVendors(),
-    });
+    // const getListOfVendors = useQuery({
+    //     queryKey: ["vendors"],
+    //     queryFn: () => getAllVendors(),
+    // });
 
-    useEffect(() => {
-        if (getListOfVendors?.isError) {
-            console.log("Error fetching vendors :", getListOfVendors?.error);
-            getListOfVendors?.error?.response?.data?.message ? toast.error(getListOfVendors?.error?.response?.data?.message) : !getListOfVendors?.error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-        }
-    }, [getListOfVendors?.isError]);
+    // useEffect(() => {
+    //     if (getListOfVendors?.isError) {
+    //         console.log("Error fetching vendors :", getListOfVendors?.error);
+    //         getListOfVendors?.error?.response?.data?.message ? toast.error(getListOfVendors?.error?.response?.data?.message) : !getListOfVendors?.error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+    //     }
+    // }, [getListOfVendors?.isError]);
 
     //Third party auth
 
@@ -320,7 +320,7 @@ const SignUpPage = () => {
                                         )}
                                     </Field>
 
-                                    {["Vendor"].includes(selectedRole) && (
+                                    {/* {["Vendor"].includes(selectedRole) && (
                                         <Field name="vendor_id">
                                             {({ input, meta }) => (
                                                 <div className="m-4 p-field">
@@ -359,7 +359,7 @@ const SignUpPage = () => {
                                                 </div>
                                             )}
                                         </Field>
-                                    )}
+                                    )} */}
 
                                     <Field name="phone_number">
                                         {({ input, meta }) => (

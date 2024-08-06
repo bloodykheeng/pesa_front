@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { Dialog } from "primereact/dialog";
 
-import { getAllServiceTypes, getServiceTypeById, postServiceType, updateServiceType, deleteServiceTypeById } from "../../../services/vendors/service-types-service";
+import { getAllProductCategories, getProductCategorieById, postProductCategorie, updateProductCategorie, deleteProductCategorieById } from "../../services/products/product-categories-service";
 
 import RowForm from "./widgets/RowForm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,32 +18,36 @@ function CreateForm(props) {
 
     const queryClient = useQueryClient();
 
+    const [creactMutationIsLoading, setCreactMutationIsLoading] = useState(false);
     const creactMutation = useMutation({
-        mutationFn: postServiceType,
+        mutationFn: postProductCategorie,
         onSuccess: () => {
-            queryClient.invalidateQueries(["service-types"]);
+            queryClient.invalidateQueries(["product-categories"]);
             toast.success("created Successfully");
             props.onClose();
+            setCreactMutationIsLoading(false);
         },
         onError: (error) => {
             // props.onClose();
+            setCreactMutationIsLoading(false);
             error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-            console.log("create service-types error : ", error);
+            console.log("create vendors error : ", error);
         },
     });
 
     const handleSubmit = async (data) => {
         // event.preventDefault();
+        setCreactMutationIsLoading(true);
         console.log("data we are submitting : ", data);
         creactMutation.mutate(data);
     };
 
     return (
-        <Dialog header="Service Types Form" visible={props.show} style={{ width: "50vw" }} onHide={() => props.onHide()}>
+        <Dialog header="Product Categories Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
             <p>Fill in the form below</p>
             <RowForm handleSubmit={handleSubmit} project_id={props?.projectId} />
             {/* <h4>{creactProgramsMutation.status}</h4> */}
-            {creactMutation.isLoading && (
+            {creactMutationIsLoading && (
                 <center>
                     <ProgressSpinner
                         style={{

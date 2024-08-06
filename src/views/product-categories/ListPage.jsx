@@ -4,16 +4,13 @@ import CreateForm from "./CreateForm";
 
 import EditForm from "./EditForm";
 
-import { deleteProgramById, getAllPrograms } from "../../../services/programs/program-service";
-
 import moment from "moment";
 
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import { getAllProductTypes, getProductTypeById, postProductType, updateProductType, deleteProductTypeById } from "../../../services/products/product-types-service";
+import { getAllProductCategories, getProductCategorieById, postProductCategorie, updateProductCategorie, deleteProductCategorieById } from "../../services/products/product-categories-service";
 
-import WaterIsLoading from "../../../components/general_components/WaterIsLoading";
-import MuiTable from "../../../components/general_components/MuiTable";
+import MuiTable from "../../components/general_components/MuiTable";
 import { toast } from "react-toastify";
 import { Button } from "primereact/button";
 import { ConfirmDialog } from "primereact/confirmdialog";
@@ -21,27 +18,33 @@ import { confirmDialog } from "primereact/confirmdialog";
 import { Panel } from "primereact/panel";
 import { Image } from "primereact/image";
 
-function ListPage({ loggedInUserData, ...props }) {
-    const queryClient = useQueryClient();
-    const { data, isLoading, isError, error, status } = useQuery({ queryKey: ["product-types"], queryFn: getAllProductTypes });
-    console.log(data);
+import useAuthContext from "../../context/AuthContext";
 
+function ListPage({ ...props }) {
+    const { getUserQuery } = useAuthContext();
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const { data, isLoading, isError, error, status } = useQuery({
+        queryKey: ["product-categories"],
+        queryFn: getAllProductCategories,
+    });
+    console.log("product categories : ", data);
     useEffect(() => {
         if (isError) {
-            console.log("Error fetching List of Users :", error);
+            console.log("Error fetching List of data :", error);
             error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
         }
     }, [isError]);
 
-    const [deleteItemMutationIsLoading, setDeleteItemMutationIsLoading] = useState(false);
-    const DeleteSelectedItemMutation = useMutation({
-        mutationFn: (variables) => deleteProductTypeById(variables),
+    const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
+    const deleteMutation = useMutation({
+        mutationFn: (variables) => deleteProductCategorieById(variables),
         onSuccess: (data) => {
-            queryClient.invalidateQueries(["product-types"]);
-            setDeleteItemMutationIsLoading(false);
+            queryClient.invalidateQueries(["product-categories"]);
+            setDeleteMutationIsLoading(false);
         },
         onError: (error) => {
-            setDeleteItemMutationIsLoading(false);
+            setDeleteMutationIsLoading(false);
             error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
         },
     });
@@ -66,8 +69,8 @@ function ListPage({ loggedInUserData, ...props }) {
 
     const confirmDelete = (selectedDeleteId) => {
         if (selectedDeleteId !== null) {
-            setDeleteItemMutationIsLoading(true);
-            DeleteSelectedItemMutation.mutate(selectedDeleteId);
+            setDeleteMutationIsLoading(true);
+            deleteMutation.mutate(selectedDeleteId);
         }
     };
 
@@ -92,7 +95,7 @@ function ListPage({ loggedInUserData, ...props }) {
     };
 
     // const activeUser = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : undefined;
-    const activeUser = loggedInUserData;
+    const activeUser = getUserQuery?.data?.data;
 
     const onFormClose = () => {
         setShowAddForm(false);
@@ -119,12 +122,16 @@ function ListPage({ loggedInUserData, ...props }) {
             title: "Name",
             field: "name",
         },
+        {
+            title: "Details",
+            field: "details",
+        },
 
         {
             title: "Photo",
             field: "photo_url",
             render: (rowData) => {
-                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_API_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
             },
         },
 
@@ -144,22 +151,32 @@ function ListPage({ loggedInUserData, ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
-            <Panel header="Product Types" style={{ marginBottom: "20px" }}>
+            <Panel header="Product Categories" style={{ marginBottom: "20px" }}>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
-                    {activeUser?.permissions.includes("create") && <Button label="Add Product Type" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
+                    {activeUser?.permissions.includes("create") && <Button label="Add Product Category" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
                     <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
-                    {/* <BudgetOutPutsCreateForm show={showBudjetOutPutAddForm} onHide={() => setShowBudjetOutPutAddForm(false)} onClose={onBudjetOutPutFormClose} /> */}
                 </div>
 
                 <MuiTable
-                    tableTitle="Product Types"
-                    tableData={data?.data ?? []}
+                    tableTitle="Product Categories"
+                    tableData={data?.data?.data ?? []}
                     tableColumns={columns}
                     handleShowEditForm={handleShowEditForm}
                     handleDelete={(e, item_id) => handleDelete(e, item_id)}
                     showEdit={activeUser?.permissions.includes("update")}
                     showDelete={activeUser?.permissions.includes("delete")}
-                    loading={isLoading || status === "loading" || deleteItemMutationIsLoading}
+                    loading={isLoading || status === "loading" || deleteMutationIsLoading}
+                    //
+                    handleViewPage={(rowData) => {
+                        navigate("product-category", { state: { productCategoryData: rowData } });
+                    }}
+                    showViewPage={true}
+                    hideRowViewPage={false}
+                    //
+                    //
+                    exportButton={true}
+                    pdfExportTitle="Product Categories"
+                    csvExportTitle="Product Categories"
                 />
 
                 {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}

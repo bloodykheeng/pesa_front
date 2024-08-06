@@ -18,7 +18,7 @@ import { Column } from "primereact/column";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FileUpload } from "primereact/fileupload";
 
-function RowForm({ handleSubmit, initialData = { name: "", description: "", photoUrl: "" }, ...props }) {
+function RowForm({ handleSubmit, initialData = { name: "", details: "", photoUrl: "" }, ...props }) {
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -31,8 +31,8 @@ function RowForm({ handleSubmit, initialData = { name: "", description: "", phot
         const errors = {};
 
         if (!values.name) errors.name = "Name is required";
-        if (!values.code) errors.code = "Code is required";
-        if (!values.description) errors.description = "Description are required";
+        // if (!values.code) errors.code = "Code is required";
+        if (!values.details) errors.details = "details are required";
         if (!values.status) {
             errors.status = "Status is required";
         }
@@ -130,7 +130,7 @@ function RowForm({ handleSubmit, initialData = { name: "", description: "", phot
                                 )}
                             </Field>
 
-                            <Field name="code">
+                            {/* <Field name="code">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
                                         <label htmlFor="code">Code</label>
@@ -140,15 +140,7 @@ function RowForm({ handleSubmit, initialData = { name: "", description: "", phot
                                 )}
                             </Field>
 
-                            <Field name="description">
-                                {({ input, meta }) => (
-                                    <div className="p-field m-4">
-                                        <label htmlFor="description">Description</label>
-                                        <InputTextarea {...input} rows={5} cols={30} id="description" className={classNames({ "p-invalid": meta.touched && meta.error })} />
-                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                    </div>
-                                )}
-                            </Field>
+                            */}
 
                             <Field name="status">
                                 {({ input, meta }) => (
@@ -163,6 +155,16 @@ function RowForm({ handleSubmit, initialData = { name: "", description: "", phot
                                             placeholder="Select a Status"
                                             className={classNames({ "p-invalid": meta.touched && meta.error })}
                                         />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
+                            <Field name="details">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="details">details</label>
+                                        <InputTextarea {...input} rows={5} cols={30} id="details" className={classNames({ "p-invalid": meta.touched && meta.error })} />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
                                 )}
@@ -183,7 +185,8 @@ function RowForm({ handleSubmit, initialData = { name: "", description: "", phot
                 <Dialog
                     header="Confirmation"
                     visible={showConfirmDialog}
-                    style={{ width: "30vw" }}
+                    maximizable
+                    style={{ minWidth: "30vw" }}
                     onHide={onCancel}
                     footer={
                         <div>

@@ -39,10 +39,3 @@ export async function getPermissionNotInCurrentRole(id) {
 //   const response = await axiosAPI.get("roles");
 //   return response;
 // }
-
-// latest
-
-export async function getAllPermissionsService(params = {}) {
-    const response = await axiosAPI.get("users-permissions", { params: params });
-    return response;
-}
