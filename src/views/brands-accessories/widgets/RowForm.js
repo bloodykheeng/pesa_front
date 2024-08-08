@@ -20,9 +20,9 @@ import { FileUpload } from "primereact/fileupload";
 //
 import { AutoComplete } from "primereact/autocomplete";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { getAllProductCategories, getProductCategorieById, postProductCategorie, updateProductCategorie, deleteProductCategorieById } from "../../../services/products/product-categories-service";
+import { getAllProductCategoryBrands, getProductCategoryBrandById, postProductCategoryBrand, updateProductCategoryBrand, deleteProductCategoryBrandById } from "../../../services/products/product-category-brands-service";
 
-function RowForm({ handleSubmit, initialData, ...props }) {
+function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props }) {
     console.log("🚀 ~ RowForm ~ initialData:", initialData);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
@@ -37,36 +37,42 @@ function RowForm({ handleSubmit, initialData, ...props }) {
 
         if (!values.name) errors.name = "Name is required";
 
-        if (!values.code) errors.code = "Code is required";
+        // if (!values.code) errors.code = "Code is required";
         // if (!values.description) errors.description = "Description are required";
-        if (!values.product_categories_id) errors.product_categories_id = "Product Category is required";
+        if (!values.category_brands_id) errors.category_brands_id = "Product Category is required";
         if (!values.status) {
             errors.status = "Status is required";
         }
         if (!values.details) errors.details = "Details is required";
+        if (!values.price) errors.price = "Price is required";
+        if (!values.quantity) errors.quantity = "Quantity is required";
 
         return errors;
     };
 
-    //====================== product categories ========================
-    const [selectedProductCategory, setSelectedProductCategory] = useState(initialData?.product_category);
-    const [filteredProductCategory, setFilteredProductCategory] = useState();
+    //====================== product categories  Brand========================
+    const [selectedProductCategoryBrand, setSelectedProductCategoryBrand] = useState(productCategoryBrandData ?? initialData?.product_category);
+    const [filteredProductCategoryBrand, setFilteredProductCategoryBrand] = useState();
 
-    const getAllProductCategoriesQuery = useQuery({
-        queryKey: ["product-categories"],
-        queryFn: getAllProductCategories,
+    if (!initialData) {
+        initialData = { category_brands_id: productCategoryBrandData?.id };
+    }
+
+    const getAllProductCategoryBrandsQuery = useQuery({
+        queryKey: ["category_brands"],
+        queryFn: getAllProductCategoryBrands,
     });
 
     useEffect(() => {
-        if (getAllProductCategoriesQuery?.isError) {
-            console.log("Error fetching List of data :", getAllProductCategoriesQuery?.error);
-            getAllProductCategoriesQuery?.error?.response?.data?.message
-                ? toast.error(getAllProductCategoriesQuery?.error?.response?.data?.message)
-                : !getAllProductCategoriesQuery?.error?.response
+        if (getAllProductCategoryBrandsQuery?.isError) {
+            console.log("Error fetching List of data :", getAllProductCategoryBrandsQuery?.error);
+            getAllProductCategoryBrandsQuery?.error?.response?.data?.message
+                ? toast.error(getAllProductCategoryBrandsQuery?.error?.response?.data?.message)
+                : !getAllProductCategoryBrandsQuery?.error?.response
                 ? toast.warning("Check Your Internet Connection Please")
                 : toast.error("An Error Occured Please Contact Admin");
         }
-    }, [getAllProductCategoriesQuery?.isError]);
+    }, [getAllProductCategoryBrandsQuery?.isError]);
 
     // const onSubmitForm = (data) => {
     //     const errors = validate(data);
@@ -158,7 +164,27 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                 )}
                             </Field>
 
-                            <Field name="code">
+                            <Field name="price">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="price">Price</label>
+                                        <InputText {...input} id="price" type="number" />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
+                            <Field name="quantity">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="quantity">Quantity</label>
+                                        <InputText {...input} id="quantity" type="number" />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
+                            {/* <Field name="code">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
                                         <label htmlFor="code">Code</label>
@@ -168,7 +194,7 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                 )}
                             </Field>
 
-                            {/* <Field name="description">
+                            <Field name="description">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
                                         <label htmlFor="description">Description</label>
@@ -196,30 +222,30 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                 )}
                             </Field>
 
-                            <Field name="product_categories_id">
+                            <Field name="category_brands_id">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
-                                        <label htmlFor="product_categories_id">Product Category</label>
+                                        <label htmlFor="category_brands_id">Product Category</label>
                                         <AutoComplete
-                                            value={selectedProductCategory?.name || ""}
-                                            suggestions={filteredProductCategory}
-                                            disabled={getAllProductCategoriesQuery.isLoading}
+                                            value={selectedProductCategoryBrand?.name || ""}
+                                            suggestions={filteredProductCategoryBrand}
+                                            disabled={getAllProductCategoryBrandsQuery.isLoading}
                                             completeMethod={(e) => {
-                                                const results = getAllProductCategoriesQuery.data?.data?.data.filter((department) => {
+                                                const results = getAllProductCategoryBrandsQuery.data?.data?.data.filter((department) => {
                                                     return department.name.toLowerCase().includes(e.query.toLowerCase());
                                                 });
-                                                setFilteredProductCategory(results);
+                                                setFilteredProductCategoryBrand(results);
                                             }}
                                             field="name"
                                             dropdown={true}
                                             onChange={(e) => {
                                                 if (typeof e.value === "string") {
                                                     // Update the display value to the typed string and reset the selected department
-                                                    setSelectedProductCategory({ name: e.value });
+                                                    setSelectedProductCategoryBrand({ name: e.value });
                                                     input.onChange("");
                                                 } else if (typeof e.value === "object" && e.value !== null) {
                                                     // Update the selected department and set the form state with the selected department's ID
-                                                    setSelectedProductCategory(e.value);
+                                                    setSelectedProductCategoryBrand(e.value);
                                                     input.onChange(e.value.id);
                                                 }
                                             }}
@@ -227,7 +253,7 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                             selectedItemTemplate={(value) => <div>{value ? value.name : "Select a Product Category"}</div>}
                                         />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                        {getAllProductCategoriesQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
+                                        {getAllProductCategoryBrandsQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
                                     </div>
                                 )}
                             </Field>

@@ -18,7 +18,7 @@ import { Column } from "primereact/column";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FileUpload } from "primereact/fileupload";
 
-function RowForm({ handleSubmit, initialData = { name: "", details: "", photoUrl: "" }, ...props }) {
+function RowForm({ handleSubmit, initialData, ...props }) {
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -31,7 +31,7 @@ function RowForm({ handleSubmit, initialData = { name: "", details: "", photoUrl
         const errors = {};
 
         if (!values.name) errors.name = "Name is required";
-        // if (!values.code) errors.code = "Code is required";
+        if (!values.code) errors.code = "Code is required";
         if (!values.details) errors.details = "details are required";
         if (!values.status) {
             errors.status = "Status is required";
@@ -53,11 +53,11 @@ function RowForm({ handleSubmit, initialData = { name: "", details: "", photoUrl
     const onSubmitForm = (data, form) => {
         const errors = validate(data);
         // Check if photo is uploaded
-        if (!uploadedFile) {
+        if (!uploadedFile && !initialData) {
             setPhotoError("A photo is required");
         }
 
-        if (Object.keys(errors).length === 0 && !photoError && uploadedFile) {
+        if (Object.keys(errors).length === 0 && !photoError) {
             const formData = { ...data, photo: uploadedFile };
             setPendingData(formData);
             setShowConfirmDialog(true);
@@ -130,7 +130,7 @@ function RowForm({ handleSubmit, initialData = { name: "", details: "", photoUrl
                                 )}
                             </Field>
 
-                            {/* <Field name="code">
+                            <Field name="code">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
                                         <label htmlFor="code">Code</label>
@@ -139,8 +139,6 @@ function RowForm({ handleSubmit, initialData = { name: "", details: "", photoUrl
                                     </div>
                                 )}
                             </Field>
-
-                            */}
 
                             <Field name="status">
                                 {({ input, meta }) => (

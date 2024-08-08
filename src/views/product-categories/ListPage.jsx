@@ -28,7 +28,7 @@ function ListPage({ ...props }) {
         queryKey: ["product-categories"],
         queryFn: getAllProductCategories,
     });
-    console.log("product categories : ", data);
+    console.log("🚀product categories ~ ListPage ~ data:", data);
     useEffect(() => {
         if (isError) {
             console.log("Error fetching List of data :", error);
@@ -123,6 +123,10 @@ function ListPage({ ...props }) {
             field: "name",
         },
         {
+            title: "Code",
+            field: "code",
+        },
+        {
             title: "Details",
             field: "details",
         },
@@ -176,7 +180,7 @@ function ListPage({ ...props }) {
                     loading={isLoading || status === "loading" || deleteMutationIsLoading}
                     //
                     handleViewPage={(rowData) => {
-                        navigate("product-category", { state: { productCategoryData: rowData } });
+                        navigate("category", { state: { productCategoryData: rowData } });
                     }}
                     showViewPage={true}
                     hideRowViewPage={false}

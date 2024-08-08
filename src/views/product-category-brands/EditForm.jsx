@@ -42,11 +42,11 @@ function EditForm(props) {
         formData.append("_method", "PUT");
         formData.append("name", data.name);
 
-        // formData.append("code", data.code);
-        // formData.append("description", data.description);
+        formData.append("code", data.code);
+        formData.append("details", data.details);
         formData.append("status", data.status);
         formData.append("photo", data.photo); // Assuming 'photo' is the field name for the file upload
-        formData.append("product_category_id", data.product_category_id);
+        formData.append("product_categories_id", data.product_categories_id);
 
         // Log formData keys and values for debugging
         // formData.forEach((value, key) => {
@@ -56,7 +56,7 @@ function EditForm(props) {
         editMutation.mutate(formData);
     };
     return (
-        <Dialog header="Product Sub Categories Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
+        <Dialog header="Product Category Brand Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
             {/* <h3>Programs Edit Form</h3> */}
             <p>Edit Data Below</p>
             <RowForm initialData={props.rowData} handleSubmit={handleSubmit} />

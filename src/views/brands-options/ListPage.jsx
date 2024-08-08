@@ -8,7 +8,7 @@ import moment from "moment";
 
 import { useNavigate } from "react-router-dom";
 
-import { getAllProductCategoryBrands, getProductCategoryBrandById, postProductCategoryBrand, updateProductCategoryBrand, deleteProductCategoryBrandById } from "../../services/products/product-category-brands-service";
+import { getAllCategoryBrandOptions, getCategoryBrandOptionById, postCategoryBrandOption, updateCategoryBrandOption, deleteCategoryBrandOptionById } from "../../services/products/category_brand_options-service";
 
 import MuiTable from "../../components/general_components/MuiTable";
 import { toast } from "react-toastify";
@@ -18,15 +18,14 @@ import { confirmDialog } from "primereact/confirmdialog";
 import { Panel } from "primereact/panel";
 import { Image } from "primereact/image";
 
-function ListPage({ loggedInUserData, productCategoryId, ...props }) {
+function ListPage({ loggedInUserData, productCategoryBrandData, ...props }) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["category_brands", "by-productCategoryId", productCategoryId],
-        queryFn: () => getAllProductCategoryBrands({ product_category_id: productCategoryId }),
+        queryKey: ["category_brand_options", "by_category_brands_id", productCategoryBrandData?.id],
+        queryFn: () => getAllCategoryBrandOptions({ category_brands_id: productCategoryBrandData?.id }),
     });
-
-    console.log("🚀 ~product category brands ListPage ~ data:", data);
+    console.log("🚀 ~product sub categories ListPage ~ data:", data);
     useEffect(() => {
         if (isError) {
             console.log("Error fetching List of data :", error);
@@ -36,9 +35,9 @@ function ListPage({ loggedInUserData, productCategoryId, ...props }) {
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
-        mutationFn: (variables) => deleteProductCategoryBrandById(variables),
+        mutationFn: (variables) => deleteCategoryBrandOptionById(variables),
         onSuccess: (data) => {
-            queryClient.invalidateQueries(["category_brands"]);
+            queryClient.invalidateQueries(["category_brand_options"]);
             toast.success("Deleted Successfully");
             setDeleteMutationIsLoading(false);
         },
@@ -163,14 +162,14 @@ function ListPage({ loggedInUserData, productCategoryId, ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
-            <Panel header="Product Category Brands" style={{ marginBottom: "20px" }}>
+            <Panel header="Brand Option" style={{ marginBottom: "20px" }}>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
-                    {activeUser?.permissions.includes("create") && <Button label="Add Product Category Brand" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
-                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
+                    {activeUser?.permissions.includes("create") && <Button label="Add Brand Option" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
+                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} productCategoryBrandData={productCategoryBrandData} />
                 </div>
 
                 <MuiTable
-                    tableTitle="Product Category Brands"
+                    tableTitle="Brand Options"
                     tableData={data?.data?.data ?? []}
                     tableColumns={columns}
                     handleShowEditForm={handleShowEditForm}
@@ -180,14 +179,14 @@ function ListPage({ loggedInUserData, productCategoryId, ...props }) {
                     loading={isLoading || status === "loading" || deleteMutationIsLoading}
                     //
                     handleViewPage={(rowData) => {
-                        navigate("brand", { state: { productCategoryBrandData: rowData } });
+                        navigate("option", { state: { BrandOptionData: rowData } });
                     }}
                     showViewPage={true}
                     hideRowViewPage={false}
                     //
                     exportButton={true}
-                    pdfExportTitle="Product Category Brands"
-                    csvExportTitle="Product Category Brands"
+                    pdfExportTitle="Brand Options"
+                    csvExportTitle="Brand Options"
                 />
 
                 {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}
