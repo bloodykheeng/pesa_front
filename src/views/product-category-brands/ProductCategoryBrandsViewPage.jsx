@@ -5,34 +5,35 @@ import { Card } from "primereact/card";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import moment from "moment";
-import ListPage from "../product-category-brands/ListPage";
+import ListPage from "../products/ListPage";
 import BreadcrumbNav from "../../components/general_components/BreadcrumbNav";
+
 import useAuthContext from "../../context/AuthContext";
 
-const ProductCategoryViewPage = () => {
+const ProductCategoryBrandsViewPage = () => {
     const { getUserQuery } = useAuthContext();
     const location = useLocation();
-    const { productCategoryData } = location.state;
+    const { productSubCategoryData } = location.state;
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
         <div className="product-category-view">
             <BreadcrumbNav />
             <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
-                <TabPanel header="Category Details">
-                    <Card title="Category Details">
+                <TabPanel header="Sub Category Details">
+                    <Card title="Sub Category Details">
                         <p>
-                            <strong>Name:</strong> {productCategoryData.name}
+                            <strong>Name:</strong> {productSubCategoryData.name}
                         </p>
                         <p>
-                            <strong>Created At:</strong> {moment(productCategoryData.created_at).format("YYYY-MM-DD HH:mm:ss")}
+                            <strong>Created At:</strong> {moment(productSubCategoryData.created_at).format("YYYY-MM-DD HH:mm:ss")}
                         </p>
                         {/* Add more details as needed */}
                     </Card>
                 </TabPanel>
-                <TabPanel header="Product Category Brands">
-                    <Card title="Product Category Brands">
-                        <ListPage productCategoryId={productCategoryData?.id} loggedInUserData={getUserQuery?.data?.data} />
+                <TabPanel header="Products">
+                    <Card title="Products">
+                        <ListPage productCategoryId={productSubCategoryData?.product_category_id} productSubCategoryId={productSubCategoryData?.id} loggedInUserData={getUserQuery?.data?.data} />
                     </Card>
                 </TabPanel>
             </TabView>
@@ -40,4 +41,4 @@ const ProductCategoryViewPage = () => {
     );
 };
 
-export default ProductCategoryViewPage;
+export default ProductCategoryBrandsViewPage;
