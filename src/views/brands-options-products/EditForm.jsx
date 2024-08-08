@@ -46,7 +46,7 @@ function EditForm(props) {
         formData.append("details", data.details);
         formData.append("status", data.status);
         formData.append("photo", data.photo); // Assuming 'photo' is the field name for the file upload
-        formData.append("category_brands_id", data.category_brands_id);
+        formData.append("category_brand_options_id", data.category_brand_options_id);
 
         // Log formData keys and values for debugging
         // formData.forEach((value, key) => {

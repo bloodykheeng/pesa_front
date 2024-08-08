@@ -36,10 +36,12 @@ function RowForm({ handleSubmit, initialData, ...props }) {
         const errors = {};
 
         if (!values.name) errors.name = "Name is required";
+        if (!values.price) errors.price = "Price is required";
+        if (!values.quantity) errors.quantity = "Quantity is required";
 
         // if (!values.code) errors.code = "Code is required";
         // if (!values.description) errors.description = "Description are required";
-        if (!values.category_brands_id) errors.category_brands_id = "Product Category is required";
+        if (!values.category_brand_options_id) errors.category_brand_options_id = "Option id is required";
         if (!values.status) {
             errors.status = "Status is required";
         }
@@ -49,8 +51,8 @@ function RowForm({ handleSubmit, initialData, ...props }) {
     };
 
     //====================== product categories ========================
-    const [selectedProductCategory, setSelectedProductCategory] = useState(initialData?.product_category);
-    const [filteredProductCategory, setFilteredProductCategory] = useState();
+    const [selectedBrandOption, setSelectedBrandOption] = useState(initialData?.product_category);
+    const [filteredBrandOption, setFilteredBrandOption] = useState();
 
     const getAllProductCategoryBrandsQuery = useQuery({
         queryKey: ["category_brands"],
@@ -178,6 +180,26 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                 )}
                             </Field> */}
 
+                            <Field name="price">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="price">Price</label>
+                                        <InputText {...input} id="price" type="number" />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
+                            <Field name="quantity">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="quantity">Quantity</label>
+                                        <InputText {...input} id="quantity" type="number" />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
                             <Field name="status">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
@@ -196,35 +218,35 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                 )}
                             </Field>
 
-                            <Field name="category_brands_id">
+                            <Field name="category_brand_options_id">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
-                                        <label htmlFor="category_brands_id">Product Category</label>
+                                        <label htmlFor="category_brand_options_id">Brand Option</label>
                                         <AutoComplete
-                                            value={selectedProductCategory?.name || ""}
-                                            suggestions={filteredProductCategory}
+                                            value={selectedBrandOption?.name || ""}
+                                            suggestions={filteredBrandOption}
                                             disabled={getAllProductCategoryBrandsQuery.isLoading}
                                             completeMethod={(e) => {
                                                 const results = getAllProductCategoryBrandsQuery.data?.data?.data.filter((department) => {
                                                     return department.name.toLowerCase().includes(e.query.toLowerCase());
                                                 });
-                                                setFilteredProductCategory(results);
+                                                setFilteredBrandOption(results);
                                             }}
                                             field="name"
                                             dropdown={true}
                                             onChange={(e) => {
                                                 if (typeof e.value === "string") {
                                                     // Update the display value to the typed string and reset the selected department
-                                                    setSelectedProductCategory({ name: e.value });
+                                                    setSelectedBrandOption({ name: e.value });
                                                     input.onChange("");
                                                 } else if (typeof e.value === "object" && e.value !== null) {
                                                     // Update the selected department and set the form state with the selected department's ID
-                                                    setSelectedProductCategory(e.value);
+                                                    setSelectedBrandOption(e.value);
                                                     input.onChange(e.value.id);
                                                 }
                                             }}
                                             id="product_category"
-                                            selectedItemTemplate={(value) => <div>{value ? value.name : "Select a Product Category"}</div>}
+                                            selectedItemTemplate={(value) => <div>{value ? value.name : "Select a Brand Option"}</div>}
                                         />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                         {getAllProductCategoryBrandsQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}

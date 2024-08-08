@@ -121,9 +121,26 @@ function ListPage({ loggedInUserData, productCategoryId, ...props }) {
             field: "name",
         },
         {
-            title: "Product Category",
-            field: "product_category.name",
+            title: "Option",
+            field: "category_brand_option.name",
         },
+        {
+            title: "Price",
+            field: "price",
+            render: (rowData) => {
+                return rowData.price ? parseFloat(rowData.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "No Price";
+            },
+        },
+        {
+            title: "Quantity",
+            field: "quantity",
+            render: (rowData) => {
+                const quantityString = String(rowData.quantity); // Ensure it's a string
+                const amount = parseFloat(quantityString.replace(/,/g, ""));
+                return <div>{isNaN(amount) ? rowData.quantity : amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>;
+            },
+        },
+
         // {
         //     title: "Photo",
         //     field: "photo_url",
@@ -173,16 +190,16 @@ function ListPage({ loggedInUserData, productCategoryId, ...props }) {
                     showEdit={activeUser?.permissions.includes("update")}
                     showDelete={activeUser?.permissions.includes("delete")}
                     loading={isLoading || status === "loading" || deleteMutationIsLoading}
-                    //
-                    handleViewPage={(rowData) => {
-                        navigate("product-category-brand", { state: { productCategoryBrandData: rowData } });
-                    }}
-                    showViewPage={true}
-                    hideRowViewPage={false}
+                    // //
+                    // handleViewPage={(rowData) => {
+                    //     navigate("product-category-brand", { state: { productCategoryBrandData: rowData } });
+                    // }}
+                    // showViewPage={true}
+                    // hideRowViewPage={false}
                     //
                     exportButton={true}
-                    pdfExportTitle="Product Category Brands"
-                    csvExportTitle="Product Category Brands"
+                    pdfExportTitle="Products"
+                    csvExportTitle="Products"
                 />
 
                 {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}

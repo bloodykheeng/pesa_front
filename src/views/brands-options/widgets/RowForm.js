@@ -247,11 +247,11 @@ function RowForm({ handleSubmit, initialData, productCategoryBrandData, ...props
                             </Field>
 
                             {/* FileUpload for photo with validation */}
-                            <div className="p-field m-4">
+                            {/* <div className="p-field m-4">
                                 <label htmlFor="photo">Photo</label>
                                 <FileUpload name="photo" customUpload uploadHandler={onFileUpload} accept="image/*" maxFileSize={2097152} />
                                 {photoTouched && photoError && <small className="p-error">{photoError}</small>}
-                            </div>
+                            </div> */}
                             <div className="d-grid gap-2">
                                 <Button type="submit" label="Save" className="p-button-primary" icon="pi pi-check" />
                             </div>
