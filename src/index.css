@@ -58,3 +58,8 @@
 a:-webkit-any-link{
     text-decoration: none;
 }
+
+/* helps to increase test in input fields */
+.auth-form .p-inputtext {
+    font-size: 2rem;
+ }

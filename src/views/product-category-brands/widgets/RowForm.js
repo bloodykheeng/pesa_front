@@ -22,7 +22,7 @@ import { AutoComplete } from "primereact/autocomplete";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { getAllProductCategories, getProductCategorieById, postProductCategorie, updateProductCategorie, deleteProductCategorieById } from "../../../services/products/product-categories-service";
 
-function RowForm({ handleSubmit, initialData, ...props }) {
+function RowForm({ handleSubmit, initialData, productCategoryData, ...props }) {
     console.log("🚀 ~ RowForm ~ initialData:", initialData);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
@@ -49,8 +49,12 @@ function RowForm({ handleSubmit, initialData, ...props }) {
     };
 
     //====================== product categories ========================
-    const [selectedProductCategory, setSelectedProductCategory] = useState(initialData?.product_category);
+    const [selectedProductCategory, setSelectedProductCategory] = useState(initialData?.product_category ?? productCategoryData);
     const [filteredProductCategory, setFilteredProductCategory] = useState();
+
+    if (!initialData) {
+        initialData = { product_categories_id: productCategoryData?.id };
+    }
 
     const getAllProductCategoriesQuery = useQuery({
         queryKey: ["product-categories"],

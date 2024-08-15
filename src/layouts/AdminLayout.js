@@ -192,6 +192,22 @@ const AdminLayout = () => {
             label: "User Management",
             items: [{ label: "Users", icon: "pi pi-fw pi-user-edit", to: "/users" }],
         },
+        {
+            label: "Settings",
+            icon: "pi pi-fw pi-cog",
+            items: [
+                {
+                    label: "Product Types",
+                    icon: "pi pi-fw pi-sliders-h",
+                    to: "/product-types",
+                },
+                // {
+                //     label: "Service Types",
+                //     icon: "pi pi-fw pi-sliders-v",
+                //     to: "/service_types",
+                // },
+            ],
+        },
         // {
         //     label: "Configurations",
         //     items: [

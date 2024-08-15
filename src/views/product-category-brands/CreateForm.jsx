@@ -9,7 +9,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { toast } from "react-toastify";
 
-function CreateForm(props) {
+function CreateForm({ productCategoryData, ...props }) {
     const [name, setName] = useState();
     const [details, setDetails] = useState();
     const [loading, setLoading] = useState(false);
@@ -45,7 +45,7 @@ function CreateForm(props) {
     return (
         <Dialog header="Product Category Brand Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
             <p>Fill in the form below</p>
-            <RowForm handleSubmit={handleSubmit} project_id={props?.projectId} />
+            <RowForm handleSubmit={handleSubmit} productCategoryData={productCategoryData} />
             {/* <h4>{creactProgramsMutation.status}</h4> */}
             {creactMutationIsLoading && (
                 <center>

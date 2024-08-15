@@ -21,9 +21,10 @@ import { FileUpload } from "primereact/fileupload";
 import { AutoComplete } from "primereact/autocomplete";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { getAllProductCategoryBrands, getProductCategoryBrandById, postProductCategoryBrand, updateProductCategoryBrand, deleteProductCategoryBrandById } from "../../../services/products/product-category-brands-service";
+import { getAllProductTypes, getProductTypeById, postProductType, updateProductType, deleteProductTypeById } from "../../../services/products/product-types-service";
 
-function RowForm({ handleSubmit, initialData, productCategoryBrandData, ...props }) {
-    console.log("🚀 ~ RowForm ~ initialData:", initialData);
+function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props }) {
+    console.log("🚀df ~ RowForm ~ initialData:", initialData);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -37,19 +38,23 @@ function RowForm({ handleSubmit, initialData, productCategoryBrandData, ...props
 
         if (!values.name) errors.name = "Name is required";
 
-        if (!values.code) errors.code = "Code is required";
+        // if (!values.code) errors.code = "Code is required";
         // if (!values.description) errors.description = "Description are required";
         if (!values.category_brands_id) errors.category_brands_id = "Product Category is required";
+        if (!values.product_types_id) errors.product_types_id = "Product Type is required";
+
         if (!values.status) {
             errors.status = "Status is required";
         }
         if (!values.details) errors.details = "Details is required";
+        if (!values.price) errors.price = "Price is required";
+        if (!values.quantity) errors.quantity = "Quantity is required";
 
         return errors;
     };
 
-    //====================== product categories BRand ========================
-    const [selectedProductCategoryBrand, setSelectedProductCategoryBrand] = useState(productCategoryBrandData ?? initialData?.product_brand_category);
+    //====================== product categories  Brand========================
+    const [selectedProductCategoryBrand, setSelectedProductCategoryBrand] = useState(productCategoryBrandData ?? initialData?.category_brand);
     const [filteredProductCategoryBrand, setFilteredProductCategoryBrand] = useState();
 
     if (!initialData) {
@@ -71,6 +76,22 @@ function RowForm({ handleSubmit, initialData, productCategoryBrandData, ...props
                 : toast.error("An Error Occured Please Contact Admin");
         }
     }, [getAllProductCategoryBrandsQuery?.isError]);
+
+    //====================== product types========================
+    const [selectedProductType, setSelectedProductType] = useState(initialData?.product_type);
+    const [filteredProductType, setFilteredProductType] = useState();
+
+    const getAllProductTypesQuery = useQuery({
+        queryKey: ["product-types"],
+        queryFn: getAllProductTypes,
+    });
+
+    useEffect(() => {
+        if (getAllProductTypesQuery?.isError) {
+            console.log("Error fetching List of data :", getAllProductTypesQuery?.error);
+            getAllProductTypesQuery?.error?.response?.data?.message ? toast.error(getAllProductTypesQuery?.error?.response?.data?.message) : !getAllProductTypesQuery?.error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+        }
+    }, [getAllProductTypesQuery?.isError]);
 
     // const onSubmitForm = (data) => {
     //     const errors = validate(data);
@@ -162,7 +183,27 @@ function RowForm({ handleSubmit, initialData, productCategoryBrandData, ...props
                                 )}
                             </Field>
 
-                            <Field name="code">
+                            <Field name="price">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="price">Price</label>
+                                        <InputText {...input} id="price" type="number" />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
+                            <Field name="quantity">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="quantity">Quantity</label>
+                                        <InputText {...input} id="quantity" type="number" />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
+                            {/* <Field name="code">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
                                         <label htmlFor="code">Code</label>
@@ -172,7 +213,7 @@ function RowForm({ handleSubmit, initialData, productCategoryBrandData, ...props
                                 )}
                             </Field>
 
-                            {/* <Field name="description">
+                            <Field name="description">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
                                         <label htmlFor="description">Description</label>
@@ -236,6 +277,42 @@ function RowForm({ handleSubmit, initialData, productCategoryBrandData, ...props
                                 )}
                             </Field>
 
+                            <Field name="product_types_id">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="product_types_id">Product Type</label>
+                                        <AutoComplete
+                                            value={selectedProductType?.name || ""}
+                                            suggestions={filteredProductType}
+                                            disabled={getAllProductTypesQuery.isLoading}
+                                            completeMethod={(e) => {
+                                                const results = getAllProductTypesQuery.data?.data?.data.filter((department) => {
+                                                    return department.name.toLowerCase().includes(e.query.toLowerCase());
+                                                });
+                                                setFilteredProductType(results);
+                                            }}
+                                            field="name"
+                                            dropdown={true}
+                                            onChange={(e) => {
+                                                if (typeof e.value === "string") {
+                                                    // Update the display value to the typed string and reset the selected department
+                                                    setSelectedProductType({ name: e.value });
+                                                    input.onChange("");
+                                                } else if (typeof e.value === "object" && e.value !== null) {
+                                                    // Update the selected department and set the form state with the selected department's ID
+                                                    setSelectedProductType(e.value);
+                                                    input.onChange(e.value.id);
+                                                }
+                                            }}
+                                            id="product_type"
+                                            selectedItemTemplate={(value) => <div>{value ? value.name : "Select a Product Type"}</div>}
+                                        />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                        {getAllProductCategoryBrandsQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
+                                    </div>
+                                )}
+                            </Field>
+
                             <Field name="details">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
@@ -247,11 +324,11 @@ function RowForm({ handleSubmit, initialData, productCategoryBrandData, ...props
                             </Field>
 
                             {/* FileUpload for photo with validation */}
-                            {/* <div className="p-field m-4">
+                            <div className="p-field m-4">
                                 <label htmlFor="photo">Photo</label>
                                 <FileUpload name="photo" customUpload uploadHandler={onFileUpload} accept="image/*" maxFileSize={2097152} />
                                 {photoTouched && photoError && <small className="p-error">{photoError}</small>}
-                            </div> */}
+                            </div>
                             <div className="d-grid gap-2">
                                 <Button type="submit" label="Save" className="p-button-primary" icon="pi pi-check" />
                             </div>

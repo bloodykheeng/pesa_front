@@ -18,21 +18,27 @@ import { confirmDialog } from "primereact/confirmdialog";
 import { Panel } from "primereact/panel";
 import { Image } from "primereact/image";
 
-function ListPage({ loggedInUserData, productCategoryId, ...props }) {
+import useHandleQueryError from "../../hooks/useHandleQueryError";
+import handleMutationError from "../../hooks/handleMutationError";
+
+function ListPage({ loggedInUserData, productCategoryData, ...props }) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["category_brands", "by-productCategoryId", productCategoryId],
-        queryFn: () => getAllProductCategoryBrands({ product_category_id: productCategoryId }),
+        queryKey: ["category_brands", "by-product_categories_id", productCategoryData?.id],
+        queryFn: () => getAllProductCategoryBrands({ product_categories_id: productCategoryData?.id }),
     });
 
     console.log("🚀 ~product category brands ListPage ~ data:", data);
-    useEffect(() => {
-        if (isError) {
-            console.log("Error fetching List of data :", error);
-            error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-        }
-    }, [isError]);
+    // useEffect(() => {
+    //     if (isError) {
+    //         console.log("Error fetching List of data :", error);
+    //         error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+    //     }
+    // }, [isError]);
+
+    // Use the custom hook to handle errors with useMemo on the error object
+    useHandleQueryError(isError, error);
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
@@ -43,8 +49,10 @@ function ListPage({ loggedInUserData, productCategoryId, ...props }) {
             setDeleteMutationIsLoading(false);
         },
         onError: (error) => {
-            setDeleteMutationIsLoading(false);
-            error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+            // setDeleteMutationIsLoading(false);
+            // error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+            // Custom hook to handle mutation error
+            handleMutationError(error, setDeleteMutationIsLoading);
         },
     });
 
@@ -166,7 +174,7 @@ function ListPage({ loggedInUserData, productCategoryId, ...props }) {
             <Panel header="Product Category Brands" style={{ marginBottom: "20px" }}>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
                     {activeUser?.permissions.includes("create") && <Button label="Add Product Category Brand" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
-                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
+                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} productCategoryData={productCategoryData} />
                 </div>
 
                 <MuiTable

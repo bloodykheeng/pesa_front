@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Form, Field } from "react-final-form";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
@@ -12,18 +12,13 @@ import { classNames } from "primereact/utils";
 import setFieldTouched from "final-form-set-field-touched";
 //
 import { toast } from "react-toastify";
+import { AutoComplete } from "primereact/autocomplete";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FileUpload } from "primereact/fileupload";
 
-//
-import { AutoComplete } from "primereact/autocomplete";
-import { ProgressSpinner } from "primereact/progressspinner";
-import { getAllProductCategoryBrands, getProductCategoryBrandById, postProductCategoryBrand, updateProductCategoryBrand, deleteProductCategoryBrandById } from "../../../services/products/product-category-brands-service";
-
 function RowForm({ handleSubmit, initialData, ...props }) {
-    console.log("🚀 ~ RowForm ~ initialData:", initialData);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -36,39 +31,14 @@ function RowForm({ handleSubmit, initialData, ...props }) {
         const errors = {};
 
         if (!values.name) errors.name = "Name is required";
-        if (!values.price) errors.price = "Price is required";
-        if (!values.quantity) errors.quantity = "Quantity is required";
-
-        // if (!values.code) errors.code = "Code is required";
-        // if (!values.description) errors.description = "Description are required";
-        if (!values.category_brand_options_id) errors.category_brand_options_id = "Option id is required";
+        if (!values.code) errors.code = "Code is required";
+        if (!values.details) errors.details = "details are required";
         if (!values.status) {
             errors.status = "Status is required";
         }
-        if (!values.details) errors.details = "Details is required";
 
         return errors;
     };
-
-    //====================== product categories ========================
-    const [selectedBrandOption, setSelectedBrandOption] = useState(initialData?.product_category);
-    const [filteredBrandOption, setFilteredBrandOption] = useState();
-
-    const getAllProductCategoryBrandsQuery = useQuery({
-        queryKey: ["category_brands"],
-        queryFn: getAllProductCategoryBrands,
-    });
-
-    useEffect(() => {
-        if (getAllProductCategoryBrandsQuery?.isError) {
-            console.log("Error fetching List of data :", getAllProductCategoryBrandsQuery?.error);
-            getAllProductCategoryBrandsQuery?.error?.response?.data?.message
-                ? toast.error(getAllProductCategoryBrandsQuery?.error?.response?.data?.message)
-                : !getAllProductCategoryBrandsQuery?.error?.response
-                ? toast.warning("Check Your Internet Connection Please")
-                : toast.error("An Error Occured Please Contact Admin");
-        }
-    }, [getAllProductCategoryBrandsQuery?.isError]);
 
     // const onSubmitForm = (data) => {
     //     const errors = validate(data);
@@ -83,9 +53,9 @@ function RowForm({ handleSubmit, initialData, ...props }) {
     const onSubmitForm = (data, form) => {
         const errors = validate(data);
         // Check if photo is uploaded
-        if (!uploadedFile && !initialData) {
-            setPhotoError("A photo is required");
-        }
+        // if (!uploadedFile && !initialData) {
+        //     setPhotoError("A photo is required");
+        // }
 
         if (Object.keys(errors).length === 0 && !photoError) {
             const formData = { ...data, photo: uploadedFile };
@@ -97,7 +67,7 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                 form.mutators.setFieldTouched(field, true);
             });
             setPhotoTouched(true); // Make sure to mark the photo as touched to show the error
-            toast.warning("Please fill in all required fields and upload a photo.");
+            toast.warning("Please fill in all required fields");
         }
     };
 
@@ -160,41 +130,11 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                 )}
                             </Field>
 
-                            {/* <Field name="code">
+                            <Field name="code">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
                                         <label htmlFor="code">Code</label>
                                         <InputText {...input} id="name" type="text" />
-                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                    </div>
-                                )}
-                            </Field>
-
-                            <Field name="description">
-                                {({ input, meta }) => (
-                                    <div className="p-field m-4">
-                                        <label htmlFor="description">Description</label>
-                                        <InputTextarea {...input} rows={5} cols={30} id="description" className={classNames({ "p-invalid": meta.touched && meta.error })} />
-                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                    </div>
-                                )}
-                            </Field> */}
-
-                            <Field name="price">
-                                {({ input, meta }) => (
-                                    <div className="p-field m-4">
-                                        <label htmlFor="price">Price</label>
-                                        <InputText {...input} id="price" type="number" />
-                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                    </div>
-                                )}
-                            </Field>
-
-                            <Field name="quantity">
-                                {({ input, meta }) => (
-                                    <div className="p-field m-4">
-                                        <label htmlFor="quantity">Quantity</label>
-                                        <InputText {...input} id="quantity" type="number" />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
                                 )}
@@ -214,42 +154,6 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                             className={classNames({ "p-invalid": meta.touched && meta.error })}
                                         />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                    </div>
-                                )}
-                            </Field>
-
-                            <Field name="category_brand_options_id">
-                                {({ input, meta }) => (
-                                    <div className="p-field m-4">
-                                        <label htmlFor="category_brand_options_id">Brand Option</label>
-                                        <AutoComplete
-                                            value={selectedBrandOption?.name || ""}
-                                            suggestions={filteredBrandOption}
-                                            disabled={getAllProductCategoryBrandsQuery.isLoading}
-                                            completeMethod={(e) => {
-                                                const results = getAllProductCategoryBrandsQuery.data?.data?.data.filter((department) => {
-                                                    return department.name.toLowerCase().includes(e.query.toLowerCase());
-                                                });
-                                                setFilteredBrandOption(results);
-                                            }}
-                                            field="name"
-                                            dropdown={true}
-                                            onChange={(e) => {
-                                                if (typeof e.value === "string") {
-                                                    // Update the display value to the typed string and reset the selected department
-                                                    setSelectedBrandOption({ name: e.value });
-                                                    input.onChange("");
-                                                } else if (typeof e.value === "object" && e.value !== null) {
-                                                    // Update the selected department and set the form state with the selected department's ID
-                                                    setSelectedBrandOption(e.value);
-                                                    input.onChange(e.value.id);
-                                                }
-                                            }}
-                                            id="product_category"
-                                            selectedItemTemplate={(value) => <div>{value ? value.name : "Select a Brand Option"}</div>}
-                                        />
-                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                        {getAllProductCategoryBrandsQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
                                     </div>
                                 )}
                             </Field>

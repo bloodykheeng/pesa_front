@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { Dialog } from "primereact/dialog";
 
-import { getAllCategoryBrandOptionProducts, getCategoryBrandOptionProductById, postCategoryBrandOptionProduct, updateCategoryBrandOptionProduct, deleteCategoryBrandOptionProductById } from "../../services/products/category_brand_option_products-service";
+import { getAllProducts, getProductById, postProduct, updateProduct, deleteProductById } from "../../services/products/products-service";
 
 import RowForm from "./widgets/RowForm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -20,9 +20,9 @@ function CreateForm(props) {
 
     const [creactMutationIsLoading, setCreactMutationIsLoading] = useState(false);
     const creactMutation = useMutation({
-        mutationFn: postCategoryBrandOptionProduct,
+        mutationFn: postProduct,
         onSuccess: () => {
-            queryClient.invalidateQueries(["category_brand_option_products"]);
+            queryClient.invalidateQueries(["products"]);
             toast.success("created Successfully");
             props.onClose();
             setCreactMutationIsLoading(false);
@@ -43,9 +43,9 @@ function CreateForm(props) {
     };
 
     return (
-        <Dialog header="Brand Accessory Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
+        <Dialog header="Product Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
             <p>Fill in the form below</p>
-            <RowForm handleSubmit={handleSubmit} project_id={props?.projectId} />
+            <RowForm handleSubmit={handleSubmit} productCategoryBrandData={props?.productCategoryBrandData} />
             {/* <h4>{creactProgramsMutation.status}</h4> */}
             {creactMutationIsLoading && (
                 <center>

@@ -5,11 +5,12 @@ import { Card } from "primereact/card";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import moment from "moment";
-import ListPage from "../brands-accessories/ListPage";
-import BrandOptionsListPage from "../brands-options/ListPage";
+import ProductsListPage from "../products/ListPage";
 import BreadcrumbNav from "../../components/general_components/BreadcrumbNav";
 
 import useAuthContext from "../../context/AuthContext";
+
+import { Image } from "primereact/image";
 
 const ProductCategoryBrandsViewPage = () => {
     const { getUserQuery } = useAuthContext();
@@ -22,26 +23,45 @@ const ProductCategoryBrandsViewPage = () => {
             <BreadcrumbNav />
             <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                 <TabPanel header="Brand Details">
-                    <Card title="Brand Details">
-                        <div style={{ minHeight: "50vh" }}>
+                    <div style={{ minHeight: "50vh", display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+                        {/* Display Image */}
+                        <div className="card flex justify-content-center">
+                            <Image src={productCategoryBrandData?.cloudinary_photo_url || productCategoryBrandData?.photo_url} alt="Brand Image" width="250" preview />
+                        </div>
+                        <div>
                             <p>
                                 <strong>Name:</strong> {productCategoryBrandData?.name}
                             </p>
                             <p>
+                                <strong>Code:</strong> {productCategoryBrandData?.code}
+                            </p>
+                            <p>
+                                <strong>Status:</strong> {productCategoryBrandData?.status}
+                            </p>
+                            <p>
+                                <strong>Details:</strong> {productCategoryBrandData?.details}
+                            </p>
+                            <p>
+                                <strong>Product Category :</strong> {productCategoryBrandData?.product_category?.name}
+                            </p>
+                            <p>
+                                <strong>Created By:</strong> {productCategoryBrandData?.created_by?.name}
+                            </p>
+                            <p>
+                                <strong>Updated By:</strong> {productCategoryBrandData?.updated_by?.name}
+                            </p>
+                            <p>
                                 <strong>Created At:</strong> {moment(productCategoryBrandData?.created_at).format("YYYY-MM-DD HH:mm:ss")}
                             </p>
-                            {/* Add more details as needed */}
+                            <p>
+                                <strong>Updated At:</strong> {moment(productCategoryBrandData?.updated_at).format("YYYY-MM-DD HH:mm:ss")}
+                            </p>
                         </div>
-                    </Card>
-                </TabPanel>
-                <TabPanel header="Brand Accesories">
-                    <div>
-                        <ListPage productCategoryBrandData={productCategoryBrandData} loggedInUserData={getUserQuery?.data?.data} />
                     </div>
                 </TabPanel>
-                <TabPanel header="Brand Options">
+                <TabPanel header="Brand Products">
                     <div>
-                        <BrandOptionsListPage productCategoryBrandData={productCategoryBrandData} loggedInUserData={getUserQuery?.data?.data} />
+                        <ProductsListPage productCategoryBrandData={productCategoryBrandData} loggedInUserData={getUserQuery?.data?.data} />
                     </div>
                 </TabPanel>
             </TabView>

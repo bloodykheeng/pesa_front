@@ -6,7 +6,7 @@ import BreadcrumbNav from "../../components/general_components/BreadcrumbNav";
 import useAuthContext from "../../context/AuthContext";
 
 //
-function BrandAccessoriesPage({ loggedInUserData }) {
+function ProductsPage({ loggedInUserData }) {
     const { getUserQuery } = useAuthContext();
     return (
         <div>
@@ -17,4 +17,4 @@ function BrandAccessoriesPage({ loggedInUserData }) {
     );
 }
 
-export default BrandAccessoriesPage;
+export default ProductsPage;

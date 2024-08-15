@@ -19,6 +19,8 @@ import { Panel } from "primereact/panel";
 import { Image } from "primereact/image";
 
 import useAuthContext from "../../context/AuthContext";
+import useHandleQueryError from "../../hooks/useHandleQueryError";
+import handleMutationError from "../../hooks/handleMutationError";
 
 function ListPage({ ...props }) {
     const { getUserQuery } = useAuthContext();
@@ -29,12 +31,14 @@ function ListPage({ ...props }) {
         queryFn: getAllProductCategories,
     });
     console.log("🚀product categories ~ ListPage ~ data:", data);
-    useEffect(() => {
-        if (isError) {
-            console.log("Error fetching List of data :", error);
-            error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-        }
-    }, [isError]);
+    // useEffect(() => {
+    //     if (isError) {
+    //         console.log("Error fetching List of data :", error);
+    //         error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+    //     }
+    // }, [isError]);
+    // Use the custom hook to handle errors with useMemo on the error object
+    useHandleQueryError(isError, error);
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
@@ -44,8 +48,10 @@ function ListPage({ ...props }) {
             setDeleteMutationIsLoading(false);
         },
         onError: (error) => {
-            setDeleteMutationIsLoading(false);
-            error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+            // setDeleteMutationIsLoading(false);
+            // error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+            // Custom hook to handle mutation error
+            handleMutationError(error, setDeleteMutationIsLoading);
         },
     });
 

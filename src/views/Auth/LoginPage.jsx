@@ -118,7 +118,7 @@ const LoginPage = () => {
 
     return (
         <Card>
-            <div className="form-demo" style={{ height: "100vh", zIndex: 2, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", overflow: "auto" }}>
+            <div className="form-demo auth-form" style={{ height: "100vh", zIndex: 2, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", overflow: "auto" }}>
                 {/* <div
                     css={css`
                         position: absolute;

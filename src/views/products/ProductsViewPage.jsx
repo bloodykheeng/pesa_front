@@ -10,7 +10,7 @@ import BreadcrumbNav from "../../components/general_components/BreadcrumbNav";
 
 import useAuthContext from "../../context/AuthContext";
 
-const BrandOptionsViewPage = () => {
+const ProductsViewPage = () => {
     const { getUserQuery } = useAuthContext();
     const location = useLocation();
     const { productSubCategoryData } = location.state;
@@ -41,4 +41,4 @@ const BrandOptionsViewPage = () => {
     );
 };
 
-export default BrandOptionsViewPage;
+export default ProductsViewPage;
