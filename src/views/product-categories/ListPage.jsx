@@ -169,7 +169,7 @@ function ListPage({ ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
-            <Panel header="Product Categories" style={{ marginBottom: "20px" }}>
+            <Panel header="Product Categories" style={{ marginBottom: "20px" }} toggleable>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
                     {activeUser?.permissions.includes("create") && <Button label="Add Product Category" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
                     <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />

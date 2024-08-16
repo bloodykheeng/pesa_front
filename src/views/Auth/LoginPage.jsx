@@ -34,7 +34,7 @@ const LoginPage = () => {
     const [googleLoginIsLoading, setGoogleLoginIsLoading] = useState(false);
 
     const loginMutation = useMutation({
-        mutationFn: (variables) => obtainToken(variables?.email, variables?.password),
+        mutationFn: (variables) => obtainToken(variables),
         onSuccess: (data) => {
             console.log("successfull login : xxxxx data : ", data);
             setIsLoading(false);
@@ -54,7 +54,11 @@ const LoginPage = () => {
     const onSubmit = (values) => {
         setIsLoading(true);
         console.log("Login data:", values);
-        loginMutation.mutate(values);
+        let finalValues = {
+            credential: values?.email,
+            password: values?.password,
+        };
+        loginMutation.mutate(finalValues);
     };
 
     const validate = (values) => {

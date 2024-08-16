@@ -7,7 +7,9 @@ import ProductCategoryViewPage from "./views/product-categories/ProductCategoryV
 import ProductCategoryBrandsViewPage from "./views/product-category-brands/ProductCategoryBrandsViewPage";
 
 import ProductTypesPage from "./views/product-types/ProductTypesPage.jsx";
-
+import PackagesPage from "./views/packages/PackagesPage.jsx";
+import OrdersPage from "./views/orders/OrdersPage.jsx";
+import CustomersPage from "./views/customers/UserPage";
 // ============ Customm component routes ========================
 const DashboardPage = lazy(() => import("./components/Dashboard"));
 const FormLayoutDemo = lazy(() => import("./components/FormLayoutDemo"));
@@ -185,6 +187,25 @@ function AppRoutes() {
             path: "/product-types",
             name: "ProductTypesPage",
             element: ProductTypesPage,
+            layout: "/admin",
+        },
+        {
+            path: "/orders",
+            name: "ProductTypesPage",
+            element: OrdersPage,
+            layout: "/admin",
+        },
+
+        {
+            path: "/packages",
+            name: "packages",
+            element: PackagesPage,
+            layout: "/admin",
+        },
+        {
+            path: "/customers",
+            name: "customers",
+            element: CustomersPage,
             layout: "/admin",
         },
     ];

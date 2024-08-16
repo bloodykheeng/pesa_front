@@ -223,7 +223,7 @@ function ListPage({ loggedInUserData, productCategoryBrandData, ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
-            <Panel header="Products" style={{ marginBottom: "20px" }}>
+            <Panel header="Products" style={{ marginBottom: "20px" }} toggleable>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
                     {activeUser?.permissions.includes("create") && <Button label="Add Product" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
                     <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} productCategoryBrandData={productCategoryBrandData} />
