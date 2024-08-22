@@ -17,11 +17,8 @@ export async function forgotPassword(email) {
     return response;
 }
 
-export async function obtainToken(email, password) {
-    const response = await axiosAPI.post("/login", {
-        email,
-        password,
-    });
+export async function obtainToken(data) {
+    const response = await axiosAPI.post("/login", data);
     setNewHeaders(response);
     setProfileHeaders(response);
     return response;

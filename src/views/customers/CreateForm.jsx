@@ -2,50 +2,44 @@ import React, { useState, useEffect } from "react";
 
 import { Dialog } from "primereact/dialog";
 
-import { getAllProductCategories, getProductCategorieById, postProductCategorie, updateProductCategorie, deleteProductCategorieById } from "../../services/products/product-categories-service";
+import { getAllUsers, getUserById, getApproverRoles, createUser, updateUser, deleteUserById, getAssignableRoles } from "../../services/auth/user-service";
 
 import RowForm from "./widgets/RowForm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { toast } from "react-toastify";
 
-function CreateForm(props) {
-    const [name, setName] = useState();
-    const [details, setDetails] = useState();
-    const [loading, setLoading] = useState(false);
-    const [showForm, setShowForm] = useState(true);
-    const [validated, setValidated] = useState(true);
-
+function CreateForm({ loggedInUserData, ...props }) {
     const queryClient = useQueryClient();
 
     const [creactMutationIsLoading, setCreactMutationIsLoading] = useState(false);
     const creactMutation = useMutation({
-        mutationFn: postProductCategorie,
+        mutationFn: createUser,
         onSuccess: () => {
-            queryClient.invalidateQueries(["product-categories"]);
+            queryClient.invalidateQueries(["users"]);
             toast.success("created Successfully");
-            props.onClose();
             setCreactMutationIsLoading(false);
+            props.onClose();
         },
         onError: (error) => {
             // props.onClose();
             setCreactMutationIsLoading(false);
             error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-            console.log("create vendors error : ", error);
+            console.log("create programs error : ", error);
         },
     });
 
     const handleSubmit = async (data) => {
         // event.preventDefault();
         setCreactMutationIsLoading(true);
-        console.log("data we are submitting : ", data);
+        console.log("data we are submitting while creating a user : ", data);
         creactMutation.mutate(data);
     };
 
     return (
-        <Dialog header="Product Categories Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
+        <Dialog header="Customers Form" visible={props.show} style={{ width: "60vw" }} onHide={() => props.onHide()} maximizable>
             <p>Fill in the form below</p>
-            <RowForm handleSubmit={handleSubmit} orderData={props?.orderData} />
+            <RowForm loggedInUserData={loggedInUserData} handleSubmit={handleSubmit} project_id={props?.projectId} selectedParentItem={props?.selectedParentItem} />
             {/* <h4>{creactProgramsMutation.status}</h4> */}
             {creactMutationIsLoading && (
                 <center>

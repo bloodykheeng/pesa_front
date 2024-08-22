@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { getAllProductCategories, getProductCategorieById, postProductCategorie, updateProductCategorie, deleteProductCategorieById } from "../../services/products/product-categories-service";
+import { getAllProductTypes, getProductTypeById, postProductType, updateProductType, deleteProductTypeById } from "../../services/products/product-types-service";
 
 import RowForm from "./widgets/RowForm";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -14,12 +14,12 @@ function EditForm(props) {
 
     const [editMutationIsLoading, setEditMutationIsLoading] = useState(false);
     const editMutation = useMutation({
-        mutationFn: (variables) => updateProductCategorie(props?.rowData?.id, variables),
+        mutationFn: (variables) => updateProductType(props?.rowData?.id, variables),
         onSuccess: () => {
             setEditMutationIsLoading(false);
             props.onClose();
             toast.success("Edited Successfully");
-            queryClient.invalidateQueries(["product-categories"]);
+            queryClient.invalidateQueries(["product-types"]);
         },
         onError: (error) => {
             console.log("🚀product category  ~ EditForm ~ error:", error);
@@ -55,7 +55,7 @@ function EditForm(props) {
         editMutation.mutate(formData);
     };
     return (
-        <Dialog header="Product Categories Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
+        <Dialog header="Product Types Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
             {/* <h3>Programs Edit Form</h3> */}
             <p>Edit Data Below</p>
             <RowForm initialData={props.rowData} handleSubmit={handleSubmit} />

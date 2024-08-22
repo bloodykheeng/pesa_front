@@ -19,6 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { FileUpload } from "primereact/fileupload";
 
 function RowForm({ handleSubmit, initialData, ...props }) {
+    console.log("🚀 orders ~ RowForm ~ initialData:", initialData);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -26,17 +27,26 @@ function RowForm({ handleSubmit, initialData, ...props }) {
 
     const [photoError, setPhotoError] = useState(null);
     const [photoTouched, setPhotoTouched] = useState(false);
-
     const validate = (values) => {
         const errors = {};
-
-        if (!values.name) errors.name = "Name is required";
-        if (!values.code) errors.code = "Code is required";
-        if (!values.details) errors.details = "details are required";
-        if (!values.status) {
-            errors.status = "Status is required";
+        // if (!values.order_number) {
+        //     errors.order_number = "Order Number is required.";
+        // }
+        // if (!values.payment_mode) {
+        //     errors.payment_mode = "Payment Mode is required.";
+        // }
+        // if (!values.address) {
+        //     errors.address = "Address is required.";
+        // }
+        // if (!values.amount) {
+        //     errors.amount = "Amount is required.";
+        // }
+        if (!values.delivery_status) {
+            errors.delivery_status = "Delivery Status is required.";
         }
-
+        if (!values.charged_amount) {
+            errors.charged_amount = "Charged Amount is required.";
+        }
         return errors;
     };
 
@@ -53,9 +63,9 @@ function RowForm({ handleSubmit, initialData, ...props }) {
     const onSubmitForm = (data, form) => {
         const errors = validate(data);
         // Check if photo is uploaded
-        if (!uploadedFile && !initialData) {
-            setPhotoError("A photo is required");
-        }
+        // if (!uploadedFile && !initialData) {
+        //     setPhotoError("A photo is required");
+        // }
 
         if (Object.keys(errors).length === 0 && !photoError) {
             const formData = { ...data, photo: uploadedFile };
@@ -67,7 +77,7 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                 form.mutators.setFieldTouched(field, true);
             });
             setPhotoTouched(true); // Make sure to mark the photo as touched to show the error
-            toast.warning("Please fill in all required fields and upload a photo.");
+            toast.warning("Please fill in all required fields");
         }
     };
 
@@ -102,6 +112,26 @@ function RowForm({ handleSubmit, initialData, ...props }) {
         }
     };
 
+    const paymentModes = [
+        { label: "Credit Card", value: "credit_card" },
+        { label: "PayPal", value: "paypal" },
+        { label: "Bank Transfer", value: "bank_transfer" },
+    ];
+
+    const deliveryStatuses = [
+        { label: "Pending", value: "pending" },
+        { label: "Processing", value: "processing" },
+        { label: "Transit", value: "transit" },
+        { label: "Delivered", value: "delivered" },
+        { label: "Cancelled", value: "cancelled" },
+    ];
+
+    const paymentStatuses = [
+        { label: "Pending", value: "pending" },
+        { label: "Paid", value: "Paid" },
+        { label: "Cancelled", value: "cancelled" },
+    ];
+
     return (
         <div className="col-12 md:col-12">
             <div className="card p-fluid">
@@ -120,7 +150,7 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                 // handleSubmit(event, values);
                             }}
                         >
-                            <Field name="name">
+                            {/* <Field name="name">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
                                         <label htmlFor="name">Name</label>
@@ -130,50 +160,81 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                 )}
                             </Field>
 
-                            <Field name="code">
+                            <Field name="order_number">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
-                                        <label htmlFor="code">Code</label>
-                                        <InputText {...input} id="name" type="text" />
+                                        <label htmlFor="order_number">Order Number</label>
+                                        <InputText {...input} id="order_number" type="text" />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
                                 )}
                             </Field>
 
-                            <Field name="status">
+                            <Field name="payment_mode">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
-                                        <label htmlFor="status">Status</label>
-                                        <Dropdown
-                                            {...input}
-                                            options={[
-                                                { id: "active", name: "Active" },
-                                                { id: "deactive", name: "Deactive" },
-                                            ].map((role) => ({ label: role.name, value: role.id }))}
-                                            placeholder="Select a Status"
-                                            className={classNames({ "p-invalid": meta.touched && meta.error })}
-                                        />
+                                        <label htmlFor="payment_mode">Payment Mode</label>
+                                        <Dropdown {...input} options={paymentModes} placeholder="Select Payment Mode" className={classNames({ "p-invalid": meta.touched && meta.error })} />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
                                 )}
                             </Field>
 
-                            <Field name="details">
+                            <Field name="address">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
-                                        <label htmlFor="details">details</label>
-                                        <InputTextarea {...input} rows={5} cols={30} id="details" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                        <label htmlFor="address">Address</label>
+                                        <InputText {...input} id="address" type="text" />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field> */}
+                            <Field name="payment_status">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="payment_status">Delivery Status</label>
+                                        <Dropdown {...input} options={paymentStatuses} placeholder="Select Payment Status" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
+                            <Field name="delivery_status">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="delivery_status">Delivery Status</label>
+                                        <Dropdown {...input} options={deliveryStatuses} placeholder="Select Delivery Status" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
+                            {/* <Field name="amount">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="amount">Amount</label>
+                                        <InputText {...input} id="amount" type="number" />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field> */}
+
+                            <Field name="charged_amount">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="charged_amount">Charged Amount</label>
+                                        <InputText {...input} id="charged_amount" type="number" />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
                                 )}
                             </Field>
 
                             {/* FileUpload for photo with validation */}
-                            <div className="p-field m-4">
+                            {/* <div className="p-field m-4">
                                 <label htmlFor="photo">Photo</label>
                                 <FileUpload name="photo" customUpload uploadHandler={onFileUpload} accept="image/*" maxFileSize={2097152} />
                                 {photoTouched && photoError && <small className="p-error">{photoError}</small>}
-                            </div>
+                            </div> */}
                             <div className="d-grid gap-2">
                                 <Button type="submit" label="Save" className="p-button-primary" icon="pi pi-check" />
                             </div>

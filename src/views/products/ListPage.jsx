@@ -8,8 +8,10 @@ import moment from "moment";
 
 import { useNavigate } from "react-router-dom";
 
-import { getAllProductCategories, getProductCategorieById, postProductCategorie, updateProductCategorie, deleteProductCategorieById } from "../../services/products/product-categories-service";
+import { getAllProducts, getProductById, postProduct, updateProduct, deleteProductById } from "../../services/products/products-service";
+import { getAllProductTypes, getProductTypeById, postProductType, updateProductType, deleteProductTypeById } from "../../services/products/product-types-service";
 
+import { Dropdown } from "primereact/dropdown";
 import MuiTable from "../../components/general_components/MuiTable";
 import { toast } from "react-toastify";
 import { Button } from "primereact/button";
@@ -17,40 +19,42 @@ import { ConfirmDialog } from "primereact/confirmdialog";
 import { confirmDialog } from "primereact/confirmdialog";
 import { Panel } from "primereact/panel";
 import { Image } from "primereact/image";
+import { ProgressSpinner } from "primereact/progressspinner";
 
-import useAuthContext from "../../context/AuthContext";
 import useHandleQueryError from "../../hooks/useHandleQueryError";
 import handleMutationError from "../../hooks/handleMutationError";
-
-function ListPage({ ...props }) {
-    const { getUserQuery } = useAuthContext();
+function ListPage({ loggedInUserData, productCategoryBrandData, ...props }) {
     const navigate = useNavigate();
+
+    const [selectedProductType, setSelectedProductType] = useState(null);
+
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["product-categories"],
-        queryFn: getAllProductCategories,
+        queryKey: ["products", "by_category_brands_id", productCategoryBrandData?.id, "by_product_type_id", selectedProductType?.id],
+        queryFn: () => getAllProducts({ category_brands_id: productCategoryBrandData?.id, product_types_id: selectedProductType?.id }),
     });
-    console.log("🚀product categories ~ ListPage ~ data:", data);
+    console.log("🚀 ~product sub categories ListPage ~ data:", data);
     // useEffect(() => {
     //     if (isError) {
     //         console.log("Error fetching List of data :", error);
     //         error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
     //     }
     // }, [isError]);
+
     // Use the custom hook to handle errors with useMemo on the error object
     useHandleQueryError(isError, error);
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
-        mutationFn: (variables) => deleteProductCategorieById(variables),
+        mutationFn: (variables) => deleteProductById(variables),
         onSuccess: (data) => {
-            queryClient.invalidateQueries(["product-categories"]);
+            queryClient.invalidateQueries(["products"]);
+            toast.success("Deleted Successfully");
             setDeleteMutationIsLoading(false);
         },
         onError: (error) => {
             // setDeleteMutationIsLoading(false);
             // error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-            // Custom hook to handle mutation error
             handleMutationError(error, setDeleteMutationIsLoading);
         },
     });
@@ -101,7 +105,7 @@ function ListPage({ ...props }) {
     };
 
     // const activeUser = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : undefined;
-    const activeUser = getUserQuery?.data?.data;
+    const activeUser = loggedInUserData;
 
     const onFormClose = () => {
         setShowAddForm(false);
@@ -129,19 +133,36 @@ function ListPage({ ...props }) {
             field: "name",
         },
         {
-            title: "Code",
-            field: "code",
+            title: "Brand",
+            field: "category_brand.name",
         },
         {
-            title: "Details",
-            field: "details",
+            title: "Type",
+            field: "product_type.name",
         },
 
+        {
+            title: "Price",
+            field: "price",
+            render: (rowData) => {
+                return rowData.price ? parseFloat(rowData.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "No Price";
+            },
+        },
+        {
+            title: "Quantity",
+            field: "quantity",
+            render: (rowData) => {
+                const quantityString = String(rowData.quantity); // Ensure it's a string
+                const amount = parseFloat(quantityString.replace(/,/g, ""));
+                return <div>{isNaN(amount) ? rowData.quantity : amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>;
+            },
+        },
         // {
         //     title: "Photo",
         //     field: "photo_url",
+        //     hidden: true,
         //     render: (rowData) => {
-        //         return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+        //         return rowData.photo_url ? <Image src={`${process.env.REACT_APP_API_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
         //     },
         // },
 
@@ -156,11 +177,44 @@ function ListPage({ ...props }) {
         {
             title: "Date",
             field: "created_at",
+            hidden: true,
             render: (rowData) => {
                 return moment(rowData.created_at).format("lll");
             },
         },
+
+        {
+            title: "Created By Name",
+            field: "created_by.name",
+            hidden: true,
+        },
+        {
+            title: "Created By Email",
+            field: "created_by.email",
+            hidden: true,
+        },
     ];
+
+    //==================== get all product types ====================
+
+    // Handler for dropdown change
+    const handleProductTypeChange = (e) => {
+        setSelectedProductType(e.value);
+    };
+    const getAllProductTypesQuery = useQuery({
+        queryKey: ["product-types"],
+        queryFn: getAllProductTypes,
+    });
+
+    // useEffect(() => {
+    //     if (getAllProductTypesQuery?.isError) {
+    //         console.log("Error fetching List of user roles data:", getAllProductTypesQuery?.error);
+    //         getAllProductTypesQuery?.error?.response?.data?.message ? toast.error(getAllProductTypesQuery?.error?.response?.data?.message) : !getAllProductTypesQuery?.error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occurred Please Contact Admin");
+    //     }
+    // }, [getAllProductTypesQuery?.isError]);
+
+    // Use the custom hook to handle errors with useMemo on the error object
+    useHandleQueryError(getAllProductTypesQuery?.isError, getAllProductTypesQuery?.error);
 
     return (
         <div style={{ width: "100%" }}>
@@ -169,14 +223,26 @@ function ListPage({ ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
-            <Panel header="Product Categories" style={{ marginBottom: "20px" }} toggleable>
+            <Panel header="Products" style={{ marginBottom: "20px" }} toggleable>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
-                    {activeUser?.permissions.includes("create") && <Button label="Add Product Category" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
-                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
+                    {activeUser?.permissions.includes("create") && <Button label="Add Product" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
+                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} productCategoryBrandData={productCategoryBrandData} />
+                </div>
+
+                <div className="p-field m-4">
+                    {/* <label htmlFor="role">Role</label> */}
+                    <Dropdown
+                        value={selectedProductType}
+                        options={[{ label: "All", value: null }, ...(getAllProductTypesQuery?.data?.data?.data?.map((type) => ({ label: type?.name, value: type })) || [])]}
+                        onChange={handleProductTypeChange}
+                        placeholder="Filter By Type"
+                        disabled={getAllProductTypesQuery?.isLoading}
+                    />
+                    {getAllProductTypesQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
                 </div>
 
                 <MuiTable
-                    tableTitle="Product Categories"
+                    tableTitle="Products"
                     tableData={data?.data?.data ?? []}
                     tableColumns={columns}
                     handleShowEditForm={handleShowEditForm}
@@ -184,17 +250,16 @@ function ListPage({ ...props }) {
                     showEdit={activeUser?.permissions.includes("update")}
                     showDelete={activeUser?.permissions.includes("delete")}
                     loading={isLoading || status === "loading" || deleteMutationIsLoading}
-                    //
-                    handleViewPage={(rowData) => {
-                        navigate("category", { state: { productCategoryData: rowData } });
-                    }}
-                    showViewPage={true}
-                    hideRowViewPage={false}
-                    //
+                    // //
+                    // handleViewPage={(rowData) => {
+                    //     navigate("product-category-brand", { state: { productCategoryBrandData: rowData } });
+                    // }}
+                    // showViewPage={true}
+                    // hideRowViewPage={false}
                     //
                     exportButton={true}
-                    pdfExportTitle="Product Categories"
-                    csvExportTitle="Product Categories"
+                    pdfExportTitle="Products"
+                    csvExportTitle="Products"
                 />
 
                 {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}

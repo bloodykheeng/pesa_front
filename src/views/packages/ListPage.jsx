@@ -8,7 +8,7 @@ import moment from "moment";
 
 import { useNavigate } from "react-router-dom";
 
-import { getAllProductCategories, getProductCategorieById, postProductCategorie, updateProductCategorie, deleteProductCategorieById } from "../../services/products/product-categories-service";
+import { getAllPackages, getPackageById, postPackage, updatePackage, deletePackageById } from "../../services/packages/packages-service";
 
 import MuiTable from "../../components/general_components/MuiTable";
 import { toast } from "react-toastify";
@@ -27,25 +27,27 @@ function ListPage({ ...props }) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["product-categories"],
-        queryFn: getAllProductCategories,
+        queryKey: ["packages"],
+        queryFn: getAllPackages,
     });
-    console.log("🚀product categories ~ ListPage ~ data:", data);
+    console.log("🚀Packages ~ ListPage ~ data:", data);
     // useEffect(() => {
     //     if (isError) {
     //         console.log("Error fetching List of data :", error);
     //         error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
     //     }
     // }, [isError]);
+
     // Use the custom hook to handle errors with useMemo on the error object
     useHandleQueryError(isError, error);
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
-        mutationFn: (variables) => deleteProductCategorieById(variables),
+        mutationFn: (variables) => deletePackageById(variables),
         onSuccess: (data) => {
-            queryClient.invalidateQueries(["product-categories"]);
+            queryClient.invalidateQueries(["packages"]);
             setDeleteMutationIsLoading(false);
+            toast.success("deleted Successfully");
         },
         onError: (error) => {
             // setDeleteMutationIsLoading(false);
@@ -125,17 +127,73 @@ function ListPage({ ...props }) {
             },
         },
         {
+            title: "Photo",
+            field: "cloudinary_photo_url",
+            render: (rowData) => {
+                return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+            },
+        },
+        {
             title: "Name",
             field: "name",
         },
+
         {
-            title: "Code",
-            field: "code",
+            title: "order number",
+            field: "order_number",
         },
         {
-            title: "Details",
-            field: "details",
+            title: "Status",
+            field: "status",
+            render: (rowData) => {
+                let statusColor;
+
+                if (rowData?.status === "pending") {
+                    statusColor = "orange";
+                } else if (rowData?.status?.toLowerCase() === "processing") {
+                    statusColor = "blue";
+                } else if (rowData?.status?.toLowerCase() === "transit") {
+                    statusColor = "purple";
+                } else if (rowData?.status?.toLowerCase() === "delivered") {
+                    statusColor = "green";
+                } else if (rowData?.status?.toLowerCase() === "cancelled") {
+                    statusColor = "red";
+                } else {
+                    statusColor = "gray";
+                }
+
+                return <span style={{ color: statusColor, fontWeight: "bold" }}>{rowData?.status?.charAt(0).toUpperCase() + rowData?.status?.slice(1)}</span>;
+            },
         },
+        {
+            title: "Pickup",
+            field: "pickup",
+        },
+        {
+            title: "destination",
+            field: "destination",
+        },
+        {
+            title: "Owner Name",
+            field: "created_by.name",
+        },
+        {
+            title: "Owner Phone",
+            field: "created_by.phone",
+        },
+        {
+            title: "Owner Email",
+            field: "created_by.email",
+        },
+
+        {
+            title: "Extra Info",
+            field: "extraInfo",
+        },
+        // {
+        //     title: "Details",
+        //     field: "details",
+        // },
 
         // {
         //     title: "Photo",
@@ -146,19 +204,22 @@ function ListPage({ ...props }) {
         // },
 
         {
-            title: "Photo",
-            field: "cloudinary_photo_url",
-            render: (rowData) => {
-                return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} width="50" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-            },
-        },
-
-        {
             title: "Date",
             field: "created_at",
             render: (rowData) => {
                 return moment(rowData.created_at).format("lll");
             },
+        },
+        {
+            title: "Updated At",
+            field: "updated_at",
+            render: (rowData) => {
+                return moment(rowData.updated_at).format("lll");
+            },
+        },
+        {
+            title: "Updated By",
+            field: "updated_by.email",
         },
     ];
 
@@ -169,14 +230,14 @@ function ListPage({ ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
-            <Panel header="Product Categories" style={{ marginBottom: "20px" }} toggleable>
+            <Panel header="Packages" style={{ marginBottom: "20px" }} toggleable>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
-                    {activeUser?.permissions.includes("create") && <Button label="Add Product Category" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
+                    {activeUser?.permissions.includes("create") && <Button label="Add Package" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
                     <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
                 </div>
 
                 <MuiTable
-                    tableTitle="Product Categories"
+                    tableTitle="Packages"
                     tableData={data?.data?.data ?? []}
                     tableColumns={columns}
                     handleShowEditForm={handleShowEditForm}
@@ -184,17 +245,17 @@ function ListPage({ ...props }) {
                     showEdit={activeUser?.permissions.includes("update")}
                     showDelete={activeUser?.permissions.includes("delete")}
                     loading={isLoading || status === "loading" || deleteMutationIsLoading}
-                    //
-                    handleViewPage={(rowData) => {
-                        navigate("category", { state: { productCategoryData: rowData } });
-                    }}
-                    showViewPage={true}
-                    hideRowViewPage={false}
+                    // //
+                    // handleViewPage={(rowData) => {
+                    //     navigate("category", { state: { productCategoryData: rowData } });
+                    // }}
+                    // showViewPage={true}
+                    // hideRowViewPage={false}
                     //
                     //
                     exportButton={true}
-                    pdfExportTitle="Product Categories"
-                    csvExportTitle="Product Categories"
+                    pdfExportTitle="Packages"
+                    csvExportTitle="Packages"
                 />
 
                 {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}

@@ -3,7 +3,14 @@ import React, { lazy, Suspense, useState } from "react";
 //==================== my car routes ====================
 import NewUsersPage from "./views/users/UserPage";
 import ProductCategoriesPage from "./views/product-categories/ProductCategoriesPage";
+import ProductCategoryViewPage from "./views/product-categories/ProductCategoryViewPage";
+import ProductCategoryBrandsViewPage from "./views/product-category-brands/ProductCategoryBrandsViewPage";
 
+import ProductTypesPage from "./views/product-types/ProductTypesPage.jsx";
+import PackagesPage from "./views/packages/PackagesPage.jsx";
+import OrdersPage from "./views/orders/OrdersPage.jsx";
+import OrdersViewPage from "./views/orders/OrdersViewPage.jsx";
+import CustomersPage from "./views/customers/UserPage";
 // ============ Customm component routes ========================
 const DashboardPage = lazy(() => import("./components/Dashboard"));
 const FormLayoutDemo = lazy(() => import("./components/FormLayoutDemo"));
@@ -161,6 +168,59 @@ function AppRoutes() {
             path: "/product-categories",
             name: "product-categories",
             element: ProductCategoriesPage,
+            layout: "/admin",
+        },
+        {
+            path: "/product-categories/category",
+            name: "category",
+            element: ProductCategoryViewPage,
+            layout: "/admin",
+        },
+
+        {
+            path: "/product-categories/category/brand",
+            name: "product-category-brand",
+            element: ProductCategoryBrandsViewPage,
+            layout: "/admin",
+        },
+
+        {
+            path: "/product-types",
+            name: "ProductTypesPage",
+            element: ProductTypesPage,
+            layout: "/admin",
+        },
+        {
+            path: "/orders",
+            name: "ProductTypesPage",
+            element: OrdersPage,
+            layout: "/admin",
+        },
+
+        {
+            path: "/orders",
+            name: "ProductTypesPage",
+            element: OrdersPage,
+            layout: "/admin",
+        },
+
+        {
+            path: "/orders/order",
+            name: "OrdersViewPage",
+            element: OrdersViewPage,
+            layout: "/admin",
+        },
+
+        {
+            path: "/packages",
+            name: "packages",
+            element: PackagesPage,
+            layout: "/admin",
+        },
+        {
+            path: "/customers",
+            name: "customers",
+            element: CustomersPage,
             layout: "/admin",
         },
     ];

@@ -29,12 +29,28 @@ function RowForm({ handleSubmit, initialData, ...props }) {
 
     const validate = (values) => {
         const errors = {};
+        if (!values.name) {
+            errors.name = "Name is required";
+        }
 
-        if (!values.name) errors.name = "Name is required";
-        if (!values.code) errors.code = "Code is required";
-        if (!values.details) errors.details = "details are required";
+        if (!values.order_number) {
+            errors.order_number = "Order number is required";
+        }
+
         if (!values.status) {
             errors.status = "Status is required";
+        }
+
+        if (!values.pickup) {
+            errors.pickup = "Pickup location is required";
+        }
+
+        if (!values.destination) {
+            errors.destination = "Destination is required";
+        }
+
+        if (!values.extraInfo) {
+            errors.extraInfo = "Extra Info is required";
         }
 
         return errors;
@@ -67,7 +83,7 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                 form.mutators.setFieldTouched(field, true);
             });
             setPhotoTouched(true); // Make sure to mark the photo as touched to show the error
-            toast.warning("Please fill in all required fields and upload a photo.");
+            toast.warning("Please fill in all required fields");
         }
     };
 
@@ -102,6 +118,16 @@ function RowForm({ handleSubmit, initialData, ...props }) {
         }
     };
 
+    //======
+    // Delivery status options
+    const deliveryStatuses = [
+        { label: "Pending", value: "pending" },
+        { label: "Processing", value: "processing" },
+        { label: "Transit", value: "transit" },
+        { label: "Delivered", value: "delivered" },
+        { label: "Cancelled", value: "cancelled" },
+    ];
+
     return (
         <div className="col-12 md:col-12">
             <div className="card p-fluid">
@@ -130,27 +156,28 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                 )}
                             </Field>
 
-                            <Field name="code">
+                            {/* Order Number Field */}
+                            <Field name="order_number">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
-                                        <label htmlFor="code">Code</label>
-                                        <InputText {...input} id="name" type="text" />
+                                        <label htmlFor="order_number">Order Number</label>
+                                        <InputText {...input} id="order_number" type="text" />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
                                 )}
                             </Field>
 
+                            {/* Status Field */}
                             <Field name="status">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
                                         <label htmlFor="status">Status</label>
                                         <Dropdown
                                             {...input}
-                                            options={[
-                                                { id: "active", name: "Active" },
-                                                { id: "deactive", name: "Deactive" },
-                                            ].map((role) => ({ label: role.name, value: role.id }))}
+                                            options={deliveryStatuses}
                                             placeholder="Select a Status"
+                                            value={input.value} // Ensure Dropdown receives the correct value
+                                            onChange={(e) => input.onChange(e.value)} // Handle dropdown change
                                             className={classNames({ "p-invalid": meta.touched && meta.error })}
                                         />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
@@ -158,11 +185,34 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                 )}
                             </Field>
 
-                            <Field name="details">
+                            {/* Pickup Field */}
+                            <Field name="pickup">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
-                                        <label htmlFor="details">details</label>
-                                        <InputTextarea {...input} rows={5} cols={30} id="details" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                        <label htmlFor="pickup">Pickup</label>
+                                        <InputText {...input} id="pickup" type="text" />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
+                            {/* Destination Field */}
+                            <Field name="destination">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="destination">Destination</label>
+                                        <InputText {...input} id="destination" type="text" />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
+                            {/* Extra Info Field */}
+                            <Field name="extraInfo">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="extraInfo">Extra Info</label>
+                                        <InputTextarea {...input} rows={5} cols={30} id="extraInfo" className={classNames({ "p-invalid": meta.touched && meta.error })} />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
                                 )}

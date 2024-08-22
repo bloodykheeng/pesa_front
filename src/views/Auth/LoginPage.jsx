@@ -34,7 +34,7 @@ const LoginPage = () => {
     const [googleLoginIsLoading, setGoogleLoginIsLoading] = useState(false);
 
     const loginMutation = useMutation({
-        mutationFn: (variables) => obtainToken(variables?.email, variables?.password),
+        mutationFn: (variables) => obtainToken(variables),
         onSuccess: (data) => {
             console.log("successfull login : xxxxx data : ", data);
             setIsLoading(false);
@@ -54,7 +54,11 @@ const LoginPage = () => {
     const onSubmit = (values) => {
         setIsLoading(true);
         console.log("Login data:", values);
-        loginMutation.mutate(values);
+        let finalValues = {
+            credential: values?.email,
+            password: values?.password,
+        };
+        loginMutation.mutate(finalValues);
     };
 
     const validate = (values) => {
@@ -118,7 +122,7 @@ const LoginPage = () => {
 
     return (
         <Card>
-            <div className="form-demo" style={{ height: "100vh", zIndex: 2, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", overflow: "auto" }}>
+            <div className="form-demo auth-form" style={{ height: "100vh", zIndex: 2, position: "relative", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", overflow: "auto" }}>
                 {/* <div
                     css={css`
                         position: absolute;

@@ -53,9 +53,9 @@ function RowForm({ handleSubmit, initialData, ...props }) {
     const onSubmitForm = (data, form) => {
         const errors = validate(data);
         // Check if photo is uploaded
-        if (!uploadedFile && !initialData) {
-            setPhotoError("A photo is required");
-        }
+        // if (!uploadedFile && !initialData) {
+        //     setPhotoError("A photo is required");
+        // }
 
         if (Object.keys(errors).length === 0 && !photoError) {
             const formData = { ...data, photo: uploadedFile };
@@ -67,7 +67,7 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                 form.mutators.setFieldTouched(field, true);
             });
             setPhotoTouched(true); // Make sure to mark the photo as touched to show the error
-            toast.warning("Please fill in all required fields and upload a photo.");
+            toast.warning("Please fill in all required fields");
         }
     };
 
