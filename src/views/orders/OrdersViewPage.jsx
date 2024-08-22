@@ -107,10 +107,10 @@ const OrdersViewPage = () => {
                                 </p>
                             </div>
                         </div>
-                        <div>
+                        <div style={{ maxWidth: "100%" }}>
                             <h3>Order Products</h3>
                             <DataTable value={orderData?.products} responsiveLayout="scroll">
-                                <Column field="image" header="Image" body={(rowData) => <Image src={rowData.product.cloudinary_photo_url || rowData.product.photo_url} alt={rowData.product.name} width="100" preview />} />
+                                <Column field="image" header="Image" body={(rowData) => <Image src={rowData.product.cloudinary_photo_url || rowData.product.photo_url} alt={rowData.product.name} width="50" preview />} />
                                 <Column field="name" header="Name" sortable body={(rowData) => rowData.product.name} />
                                 <Column field="price" header="Price" sortable body={(rowData) => `(UGX) ${rowData.price}`} />
                                 <Column field="quantity" header="Quantity" sortable body={(rowData) => rowData.quantity} />

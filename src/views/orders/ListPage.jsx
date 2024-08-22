@@ -311,7 +311,7 @@ function ListPage({ ...props }) {
                 {/* Dialog to show products */}
                 <Dialog header="Products in Order" maximizable visible={isDialogVisible} style={{ minWidth: "50vw" }} onHide={() => setIsDialogVisible(false)}>
                     <DataTable value={selectedProducts} responsiveLayout="scroll">
-                        <Column field="image" header="Image" body={(rowData) => <Image src={rowData.product.cloudinary_photo_url || rowData.product.photo_url} alt={rowData.product.name} width="100" preview />} />
+                        <Column field="image" header="Image" body={(rowData) => <Image src={rowData.product.cloudinary_photo_url || rowData.product.photo_url} alt={rowData.product.name} width="50" preview />} />
                         <Column field="name" header="Name" sortable body={(rowData) => rowData.product.name} />
                         <Column field="price" header="Price" sortable body={(rowData) => `(UGX) ${rowData.price}`} />
                         <Column field="quantity" header="Quantity" sortable body={(rowData) => rowData.quantity} />
