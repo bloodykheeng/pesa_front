@@ -6,7 +6,7 @@ import EditForm from "./EditForm";
 
 import { useNavigate } from "react-router-dom";
 
-import { getAllOrders, getOrderById, postOrder, updateOrder, deleteOrderById } from "../../services/orders/orders-service";
+import { getAllPayments, getPaymentById, postPayment, updatePayment, deletePaymentById } from "../../services/payments/payments-service";
 
 import MuiTable from "../../components/general_components/MuiTable";
 import { toast } from "react-toastify";
@@ -26,15 +26,15 @@ import moment from "moment";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
-function ListPage({ ...props }) {
+function ListPage({ orderData, ...props }) {
     const { getUserQuery } = useAuthContext();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["orders"],
-        queryFn: getAllOrders,
+        queryKey: ["payments"],
+        queryFn: getAllPayments,
     });
-    console.log("🚀Orders ~ ListPage ~ data:", data);
+    console.log("🚀Payments ~ ListPage ~ data:", data);
     // useEffect(() => {
     //     if (isError) {
     //         console.log("Error fetching List of data :", error);
@@ -47,9 +47,9 @@ function ListPage({ ...props }) {
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
-        mutationFn: (variables) => deleteOrderById(variables),
+        mutationFn: (variables) => deletePaymentById(variables),
         onSuccess: (data) => {
-            queryClient.invalidateQueries(["orders"]);
+            queryClient.invalidateQueries(["payments"]);
             setDeleteMutationIsLoading(false);
             toast.success("deleted Successfully");
         },
@@ -256,14 +256,14 @@ function ListPage({ ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
-            <Panel header="Orders" style={{ marginBottom: "20px" }} toggleable>
+            <Panel header="Payments" style={{ marginBottom: "20px" }} toggleable>
                 {/* <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
                     {activeUser?.permissions.includes("create") && <Button label="Add Order" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
                     <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
                 </div> */}
 
                 <MuiTable
-                    tableTitle="Orders"
+                    tableTitle="Payments"
                     tableData={data?.data?.data ?? []}
                     tableColumns={columns}
                     handleShowEditForm={handleShowEditForm}
@@ -274,16 +274,16 @@ function ListPage({ ...props }) {
                     //
                     hideRowEdit={(rowData) => (rowData?.delivery_status === "received" ? true : false)}
                     // //
-                    handleViewPage={(rowData) => {
-                        navigate("order", { state: { orderData: rowData } });
-                    }}
-                    showViewPage={true}
-                    hideRowViewPage={false}
+                    // handleViewPage={(rowData) => {
+                    //     navigate("order", { state: { orderData: rowData } });
+                    // }}
+                    // showViewPage={true}
+                    // hideRowViewPage={false}
                     //
                     //
                     exportButton={true}
-                    pdfExportTitle="Orders"
-                    csvExportTitle="Orders"
+                    pdfExportTitle="Payments"
+                    csvExportTitle="Payments"
                 />
 
                 {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}

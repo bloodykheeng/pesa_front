@@ -5,14 +5,14 @@ import { Card } from "primereact/card";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import moment from "moment";
-import ListPage from "../payments/ListPage";
+import ListPage from "../product-category-brands/ListPage";
 import BreadcrumbNav from "../../components/general_components/BreadcrumbNav";
 import useAuthContext from "../../context/AuthContext";
 
-const OrdersViewPage = () => {
+const PaymentsViewPage = () => {
     const { getUserQuery } = useAuthContext();
     const location = useLocation();
-    const { orderData } = location.state;
+    const { productCategoryData } = location.state;
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
@@ -23,19 +23,19 @@ const OrdersViewPage = () => {
                     <Card title="Category Details">
                         <div style={{ minHeight: "50vh" }}>
                             <p>
-                                <strong>Name:</strong> {orderData.name}
+                                <strong>Name:</strong> {productCategoryData.name}
                             </p>
                             <p>
-                                <strong>Created At:</strong> {moment(orderData.created_at).format("YYYY-MM-DD HH:mm:ss")}
+                                <strong>Created At:</strong> {moment(productCategoryData.created_at).format("YYYY-MM-DD HH:mm:ss")}
                             </p>
                         </div>
 
                         {/* Add more details as needed */}
                     </Card>
                 </TabPanel>
-                <TabPanel header="Payments">
+                <TabPanel header="Product Category Brands">
                     <div>
-                        <ListPage orderData={orderData} loggedInUserData={getUserQuery?.data?.data} />
+                        <ListPage productCategoryId={productCategoryData?.id} loggedInUserData={getUserQuery?.data?.data} />
                     </div>
                 </TabPanel>
             </TabView>
@@ -43,4 +43,4 @@ const OrdersViewPage = () => {
     );
 };
 
-export default OrdersViewPage;
+export default PaymentsViewPage;
