@@ -41,9 +41,12 @@ function EditForm(props) {
 
         const formData = new FormData();
         formData.append("_method", "PUT");
-        formData.append("delivery_status", data.delivery_status);
-        formData.append("payment_status", data.payment_status);
-        formData.append("charged_amount", data.charged_amount);
+        formData.append("order_id", data.order_id);
+        formData.append("user_id", data.user_id);
+        formData.append("amount", data.amount);
+        formData.append("payment_method", data.payment_method);
+        formData.append("transaction_number", data.transaction_number);
+        formData.append("details", data.details);
         // formData.append("description", data.description);
         // formData.append("status", data.status);
         // formData.append("photo", data.photo); // Assuming 'photo' is the field name for the file upload

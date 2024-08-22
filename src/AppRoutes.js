@@ -198,6 +198,20 @@ function AppRoutes() {
         },
 
         {
+            path: "/orders",
+            name: "ProductTypesPage",
+            element: OrdersPage,
+            layout: "/admin",
+        },
+
+        {
+            path: "/orders/order",
+            name: "OrdersViewPage",
+            element: OrdersViewPage,
+            layout: "/admin",
+        },
+
+        {
             path: "/packages",
             name: "packages",
             element: PackagesPage,

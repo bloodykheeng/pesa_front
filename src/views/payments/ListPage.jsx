@@ -31,8 +31,8 @@ function ListPage({ orderData, ...props }) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["payments"],
-        queryFn: getAllPayments,
+        queryKey: ["payments", "get_by_order_id", orderData?.id],
+        queryFn: () => getAllPayments({ order_id: orderData?.id }),
     });
     console.log("🚀Payments ~ ListPage ~ data:", data);
     // useEffect(() => {
@@ -141,44 +141,15 @@ function ListPage({ orderData, ...props }) {
         },
         {
             title: "Order Number",
-            field: "order_number",
+            field: "order.order_number",
             render: (rowData) => {
-                return (
-                    <div onClick={() => handleOrderClick(rowData?.products)} style={{ cursor: "pointer", color: "blue" }}>
-                        {rowData?.order_number}
-                    </div>
-                );
+                return <div>{rowData?.order?.order_number}</div>;
             },
         },
         {
-            title: "address",
-            field: "address",
+            title: "Customer",
+            field: "customer.name",
         },
-        {
-            title: "Payment Mode",
-            field: "payment_mode",
-        },
-
-        {
-            title: "Payment Status",
-            field: "payment_status",
-            render: (rowData) => {
-                let statusColor;
-
-                if (rowData?.payment_status?.toLowerCase() === "pending") {
-                    statusColor = "orange";
-                } else if (rowData?.payment_status?.toLowerCase() === "paid") {
-                    statusColor = "green";
-                } else if (rowData?.payment_status?.toLowerCase() === "cancelled") {
-                    statusColor = "red";
-                } else {
-                    statusColor = "gray";
-                }
-
-                return <span style={{ color: statusColor, fontWeight: "bold" }}>{rowData?.payment_status?.charAt(0).toUpperCase() + rowData?.payment_status?.slice(1)}</span>;
-            },
-        },
-
         {
             title: "Amount",
             field: "amount",
@@ -187,49 +158,30 @@ function ListPage({ orderData, ...props }) {
             },
         },
         {
-            title: "Delivery Status",
-            field: "delivery_status",
-            render: (rowData) => {
-                let statusColor;
-
-                if (rowData?.delivery_status === "pending") {
-                    statusColor = "orange";
-                } else if (rowData?.delivery_status?.toLowerCase() === "processing") {
-                    statusColor = "blue";
-                } else if (rowData?.delivery_status?.toLowerCase() === "transit") {
-                    statusColor = "purple";
-                } else if (rowData?.delivery_status?.toLowerCase() === "delivered") {
-                    statusColor = "green";
-                } else if (rowData?.delivery_status?.toLowerCase() === "received") {
-                    statusColor = "green";
-                } else if (rowData?.delivery_status?.toLowerCase() === "cancelled") {
-                    statusColor = "red";
-                } else {
-                    statusColor = "gray";
-                }
-
-                return <span style={{ color: statusColor, fontWeight: "bold" }}>{rowData?.delivery_status?.charAt(0).toUpperCase() + rowData?.delivery_status?.slice(1)}</span>;
-            },
+            title: "Payment Method",
+            field: "payment_method",
         },
         {
-            title: "Charged Amount",
-            field: "charged_amount",
-            render: (rowData) => {
-                return rowData.charged_amount ? parseFloat(rowData.charged_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "No charged amount";
-            },
+            title: "Transaction Number",
+            field: "transaction_number",
         },
-        // {
-        //     title: "Quantity",
-        //     field: "quantity",
-        //     render: (rowData) => {
-        //         const quantityString = String(rowData.quantity); // Ensure it's a string
-        //         const amount = parseFloat(quantityString.replace(/,/g, ""));
-        //         return <div>{isNaN(amount) ? rowData.quantity : amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>;
-        //     },
-        // },
+        {
+            title: "Details",
+            field: "details",
+        },
+        {
+            title: "Created By Name",
+            field: "created_by.name",
+            hidden: false,
+        },
+        {
+            title: "Created By Email",
+            field: "created_by.email",
+            hidden: true,
+        },
 
         {
-            title: "Date",
+            title: "Created At",
             field: "created_at",
             hidden: true,
             render: (rowData) => {
@@ -238,14 +190,23 @@ function ListPage({ orderData, ...props }) {
         },
 
         {
-            title: "Created By Name",
-            field: "created_by.name",
-            hidden: true,
+            title: "Updated By Name",
+            field: "updated_by.name",
+            hidden: false,
         },
         {
-            title: "Created By Email",
-            field: "created_by.email",
+            title: "Updated By Email",
+            field: "updated_by.email",
             hidden: true,
+        },
+
+        {
+            title: "Updated At",
+            field: "updated_at",
+            hidden: true,
+            render: (rowData) => {
+                return moment(rowData.updated_at).format("lll");
+            },
         },
     ];
 
@@ -257,10 +218,10 @@ function ListPage({ orderData, ...props }) {
                 </div>
             </div> */}
             <Panel header="Payments" style={{ marginBottom: "20px" }} toggleable>
-                {/* <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
-                    {activeUser?.permissions.includes("create") && <Button label="Add Order" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
-                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
-                </div> */}
+                <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+                    {activeUser?.permissions.includes("create") && <Button label="Add Payment" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
+                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} orderData={orderData} />
+                </div>
 
                 <MuiTable
                     tableTitle="Payments"
@@ -272,7 +233,7 @@ function ListPage({ orderData, ...props }) {
                     showDelete={activeUser?.permissions.includes("delete")}
                     loading={isLoading || status === "loading" || deleteMutationIsLoading}
                     //
-                    hideRowEdit={(rowData) => (rowData?.delivery_status === "received" ? true : false)}
+                    // hideRowEdit={(rowData) => (rowData?.delivery_status === "received" ? true : false)}
                     // //
                     // handleViewPage={(rowData) => {
                     //     navigate("order", { state: { orderData: rowData } });

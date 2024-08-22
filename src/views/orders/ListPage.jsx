@@ -229,7 +229,18 @@ function ListPage({ ...props }) {
         // },
 
         {
-            title: "Date",
+            title: "Created By Name",
+            field: "created_by.name",
+            hidden: false,
+        },
+        {
+            title: "Created By Email",
+            field: "created_by.email",
+            hidden: true,
+        },
+
+        {
+            title: "Created At",
             field: "created_at",
             hidden: true,
             render: (rowData) => {
@@ -238,14 +249,23 @@ function ListPage({ ...props }) {
         },
 
         {
-            title: "Created By Name",
-            field: "created_by.name",
-            hidden: true,
+            title: "Updated By Name",
+            field: "updated_by.name",
+            hidden: false,
         },
         {
-            title: "Created By Email",
-            field: "created_by.email",
+            title: "Updated By Email",
+            field: "updated_by.email",
             hidden: true,
+        },
+
+        {
+            title: "Updated At",
+            field: "updated_at",
+            hidden: true,
+            render: (rowData) => {
+                return moment(rowData.updated_at).format("lll");
+            },
         },
     ];
 

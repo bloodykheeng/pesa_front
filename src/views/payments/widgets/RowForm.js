@@ -18,8 +18,8 @@ import { Column } from "primereact/column";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FileUpload } from "primereact/fileupload";
 
-function RowForm({ handleSubmit, initialData, ...props }) {
-    console.log("🚀 orders ~ RowForm ~ initialData:", initialData);
+function RowForm({ handleSubmit, initialData, orderData, ...props }) {
+    console.log("🚀 payements ~ RowForm ~ initialData:", initialData);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -27,26 +27,28 @@ function RowForm({ handleSubmit, initialData, ...props }) {
 
     const [photoError, setPhotoError] = useState(null);
     const [photoTouched, setPhotoTouched] = useState(false);
+
+    //
+    const [orderNumber, setOrderNumber] = useState(orderData?.order_number ?? initialData?.order?.order_number);
+    const [orderId, setOrderId] = useState(orderData?.id ?? initialData?.order_id);
+    const [customerName, setCustomerName] = useState(orderData?.created_by?.name ?? initialData?.customer?.name);
+    const [customerId, setCustomerId] = useState(orderData?.created_by?.id ?? initialData?.user_id);
+
     const validate = (values) => {
         const errors = {};
-        // if (!values.order_number) {
-        //     errors.order_number = "Order Number is required.";
-        // }
-        // if (!values.payment_mode) {
-        //     errors.payment_mode = "Payment Mode is required.";
-        // }
+        if (!values.transaction_number) {
+            errors.transaction_number = "Transaction Number is required.";
+        }
+        if (!values.payment_method) {
+            errors.payment_method = "Payment Mode is required.";
+        }
         // if (!values.address) {
         //     errors.address = "Address is required.";
         // }
-        // if (!values.amount) {
-        //     errors.amount = "Amount is required.";
-        // }
-        if (!values.delivery_status) {
-            errors.delivery_status = "Delivery Status is required.";
+        if (!values.amount) {
+            errors.amount = "Amount is required.";
         }
-        if (!values.charged_amount) {
-            errors.charged_amount = "Charged Amount is required.";
-        }
+
         return errors;
     };
 
@@ -62,13 +64,9 @@ function RowForm({ handleSubmit, initialData, ...props }) {
     // };
     const onSubmitForm = (data, form) => {
         const errors = validate(data);
-        // Check if photo is uploaded
-        // if (!uploadedFile && !initialData) {
-        //     setPhotoError("A photo is required");
-        // }
 
         if (Object.keys(errors).length === 0 && !photoError) {
-            const formData = { ...data, photo: uploadedFile };
+            const formData = { ...data, order_id: orderId, user_id: customerId, photo: uploadedFile };
             setPendingData(formData);
             setShowConfirmDialog(true);
         } else {
@@ -92,44 +90,14 @@ function RowForm({ handleSubmit, initialData, ...props }) {
     const onCancel = () => {
         setShowConfirmDialog(false);
     };
-    const onFileUpload = (e) => {
-        // Clear previous errors
-        setPhotoError(null);
-        setPhotoTouched(true); // Indicate that the user has interacted with the file input
 
-        const file = e.files && e.files.length > 0 ? e.files[0] : null;
-        if (file) {
-            if (file.size > 2097152) {
-                // Check file size
-                setPhotoError("File size should be less than 2MB");
-                setUploadedFile(null); // Clear the uploaded file on error
-            } else {
-                setUploadedFile(file); // Update the state with the new file
-            }
-        } else {
-            setPhotoError("A photo is required");
-            setUploadedFile(null); // Clear the uploaded file if no file is selected
-        }
-    };
-
-    const paymentModes = [
+    const paymentMethod = [
+        { label: "Cash", value: "cash" },
+        { label: "MTN Mobile Money", value: "mtn_mobile_money" },
+        { label: "Airtel Mobile Money", value: "airtel_mobile_money" },
         { label: "Credit Card", value: "credit_card" },
         { label: "PayPal", value: "paypal" },
         { label: "Bank Transfer", value: "bank_transfer" },
-    ];
-
-    const deliveryStatuses = [
-        { label: "Pending", value: "pending" },
-        { label: "Processing", value: "processing" },
-        { label: "Transit", value: "transit" },
-        { label: "Delivered", value: "delivered" },
-        { label: "Cancelled", value: "cancelled" },
-    ];
-
-    const paymentStatuses = [
-        { label: "Pending", value: "pending" },
-        { label: "Paid", value: "Paid" },
-        { label: "Cancelled", value: "cancelled" },
     ];
 
     return (
@@ -168,73 +136,57 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
                                 )}
-                            </Field>
-
-                            <Field name="payment_mode">
-                                {({ input, meta }) => (
-                                    <div className="p-field m-4">
-                                        <label htmlFor="payment_mode">Payment Mode</label>
-                                        <Dropdown {...input} options={paymentModes} placeholder="Select Payment Mode" className={classNames({ "p-invalid": meta.touched && meta.error })} />
-                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                    </div>
-                                )}
-                            </Field>
-
-                            <Field name="address">
-                                {({ input, meta }) => (
-                                    <div className="p-field m-4">
-                                        <label htmlFor="address">Address</label>
-                                        <InputText {...input} id="address" type="text" />
-                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                    </div>
-                                )}
                             </Field> */}
-                            <Field name="payment_status">
+
+                            <div className="p-field m-4">
+                                <label htmlFor="order_number">Order Number</label>
+                                <InputText disabled id="order_number" type="text" value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} />
+                            </div>
+                            <div className="p-field m-4">
+                                <label htmlFor="customer_name">Customer Name</label>
+                                <InputText disabled id="customer_name" type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+                            </div>
+
+                            <Field name="transaction_number">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
-                                        <label htmlFor="payment_status">Delivery Status</label>
-                                        <Dropdown {...input} options={paymentStatuses} placeholder="Select Payment Status" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                        <label htmlFor="transaction_number">Transaction Number</label>
+                                        <InputText {...input} id="transaction_number" type="text" className={classNames({ "p-invalid": meta.touched && meta.error })} />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
                                 )}
                             </Field>
 
-                            <Field name="delivery_status">
+                            <Field name="payment_method">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
-                                        <label htmlFor="delivery_status">Delivery Status</label>
-                                        <Dropdown {...input} options={deliveryStatuses} placeholder="Select Delivery Status" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                        <label htmlFor="payment_method">Payment Method</label>
+                                        <Dropdown {...input} options={paymentMethod} placeholder="Select Payment Mode" className={classNames({ "p-invalid": meta.touched && meta.error })} />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
                                 )}
                             </Field>
 
-                            {/* <Field name="amount">
+                            <Field name="amount">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
                                         <label htmlFor="amount">Amount</label>
-                                        <InputText {...input} id="amount" type="number" />
-                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                    </div>
-                                )}
-                            </Field> */}
-
-                            <Field name="charged_amount">
-                                {({ input, meta }) => (
-                                    <div className="p-field m-4">
-                                        <label htmlFor="charged_amount">Charged Amount</label>
-                                        <InputText {...input} id="charged_amount" type="number" />
+                                        <InputText {...input} id="amount" type="number" className={classNames({ "p-invalid": meta.touched && meta.error })} />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
                                 )}
                             </Field>
 
-                            {/* FileUpload for photo with validation */}
-                            {/* <div className="p-field m-4">
-                                <label htmlFor="photo">Photo</label>
-                                <FileUpload name="photo" customUpload uploadHandler={onFileUpload} accept="image/*" maxFileSize={2097152} />
-                                {photoTouched && photoError && <small className="p-error">{photoError}</small>}
-                            </div> */}
+                            <Field name="details">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="details">details</label>
+                                        <InputTextarea {...input} rows={5} cols={30} id="details" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
                             <div className="d-grid gap-2">
                                 <Button type="submit" label="Save" className="p-button-primary" icon="pi pi-check" />
                             </div>
