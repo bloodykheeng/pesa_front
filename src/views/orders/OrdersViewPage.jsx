@@ -110,12 +110,12 @@ const OrdersViewPage = () => {
                         <div style={{ maxWidth: "100%" }}>
                             <h3>Order Products</h3>
                             <DataTable value={orderData?.products} responsiveLayout="scroll">
-                                <Column field="image" header="Image" body={(rowData) => <Image src={rowData.product.cloudinary_photo_url || rowData.product.photo_url} alt={rowData.product.name} width="50" preview />} />
-                                <Column field="name" header="Name" sortable body={(rowData) => rowData.product.name} />
-                                <Column field="price" header="Price" sortable body={(rowData) => `(UGX) ${rowData.price}`} />
-                                <Column field="quantity" header="Quantity" sortable body={(rowData) => rowData.quantity} />
-                                <Column field="created_at" header="Created At" sortable body={(rowData) => moment(rowData.created_at).format("YYYY-MM-DD HH:mm:ss")} />
-                                <Column field="updated_at" header="Updated At" sortable body={(rowData) => moment(rowData.updated_at).format("YYYY-MM-DD HH:mm:ss")} />
+                                <Column field="image" header="Image" body={(rowData) => <Image src={rowData?.product?.cloudinary_photo_url || rowData?.product?.photo_url} alt={rowData?.product?.name} width="50" preview />} />
+                                <Column field="name" header="Name" sortable body={(rowData) => rowData?.product?.name} />
+                                <Column field="price" header="Price" sortable body={(rowData) => `(UGX) ${rowData?.price}`} />
+                                <Column field="quantity" header="Quantity" sortable body={(rowData) => rowData?.quantity} />
+                                <Column field="created_at" header="Created At" sortable body={(rowData) => moment(rowData?.created_at).format("YYYY-MM-DD HH:mm:ss")} />
+                                <Column field="updated_at" header="Updated At" sortable body={(rowData) => moment(rowData?.updated_at).format("YYYY-MM-DD HH:mm:ss")} />
                             </DataTable>
                         </div>
                     </div>
