@@ -3,8 +3,8 @@ import styles from "../styles";
 
 const SidebarTopbar = () => (
     <div style={styles.sidebarTopbar}>
-        <h2 style={styles.sidebarTitle}>Lama Chat</h2>
-        <button style={styles.logoutButton}>Logout</button>
+        <h4 style={styles.sidebarTitle}>Customer Care Support Chat</h4>
+        {/* <button style={styles.logoutButton}>Logout</button> */}
     </div>
 );
 

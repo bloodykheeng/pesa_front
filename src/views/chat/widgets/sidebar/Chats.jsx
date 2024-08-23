@@ -16,7 +16,7 @@ const Chats = ({ loggedInUserData, getListOfUsers, users, onSelectUser }) => {
                         <div key={user?.id} style={styles.chatItem} onClick={() => onSelectUser(user)}>
                             <img
                                 // src={user?.avatar}
-                                src={"https://randomuser.me/api/portraits/men/1.jpg"}
+                                src={user?.cloudinary_photo_url ? user?.cloudinary_photo_url : "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
                                 alt={user?.name}
                                 style={styles.avatar}
                             />

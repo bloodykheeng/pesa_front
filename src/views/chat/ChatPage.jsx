@@ -24,11 +24,16 @@ import handleMutationError from "../../hooks/handleMutationError";
 import { getAllUsers, getUserById, getApproverRoles, createUser, updateUser, deleteUserById, getAssignableRoles } from "../../services/auth/user-service";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
+import moment from "moment";
+
 const ChatPage = () => {
     const queryClient = useQueryClient();
     const [users, setUsers] = useState(initialUsers);
     const [messages, setMessages] = useState(initialMessages);
-    const [selectedUser, setSelectedUser] = useState(users[0]);
+    const [selectedUser, setSelectedUser] = useState();
+
+    //
+    const [newBroadcastedChannelMessages, setNewBroadcastedChannelMessages] = useState([]);
 
     const { getUserQuery } = useAuthContext();
     console.log("🚀 ~ ChatPage ~ getUserQuery:", getUserQuery?.data?.data);
@@ -61,9 +66,25 @@ const ChatPage = () => {
             echo.private(`chat.${loggedInUserData?.id}`).listen("MessageSent", (event) => {
                 console.log("🚀 ttttt ~ echo.private ~ event:", event);
 
-                if (event.receiver.id === loggedInUserData?.id) console.log("Real-time event received: ", event);
+                if (event.receiver.id === loggedInUserData?.id) {
+                    console.log("Real-time event received: ", event);
 
-                handleEchoCallback();
+                    let fomattedData = {
+                        chat_id: event?.chat?.id,
+                        sender_id: event?.sender?.id,
+                        sender: event?.sender,
+                        reciver_id: event?.receiver?.id,
+                        reciver: event?.receiver,
+                        content: event?.message,
+                        is_read: false,
+                    };
+                    setNewBroadcastedChannelMessages((prevMessages) => {
+                        // Combine the existing messages with the new formatted data
+                        return [...prevMessages, fomattedData];
+                    });
+
+                    handleEchoCallback();
+                }
             });
 
             echo.channel("example-chat").listen("Example", (event) => {
@@ -114,10 +135,18 @@ const ChatPage = () => {
         let messsagePayload = {
             chat_id: null,
             sender_id: loggedInUserData?.id,
+            sender: loggedInUserData,
             reciver_id: selectedUser.id,
+            reciever: selectedUser,
             content: newMessage,
+            created_at: moment().toISOString(),
         };
         sendMessageMutation.mutate(messsagePayload);
+
+        setNewBroadcastedChannelMessages((prevMessages) => {
+            // Combine the existing messages with the new formatted data
+            return [...prevMessages, messsagePayload];
+        });
     };
 
     // get list of users
@@ -132,14 +161,7 @@ const ChatPage = () => {
         <Card style={styles.lamaChat}>
             <div style={styles.chatContainer}>
                 <Sidebar loggedInUserData={loggedInUserData} getListOfUsers={getListOfUsers} users={getListOfUsers?.data?.data?.data} onSelectUser={setSelectedUser} />
-                <ChatSection
-                    selectedUser={selectedUser}
-                    currentUser={users[0]} // Assuming the first user is the current user
-                    messages={messages.filter((m) => m.senderId === selectedUser.id || m.receiverId === selectedUser.id)}
-                    onSendMessage={handleSendMessage}
-                    users={users}
-                    loggedInUserData={loggedInUserData}
-                />
+                <ChatSection selectedUser={selectedUser} onSendMessage={handleSendMessage} loggedInUserData={loggedInUserData} newBroadcastedChannelMessages={newBroadcastedChannelMessages} setNewBroadcastedChannelMessages={setNewBroadcastedChannelMessages} />
             </div>
         </Card>
     );
