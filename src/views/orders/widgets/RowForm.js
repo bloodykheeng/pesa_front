@@ -192,7 +192,7 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                             <Field name="payment_status">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
-                                        <label htmlFor="payment_status">Delivery Status</label>
+                                        <label htmlFor="payment_status">Payment Status</label>
                                         <Dropdown {...input} options={paymentStatuses} placeholder="Select Payment Status" className={classNames({ "p-invalid": meta.touched && meta.error })} />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>

@@ -7,7 +7,7 @@ const useHandleQueryError = (isError, error) => {
 
     useEffect(() => {
         if (isError) {
-            console.log("Error fetching List of data:", memoizedError);
+            console.log("🚀 ~ useHandleQueryError ~ isError fetching List of data : ", isError);
             if (memoizedError?.response?.data?.message) {
                 toast.error(memoizedError.response.data.message);
             } else if (!memoizedError?.response) {
