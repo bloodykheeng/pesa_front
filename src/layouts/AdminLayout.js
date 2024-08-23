@@ -191,6 +191,12 @@ const AdminLayout = () => {
                     icon: "pi pi-fw pi-box",
                     to: "/packages",
                 },
+                {
+                    label: "Customer Care",
+                    icon: "pi pi-fw pi-comments",
+                    to: "/customer-care",
+                },
+
                 // {
                 //     label: "vendors",
                 //     icon: "pi pi-fw pi-warehouse",
