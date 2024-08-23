@@ -1,6 +1,6 @@
 const styles = {
     lamaChat: {
-        width: "800px",
+        width: "100%",
         margin: "0 auto",
     },
     chatContainer: {
@@ -102,6 +102,12 @@ const styles = {
         alignSelf: "flex-start",
         borderBottomLeftRadius: "4px",
     },
+    messageSender: {
+        fontSize: "12px",
+        fontWeight: "bold",
+        marginBottom: "4px",
+        color: "#555",
+    },
     messageText: {
         margin: 0,
         fontSize: "14px",
@@ -109,7 +115,7 @@ const styles = {
     messageTime: {
         fontSize: "11px",
         color: "#999",
-        position: "absolute",
+        // position: "absolute",
         bottom: "-18px",
         right: "5px",
     },
