@@ -36,6 +36,7 @@ const ChatPage = () => {
     const loggedInUserData = getUserQuery?.data?.data;
 
     const echo = useEcho();
+    console.log("🚀 ~ ChatPage ~ echo:", echo);
 
     const sound = new Howl({
         src: ["/media/bell.mp3"],
@@ -56,10 +57,17 @@ const ChatPage = () => {
     useEffect(() => {
         // Here we are going to listen for real-time events.
         if (echo) {
+            console.log("🚀 ~ useEffect ~ echo in the if :", echo);
             echo.private(`chat.${loggedInUserData?.id}`).listen("MessageSent", (event) => {
+                console.log("🚀 ttttt ~ echo.private ~ event:", event);
+
                 if (event.receiver.id === loggedInUserData?.id) console.log("Real-time event received: ", event);
 
                 handleEchoCallback();
+            });
+
+            echo.channel("example-chat").listen("Example", (event) => {
+                console.log("🚀example chat public event", event);
             });
         }
 
@@ -79,14 +87,11 @@ const ChatPage = () => {
     const sendMessageMutation = useMutation({
         mutationFn: postMessage,
         onSuccess: () => {
-            queryClient.invalidateQueries(["products"]);
-            toast.success("created Successfully");
-            setMessageMutationIsLoading(false);
+            // queryClient.invalidateQueries(["products"]);
+            // toast.success("created Successfully");
+            // setMessageMutationIsLoading(false);
 
-            // if (res.statusText === 'No Content') {
-            //     setIsSending(false)
-            //     onClose()
-            // }
+            setMessageMutationIsLoading(false);
         },
         onError: (error) => {
             handleMutationError(error, setMessageMutationIsLoading);
@@ -107,9 +112,10 @@ const ChatPage = () => {
         setMessages(updatedMessages);
 
         let messsagePayload = {
-            user_id: selectedUser.id === 1 ? 2 : 1, // This is a simplification
-            from: loggedInUserData?.id,
-            message: newMessage,
+            chat_id: null,
+            sender_id: loggedInUserData?.id,
+            reciver_id: selectedUser.id,
+            content: newMessage,
         };
         sendMessageMutation.mutate(messsagePayload);
     };
@@ -125,13 +131,14 @@ const ChatPage = () => {
     return (
         <Card style={styles.lamaChat}>
             <div style={styles.chatContainer}>
-                <Sidebar getListOfUsers={getListOfUsers} users={getListOfUsers?.data?.data?.data} onSelectUser={setSelectedUser} />
+                <Sidebar loggedInUserData={loggedInUserData} getListOfUsers={getListOfUsers} users={getListOfUsers?.data?.data?.data} onSelectUser={setSelectedUser} />
                 <ChatSection
                     selectedUser={selectedUser}
                     currentUser={users[0]} // Assuming the first user is the current user
                     messages={messages.filter((m) => m.senderId === selectedUser.id || m.receiverId === selectedUser.id)}
                     onSendMessage={handleSendMessage}
                     users={users}
+                    loggedInUserData={loggedInUserData}
                 />
             </div>
         </Card>

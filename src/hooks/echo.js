@@ -36,7 +36,7 @@ const useEcho = () => {
                 return {
                     authorize: (socketId, callback) => {
                         axiosAPI
-                            .post("/api/broadcasting/auth", {
+                            .post("/broadcasting/auth", {
                                 socket_id: socketId,
                                 channel_name: channel.name,
                             })

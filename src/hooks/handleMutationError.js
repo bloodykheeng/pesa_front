@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 
 const useHandleMutationError = (error, setIsLoading) => {
     if (error) {
+        console.log("🚀 ~ useHandleMutationError ~ error:", error);
         setIsLoading(false);
         if (error?.response?.data?.message) {
             toast.error(error.response.data.message);

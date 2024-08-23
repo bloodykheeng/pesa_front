@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "../styles";
 
-const Messages = ({ messages, currentUser, users }) => (
+const Messages = ({ loggedInUserData, messages, currentUser, users }) => (
     <div style={styles.messages}>
         {messages.map((message) => {
             const isCurrentUser = message.senderId === currentUser.id;
