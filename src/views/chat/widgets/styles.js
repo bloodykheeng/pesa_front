@@ -74,29 +74,70 @@ const styles = {
         display: "flex",
         alignItems: "center",
     },
+
     messages: {
         flexGrow: 1,
         overflowY: "auto",
         padding: "1rem",
+        display: "flex",
+        flexDirection: "column",
+    },
+    messageWrapper: {
+        display: "flex",
+        marginBottom: "0.5rem",
     },
     message: {
         maxWidth: "70%",
-        padding: "0.5rem",
-        borderRadius: "8px",
-        marginBottom: "0.5rem",
-        backgroundColor: "#f0f0f0",
+        padding: "0.5rem 1rem",
+        borderRadius: "18px",
+        position: "relative",
     },
     sentMessage: {
         backgroundColor: "#dcf8c6",
         alignSelf: "flex-end",
+        borderBottomRightRadius: "4px",
+    },
+    receivedMessage: {
+        backgroundColor: "#fff",
+        alignSelf: "flex-start",
+        borderBottomLeftRadius: "4px",
     },
     messageText: {
         margin: 0,
+        fontSize: "14px",
     },
     messageTime: {
-        fontSize: "0.7rem",
-        color: "#666",
+        fontSize: "11px",
+        color: "#999",
+        position: "absolute",
+        bottom: "-18px",
+        right: "5px",
     },
+
+    /////////////////////////
+    // messages: {
+    //     flexGrow: 1,
+    //     overflowY: "auto",
+    //     padding: "1rem",
+    // },
+    // message: {
+    //     maxWidth: "70%",
+    //     padding: "0.5rem",
+    //     borderRadius: "8px",
+    //     marginBottom: "0.5rem",
+    //     backgroundColor: "#f0f0f0",
+    // },
+    // sentMessage: {
+    //     backgroundColor: "#dcf8c6",
+    //     alignSelf: "flex-end",
+    // },
+    // messageText: {
+    //     margin: 0,
+    // },
+    // messageTime: {
+    //     fontSize: "0.7rem",
+    //     color: "#666",
+    // },
     messageBox: {
         display: "flex",
         padding: "1rem",
