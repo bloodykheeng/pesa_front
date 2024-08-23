@@ -4,11 +4,11 @@ import Search from "./widgets/sidebar/Search";
 import Chats from "./widgets/sidebar/Chats";
 import styles from "./widgets/styles";
 
-const Sidebar = ({ users, onSelectUser }) => (
+const Sidebar = ({ users, getListOfUsers, onSelectUser }) => (
     <div style={styles.sidebar}>
         <SidebarTopbar />
         <Search />
-        <Chats users={users} onSelectUser={onSelectUser} />
+        <Chats getListOfUsers={getListOfUsers} users={users} onSelectUser={onSelectUser} />
     </div>
 );
 

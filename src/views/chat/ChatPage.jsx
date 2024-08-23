@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card } from "primereact/card";
 import Sidebar from "./Sidebar";
 import ChatSection from "./ChatSection";
@@ -6,10 +6,92 @@ import { users, messages } from "./sampleData";
 import { users as initialUsers, messages as initialMessages } from "./sampleData";
 import styles from "./widgets/styles";
 
+import { postMessage } from "../../services/messages/messages-service";
+import { ProgressSpinner } from "primereact/progressspinner";
+import { toast } from "react-toastify";
+
+//
+import { Howl } from "howler";
+import useEcho from "../../hooks/echo";
+
+import useAuthContext from "../../context/AuthContext";
+
+//
+import useHandleQueryError from "../../hooks/useHandleQueryError";
+import handleMutationError from "../../hooks/handleMutationError";
+
+//
+import { getAllUsers, getUserById, getApproverRoles, createUser, updateUser, deleteUserById, getAssignableRoles } from "../../services/auth/user-service";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+
 const ChatPage = () => {
+    const queryClient = useQueryClient();
     const [users, setUsers] = useState(initialUsers);
     const [messages, setMessages] = useState(initialMessages);
     const [selectedUser, setSelectedUser] = useState(users[0]);
+
+    const { getUserQuery } = useAuthContext();
+    console.log("🚀 ~ ChatPage ~ getUserQuery:", getUserQuery?.data?.data);
+
+    const loggedInUserData = getUserQuery?.data?.data;
+
+    const echo = useEcho();
+
+    const sound = new Howl({
+        src: ["/media/bell.mp3"],
+    });
+
+    const handleEchoCallback = () => {
+        // setUnreadMessages(prevUnread => prevUnread + 1)
+        // triggerAnimation()
+        sound.play();
+    };
+
+    //
+    const memoizedValues = useMemo(() => {
+        // return { user, unreadMessages, controls, echo };
+        return { echo };
+    }, [echo]);
+
+    useEffect(() => {
+        // Here we are going to listen for real-time events.
+        if (echo) {
+            echo.private(`chat.${loggedInUserData?.id}`).listen("MessageSent", (event) => {
+                if (event.receiver.id === loggedInUserData?.id) console.log("Real-time event received: ", event);
+
+                handleEchoCallback();
+            });
+        }
+
+        // axios
+        //     .post("/api/get-unread-messages", {
+        //         user_id: user?.id,
+        //     })
+        //     .then((res) => {
+        //         setUnreadMessages(res.data.length);
+        //         setMessages(res.data);
+        //     });
+    }, [memoizedValues]);
+
+    //=============== sending a message ============================
+
+    const [messageMutationIsLoading, setMessageMutationIsLoading] = useState(false);
+    const sendMessageMutation = useMutation({
+        mutationFn: postMessage,
+        onSuccess: () => {
+            queryClient.invalidateQueries(["products"]);
+            toast.success("created Successfully");
+            setMessageMutationIsLoading(false);
+
+            // if (res.statusText === 'No Content') {
+            //     setIsSending(false)
+            //     onClose()
+            // }
+        },
+        onError: (error) => {
+            handleMutationError(error, setMessageMutationIsLoading);
+        },
+    });
 
     const handleSendMessage = (newMessage) => {
         const updatedMessages = [
@@ -23,12 +105,27 @@ const ChatPage = () => {
             },
         ];
         setMessages(updatedMessages);
+
+        let messsagePayload = {
+            user_id: selectedUser.id === 1 ? 2 : 1, // This is a simplification
+            from: loggedInUserData?.id,
+            message: newMessage,
+        };
+        sendMessageMutation.mutate(messsagePayload);
     };
+
+    // get list of users
+
+    const getListOfUsers = useQuery({ queryKey: ["users"], queryFn: getAllUsers });
+    console.log("users list : ", getListOfUsers?.data?.data);
+
+    // Use the custom hook to handle errors with useMemo on the error object
+    useHandleQueryError(getListOfUsers?.isError, getListOfUsers?.error);
 
     return (
         <Card style={styles.lamaChat}>
             <div style={styles.chatContainer}>
-                <Sidebar users={users} onSelectUser={setSelectedUser} />
+                <Sidebar getListOfUsers={getListOfUsers} users={getListOfUsers?.data?.data?.data} onSelectUser={setSelectedUser} />
                 <ChatSection
                     selectedUser={selectedUser}
                     currentUser={users[0]} // Assuming the first user is the current user
