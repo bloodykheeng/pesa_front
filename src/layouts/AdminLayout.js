@@ -176,20 +176,16 @@ const AdminLayout = () => {
                     icon: "pi pi-fw pi-shopping-cart",
                     to: "/orders",
                 },
-                {
-                    label: "Customers",
-                    icon: "pi pi-fw pi-users",
-                    to: "/customers",
-                },
-                {
-                    label: "Orders",
-                    icon: "pi pi-fw pi-shopping-cart",
-                    to: "/orders",
-                },
+
                 {
                     label: "Packages",
                     icon: "pi pi-fw pi-box",
                     to: "/packages",
+                },
+                {
+                    label: "Customers",
+                    icon: "pi pi-fw pi-users",
+                    to: "/customers",
                 },
 
                 // {
