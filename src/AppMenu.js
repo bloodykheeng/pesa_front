@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate, useLocation } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 import classNames from "classnames";
 import { Ripple } from "primereact/ripple";
@@ -54,33 +54,77 @@ const AppSubmenu = (props) => {
         );
     };
 
+    //
+    let { state } = useLocation();
+    let componentDetailFromNavLink = state?.componentDetailFromNavLink ? state?.componentDetailFromNavLink : null;
+
+    console.log("componentDetailFromNavLink  ggg :  ", componentDetailFromNavLink);
+
     const renderLink = (item, i) => {
-        let content = renderLinkContent(item);
+        let submenuIcon = item.items && (
+            <i
+                className={`pi pi-fw ${activeIndex === i ? "pi-angle-up" : "pi-angle-down"} menuitem-toggle-icon`}
+                onClick={(e) => {
+                    e.stopPropagation(); // Prevent NavLink onClick from being triggered
+                    onMenuItemClick(e, item, i);
+                }}
+            ></i>
+        );
+        let badge = item.badge && <Badge value={item.badge} />;
+
+        const linkContent = (
+            <React.Fragment>
+                <i className={item.icon}></i>
+                <span>{item.label}</span>
+                {badge}
+                {/* {submenuIcon} */}
+            </React.Fragment>
+        );
 
         if (item.to) {
             return (
-                <Link
-                    aria-label={item.label}
-                    onKeyDown={onKeyDown}
-                    role="menuitem"
-                    className="p-ripple"
-                    activeClassName="router-link-active router-link-exact-active"
-                    to={item.to}
-                    onClick={(e) => {
-                        onMenuItemClick(e, item, i);
-                        // Use navigate to programmatically navigate
-                        navigate(item.to);
-                    }}
-                    exact={true}
-                    target={item.target}
-                >
-                    {content}
-                </Link>
+                <div role="menuitem" style={{ display: "flex", width: "100%", alignItems: "center", cursor: "pointer", justifyContent: "space-between" }}>
+                    <NavLink
+                        key={item?.label}
+                        aria-label={item.label}
+                        onKeyDown={onKeyDown}
+                        role="menuitem"
+                        state={{ componentDetailFromNavLink: item }}
+                        style={({ isActive }) => ({
+                            width: "100%",
+                            color: isActive && item.label === componentDetailFromNavLink?.label ? "var(--primary-color)" : "inherit", // Adjust active text color here
+                        })}
+                        className={({ isActive }) => (isActive && item.label === componentDetailFromNavLink?.label ? "navbar-item active active-sidebar-item-clicked" : "navbar-item")}
+                        to={item.to}
+                        onClick={(e) => {
+                            e.stopPropagation(); // Prevent NavLink onClick from being triggered by the submenu icon
+                            onMenuItemClick(e, item, i);
+                        }}
+                        target={item.target}
+                    >
+                        {linkContent}
+                    </NavLink>
+                    {submenuIcon}
+                </div>
             );
         } else {
             return (
-                <a tabIndex="0" aria-label={item.label} onKeyDown={onKeyDown} role="menuitem" href={item.url} className="p-ripple" onClick={(e) => onMenuItemClick(e, item, i)} target={item.target}>
-                    {content}
+                <a
+                    tabIndex="0"
+                    aria-label={item.label}
+                    onKeyDown={onKeyDown}
+                    role="menuitem"
+                    href="/"
+                    className="p-ripple"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        onMenuItemClick(e, item, i);
+                    }}
+                    target={item.target}
+                >
+                    {linkContent}
+                    {submenuIcon}
+                    <Ripple />
                 </a>
             );
         }

@@ -63,3 +63,13 @@ a:-webkit-any-link{
 .auth-form .p-inputtext {
     font-size: 2rem;
  }
+
+
+  /* active side bar menue border case active or clicked */
+
+  .active-sidebar-item-clicked {
+    outline: 0 none;
+    outline-offset: 0;
+    transition: box-shadow 0.2s;
+    box-shadow: inset var(--focus-ring);
+ }
