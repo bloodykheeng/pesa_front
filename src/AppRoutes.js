@@ -12,7 +12,6 @@ import OrdersPage from "./views/orders/OrdersPage.jsx";
 import OrdersViewPage from "./views/orders/OrdersViewPage.jsx";
 import CustomersPage from "./views/customers/UserPage";
 
-import ChatPage from "./views/chat/ChatPage.jsx";
 // ============ Customm component routes ========================
 const DashboardPage = lazy(() => import("./components/Dashboard"));
 const FormLayoutDemo = lazy(() => import("./components/FormLayoutDemo"));
@@ -223,13 +222,6 @@ function AppRoutes() {
             path: "/customers",
             name: "customers",
             element: CustomersPage,
-            layout: "/admin",
-        },
-
-        {
-            path: "/customer-care",
-            name: "customers-care",
-            element: ChatPage,
             layout: "/admin",
         },
     ];
