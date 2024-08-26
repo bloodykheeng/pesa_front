@@ -162,7 +162,7 @@ function ListPage({ loggedInUserData, productCategoryBrandData, ...props }) {
         //     field: "photo_url",
         //     hidden: true,
         //     render: (rowData) => {
-        //         return rowData.photo_url ? <Image src={`${process.env.REACT_APP_API_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+        //         return rowData.photo_url ? <Image src={`${process.env.REACT_APP_API_BASE_URL}${rowData.photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
         //     },
         // },
 
@@ -170,7 +170,7 @@ function ListPage({ loggedInUserData, productCategoryBrandData, ...props }) {
             title: "Photo",
             field: "cloudinary_photo_url",
             render: (rowData) => {
-                return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} width="50" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+                return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
             },
         },
 

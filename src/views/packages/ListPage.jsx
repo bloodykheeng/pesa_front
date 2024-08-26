@@ -22,13 +22,13 @@ import useAuthContext from "../../context/AuthContext";
 import useHandleQueryError from "../../hooks/useHandleQueryError";
 import handleMutationError from "../../hooks/handleMutationError";
 
-function ListPage({ ...props }) {
+function ListPage({ customerData, ...props }) {
     const { getUserQuery } = useAuthContext();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["packages"],
-        queryFn: getAllPackages,
+        queryKey: ["packages", "by_customer_id", customerData?.id],
+        queryFn: () => getAllPackages({ created_by: customerData?.id }),
     });
     console.log("🚀Packages ~ ListPage ~ data:", data);
     // useEffect(() => {
@@ -130,7 +130,7 @@ function ListPage({ ...props }) {
             title: "Photo",
             field: "cloudinary_photo_url",
             render: (rowData) => {
-                return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+                return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
             },
         },
         {
@@ -231,10 +231,10 @@ function ListPage({ ...props }) {
                 </div>
             </div> */}
             <Panel header="Packages" style={{ marginBottom: "20px" }} toggleable>
-                <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+                {/* <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
                     {activeUser?.permissions.includes("create") && <Button label="Add Package" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
                     <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
-                </div>
+                </div> */}
 
                 <MuiTable
                     tableTitle="Packages"

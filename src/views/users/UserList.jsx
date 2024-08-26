@@ -14,6 +14,7 @@ import { Button } from "primereact/button";
 import { confirmDialog } from "primereact/confirmdialog";
 
 import { Panel } from "primereact/panel";
+import { Image } from "primereact/image";
 
 function UserList({ loggedInUserData }) {
     const queryClient = useQueryClient();
@@ -123,6 +124,13 @@ function UserList({ loggedInUserData }) {
                 tableId = rowData.tableData.id;
                 tableId++;
                 return <div>{rowData.tableData.id}</div>;
+            },
+        },
+        {
+            title: "Photo",
+            field: "cloudinary_photo_url",
+            render: (rowData) => {
+                return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
             },
         },
         {

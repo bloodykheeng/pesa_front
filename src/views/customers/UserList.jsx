@@ -5,7 +5,7 @@ import EditForm from "./EditForm";
 import CreateForm from "./CreateForm";
 import WaterIsLoading from "../../components/general_components/WaterIsLoading";
 import moment from "moment";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import MuiTable from "../../components/general_components/MuiTable";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import UserDetailsPage from "./UserDetailsPage";
@@ -14,9 +14,11 @@ import { Button } from "primereact/button";
 import { confirmDialog } from "primereact/confirmdialog";
 
 import { Panel } from "primereact/panel";
+import { Image } from "primereact/image";
 
 function UserList({ loggedInUserData }) {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const [selectedItem, setSelectedItem] = useState({ id: null });
 
     const [showUserForm, setShowUserForm] = useState(false);
@@ -59,7 +61,7 @@ function UserList({ loggedInUserData }) {
             getListOfUsers?.error?.response?.data?.message ? toast.error(getListOfUsers?.error?.response?.data?.message) : !getListOfUsers?.error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
         }
     }, [getListOfUsers?.isError]);
-    console.log("users list : ", getListOfUsers?.data?.data);
+    console.log("Customers list data : ", getListOfUsers?.data?.data);
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
@@ -127,6 +129,13 @@ function UserList({ loggedInUserData }) {
             },
         },
         {
+            title: "Photo",
+            field: "cloudinary_photo_url",
+            render: (rowData) => {
+                return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+            },
+        },
+        {
             title: "Name",
             field: "name",
             render: (rowData) => {
@@ -180,6 +189,16 @@ function UserList({ loggedInUserData }) {
                                     showEdit={loggedInUserData?.permissions?.includes("update user")}
                                     showDelete={loggedInUserData?.permissions?.includes("delete user")}
                                     loading={loading || getListOfUsers.isLoading || getListOfUsers.status == "loading" || deleteMutationIsLoading}
+                                    //
+                                    handleViewPage={(rowData) => {
+                                        navigate("customer", { state: { customerData: rowData } });
+                                    }}
+                                    showViewPage={true}
+                                    hideRowViewPage={false}
+                                    //
+                                    exportButton={true}
+                                    pdfExportTitle="Customers"
+                                    csvExportTitle="Customers"
                                 />
 
                                 <UserDetailsPage user={userDetail} showModal={userDetailShowModal} handleCloseModal={handleCloseuserDetailModal} />

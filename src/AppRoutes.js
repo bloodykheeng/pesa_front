@@ -11,6 +11,7 @@ import PackagesPage from "./views/packages/PackagesPage.jsx";
 import OrdersPage from "./views/orders/OrdersPage.jsx";
 import OrdersViewPage from "./views/orders/OrdersViewPage.jsx";
 import CustomersPage from "./views/customers/UserPage";
+import CustomersViewPage from "./views/customers/UsersViewPage";
 
 // ============ Customm component routes ========================
 const DashboardPage = lazy(() => import("./components/Dashboard"));
@@ -222,6 +223,18 @@ function AppRoutes() {
             path: "/customers",
             name: "customers",
             element: CustomersPage,
+            layout: "/admin",
+        },
+        {
+            path: "/customers/customer",
+            name: "customer",
+            element: CustomersViewPage,
+            layout: "/admin",
+        },
+        {
+            path: "/customers/customer/order",
+            name: "OrdersViewPage",
+            element: OrdersViewPage,
             layout: "/admin",
         },
     ];
