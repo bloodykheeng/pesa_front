@@ -160,6 +160,38 @@ function UserList({ loggedInUserData }) {
             title: "lastlogin",
             field: "lastlogin",
         },
+        {
+            title: "Agree",
+            field: "agree",
+            render: (rowData) => (rowData.agree ? "Yes" : "No"),
+        },
+        {
+            title: "Phone",
+            field: "phone",
+        },
+        {
+            title: "NIN",
+            field: "nin",
+        },
+        {
+            title: "Date",
+            field: "created_at",
+            hidden: true,
+            render: (rowData) => {
+                return moment(rowData.created_at).format("lll");
+            },
+        },
+
+        {
+            title: "Created By Name",
+            field: "created_by.name",
+            hidden: true,
+        },
+        {
+            title: "Created By Email",
+            field: "created_by.email",
+            hidden: true,
+        },
     ];
 
     return (

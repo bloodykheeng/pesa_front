@@ -13,6 +13,8 @@ import OrdersViewPage from "./views/orders/OrdersViewPage.jsx";
 import CustomersPage from "./views/customers/UserPage";
 import CustomersViewPage from "./views/customers/UsersViewPage";
 
+import ReferalsPage from "./views/referals/ReferalsPage.jsx";
+
 // ============ Customm component routes ========================
 const DashboardPage = lazy(() => import("./components/Dashboard"));
 const FormLayoutDemo = lazy(() => import("./components/FormLayoutDemo"));
@@ -235,6 +237,12 @@ function AppRoutes() {
             path: "/customers/customer/order",
             name: "OrdersViewPage",
             element: OrdersViewPage,
+            layout: "/admin",
+        },
+        {
+            path: "/referrals",
+            name: "referrals",
+            element: ReferalsPage,
             layout: "/admin",
         },
     ];

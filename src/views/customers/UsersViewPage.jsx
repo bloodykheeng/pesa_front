@@ -52,7 +52,7 @@ const UsersViewPage = () => {
                             <p>
                                 <strong>Phone:</strong> {customerData?.phone}
                             </p>
-                            <p>
+                            {/* <p>
                                 <strong>Date of Birth:</strong> {customerData?.date_of_birth}
                             </p>
                             <p>
@@ -60,7 +60,7 @@ const UsersViewPage = () => {
                             </p>
                             <p>
                                 <strong>Device Token:</strong> {customerData?.device_token}
-                            </p>
+                            </p> */}
                             <p>
                                 <strong>NIN:</strong> {customerData?.nin}
                             </p>

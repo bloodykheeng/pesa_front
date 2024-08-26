@@ -187,6 +187,11 @@ const AdminLayout = () => {
                     icon: "pi pi-fw pi-users",
                     to: "/customers",
                 },
+                {
+                    label: "Referrals",
+                    icon: "pi pi-fw pi-share-alt", // or you can use "pi-send"
+                    to: "/referrals",
+                },
 
                 // {
                 //     label: "vendors",
