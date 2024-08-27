@@ -1,0 +1,554 @@
+Realtime with Laravel Reverb
+--------------------------------------------------
+https://youtu.be/WgirvczpvA8?si=M7g1BRzvLDzCoVyg
+
+ensure Laravel is installed on ur machine
+https://laravel.com/docs/11.x/installation
+
+lets start by creating a new project
+Laravel new realtime-laravel-basics
+then choose
+Laravel breeze starter kit
+then chose
+blade and alpine
+
+Which testing framework do you prefer?
+pest
+
+ Would you like to initialize a Git repository? 
+no
+-------------------------------------
+
+currently a fresh Laravel installation knows nothing on how your gnna be broadcasting events so even in the env  broadcast connection is logs
+
+============================= 3:09=================
+to Set up broad casting into our project
+
+php artisan install:broadcasting
+
+after this command we get a broadcasting config file
+and a channels route file
+Then prompted to install Laravel reverb
+
+After this reverb will be installed and the env connection will change also thus BROADCAST_CONNECTION=reverb
+
+it will also add reverb keys automatically that we can use
+eg REVERP_APP_ID,APP_KEY_APP_SECRET,hOST,pORTAND SCHEME
+
+U MAI NEED to change the REVERP_HOST="local" to your domain incase u go live
+
+------------------------ 5:30--------------
+Now u have echo.js file in resources/js/echo.js
+
+Laravel echo is the client side of real time functionality
+When we push an event inside Laravel internaly using an event class This will push all our vent data to our reverb server which we are gonna start up in a second
+
+Laravel echo will allow us to detect if an event has been broad cast from our reverb server then it can be detected from our client side 
+
+------------------------------ 6:07
+
+we can have multiple reverb apps at once in u can see that in config reverb.php
+now in our routes u can see that we have channels route
+we can set up 
+by default Laravel gives us a private channel which will authenticate users and make sure they are allowed to access that channel 
+
+------------------------------ 8:23
+How to start up our reverb server
+
+php artisan reverb:start
+we can also use debug option
+php artisan reverb:start --debug
+
+============================ 9:46 ================================
+Lets learn creating a channel and broadcasting and event now
+
+-----------------------------
+run 
+npm run dev -> to build all assets
+Then start reverb server in debug too in different terminal
+php artisan reverb:start --debug
+
+
+now go to channels 
+routes/channels
+
+lets create a public channel there
+in the call back we always get a current user who tries to authenticate but since we are using a public channel we dont nessesarilly need the user
+
+routes/channels
+Broadcast::channel('chat',function(){});
+
+lets create an event ie lets create an example event
+
+11:02------------------
+php artisan make:event Example
+
+it gets creats here app\Events\Example.php
+At the moment its a plain event that we can broadcast from our application
+
+eg u can issue an event when a user has registered and a listener on that event will sent them an email in this case the listener of that event will send them a message to our sever
+
+From there we can broadcast to as many channels as we want
+now lets not use a private channel but instead a public channel
+
+12:45------------------------------------
+this is what was there new PrivateChannel('channel-name'),
+lets now use chanel chat that we subscribed too
+new Channel('chat'),
+
+BUT not we need to implement an interface in order to make it broadcastable 
+we can use shouldBroacast
+or shouldBroadcat now
+
+ShouldBroacast -> always put in a queue so things will only work when u start queue work
+ShouldBroadcastNow -> 
+
+-------------------------------- 13:14
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+class Example implements ShouldBroadcastNow
+{ }
+
+-------------------------------
+lets create now a simple route that dispatches this example event
+
+we shall us ethe broadcast helper that will broadcast it to our server
+
+Route::get('/broadcast', function () {
+    broadcast(new Example());
+});
+
+now go to the browser and register n account
+
+after go to the broadcast route
+http://127.0.0.1:8000/broadcast
+
+youill see nothing but it has been triggered in reverb terminal 
+
+
+
+============================= 15:55 =========================
+now lets listen to the event after subscribing to a channel
+
+go in resources/views/dashboard.blade.php nd we use echo to connect and subscribe to our channel
+and listen to a message
+we shall use apine js
+with it anything u write in x-init is considered as javascript
+
+<div x-init="console.log('test')"></div>
+
+now go to the console here in browser uill see test
+http://127.0.0.1:8000/dashboard
+
+now lets use Echo to connect to a channel
+Remmeber in resources/js/echo.js there we set up echo to listen to our reverb server and now loaded it to the dom or window so with this we can access echo
+
+So now lets listen to the chat
+
+x-init="
+Echo.channel('chat')
+"
+now since its a public channel it will automatically subscribe to it f u check in our reverb terminal
+-------------------------
+ {
+
+   2▕     "event": "pusher:subscribe",
+----------------------------------
+
+now lets listen to events broadacted to the reverb server
+we use .listen
+now we listen to event Example that we created so when echo received that event we then run a closure with any of the event data passed in
+
+so currently we are connecting to a channel and listenig to events on it then consolelogging the 
+data in the event
+
+---------------- 18:26
+<div
+x-init="
+Echo.channel('chat').listen('Example',(event)=>{
+console.log(event)
+})
+"
+></div>
+-----------------------
+create two tabs eacg with those routes
+now go there
+http://127.0.0.1:8000/broadcast
+
+and come back here 
+http://127.0.0.1:8000/dashboard
+---- 18:00
+Now uill notice that everytime u hit the broadacast route an array will be conole logged in the console of this http://127.0.0.1:8000/dashboard it means the event is truiggerd nd we ahve listened to it an console logged it 
+
+
+app/Events/Example.php
+Now lets add data to our event
+lets add a 
+
+public string $message = 'hey
+
+20:00----------------
+now go teste our server hit the broadcast rout and check the console of dashboard uill see this
+{message: 'hey'}
+Thus a message will be received to all people connected to this channel
+
+
+======================20:00 he correct approach it to pass data through our constructor =================================
+in our web routes lets find a user and pass them in as a dependency
+Since we need to know who posted the message and we need to see the content in the message 
+
+routes/web.php
+-----------------------------------------
+Route::get('/broadcast', function () {
+    broadcast(new Example(User::find(1)));
+});
+-------------------------------------------------
+
+now in our event lets pass i the modal and set it as entire property
+App/Events/Example.php
+
+ public function __construct(public User $user)
+    {
+        //
+    }
+
+now if u hit the broadcast route Laravel will then send u the user details of the fist user in the event 
+
+so am getting back this 
+-----------------------------------------
+message
+: 
+"hey"
+user
+: 
+{id: 1, name: 'john doe', email: 'johndoe@gmail.com', email_verified_at: null, created_at: '2024-08-15T12:29:48.000000Z', …}
+[[Prototype]]
+: 
+Object
+-------------------------------------------------------------------------
+
+if u set data to protected it will not work it has to be public
+
+ public function __construct(public User $user)
+    {
+        //
+    }
+protected User $user woont work
+
+
+
+
+
+
+
+========================22:35 How to control data being sent or broadcasted ====================
+
+In the event we can adda function called broadcastWith() it will return any data u pass in se we can modify the user details to be sent back when broadcasting
+
+----------------------------------
+ public function broadcastWith()
+    {
+        return [
+            'user' => [
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+            ],
+        ];
+    }
+------------------------------
+
+This is what i get back
+{user: {…}}
+user: id
+name: john doe"
+---------------------------------------------
+
+after using that function we can now easily set our items in the constructor protected
+
+--------------24:00------------------------------
+ public function __construct(protected User $user)
+    {
+        //
+    }
+--------------------------------------------------
+
+
+
+
+=======================24:24 creating a chat interface ============================
+php artisan make:model Message -m
+php artisan migrate
+
+24:50
+install db browser on ur machine such that we can manually put a record in sql lite db
+create a new record under message then save it or write changes
+
+now lets go pass the mssage in the  broadcast route too
+then also we pass it in the event
+
+routes/web.php
+-----------------------------
+Route::get('/broadcast', function () {
+    broadcast(new Example(User::find(1), Message::find(1)));
+});
+
+app/events/example.php
+-------------------------
+
+uill see the user and the message now 
+
+
+
+
+
+
+================26:24 Organising events in the events folder ==============
+
+php artisan make:event Chat\ExampleTwo
+
+then add there implements ShouldBroadcastNow then channel make it now
+
+now lets go to routes web,php and start using example two event
+broadcast(new ExampleTwo());
+
+also in blade for dashboard esure u listen to exapmleTwo
+------------------------------------
+ <div class="p-6 text-gray-900 dark:text-gray-100" x-init="console.log('test')
+                Echo.channel('chat')
+                    .listen('ExampleTwo', (event) => {
+                        console.log(event)
+                    })">
+                    {{ __("You're logged in!") }}
+                </div>
+            </div>
+-----------------------------------------------------
+
+it wont work this is because when we are dealing with events that are name spaced there is a convention we should use so if the event is directly in events folder we can just easily listen to it in echo by specifying its name
+
+but if its in a subdirectory we have to provide full path from events folder and we start with a dot .
+27:42--------------------------------
+.App\Events\Chat\ExampleTwo
+ni u must use double bars u get the pasth from reverb server its shows it 
+though u have to start with a dot
+.App\\Events\\Chat\\ExampleTwo
+
+------------------------------------
+ <div class="p-6 text-gray-900 dark:text-gray-100" x-init="console.log('test')
+                Echo.channel('chat')
+                    .listen('.App\\Events\\Chat\\ExampleTwo', (event) => {
+                        console.log(event)
+                    })">
+                    {{ __("You're logged in!") }}
+                </div>
+            </div>
+-----------------------------------------------------
+
+
+
+============================28:00======================
+its better we just provide namespce from echo.js
+
+namespace:'App.Events.Chat'
+namespace:'.App\\Events\\Chat\\ExampleTwo'
+
+
+but using this events that are ouside that directory will stop working so its not advisable
+
+
+
+
+29:00
+========================= lets start also using ques Should broadcast =======================
+
+Using Ques is good since it sends some processes in the background
+now lest stop using this
+class Example implements ShouldBroadcastNow
+
+and instead use
+class Example implements ShouldBroadcast
+
+
+now if u try to broadcast uill see that events are sent to the database
+
+now run 
+php artisan queue:work
+to execute all the jobs in the database
+
+so now if u broadcast and switch to dashboard it will take some seconds before the listener gets a response because the queue takes some time to process
+
+
+
+================ putting events on a soecific queue 32:04==============
+
+go to Events/Example.php
+
+
+add this 
+public string $queue = 'chat';
+
+now in terminal run this to run a specific queue
+php artisan queue:work --queue=chat
+
+ypu can also even dynamically create a cue within an event 
+------------------------------------
+public function broadcastQueue(){
+return 'chat';
+}
+--------------------------------------
+
+the function should just return the name of the queue u want the event to use 
+
+
+
+
+
+============================= Private Channels 33:49======================================
+lets work with the channels default route
+NB
+this App.Models.User.{id} is teh same as this users.{id}
+
+
+Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('users.{id}', function (User $user, $id) {
+    return (int) $user->id === (int) $id;
+});
+
+Sowhen we connect to this channel we gonna replace this id users.{id} with the id of the user trying to connect to the channel 
+
+Then we will get the current authenticated user function (User $user, $id) { and make sure there id is matches the id we passed in there users.{id}
+35:00
+there fore this return (int) $user->id === (int) $id;
+
+This time round we use privete when want
+to connect to this channel and event
+
+-----------------------------------------
+x-init="console.log('test-private-channel')
+                Echo.private('users.2')"
+
+if u try user with id 2 we get error 403 since the current logged in user is with id 1
+
+------------------- error am getting back
+pusher-js.js?v=d2a93b71:669 
+        
+        
+       POST http://127.0.0.1:8000/broadcasting/auth 403 (Forbidden)
+----------------------------------------------
+
+
+what Laravel echo is doing now that we are using a private method to connect to a  channel is that its hitting this endpoint  http://127.0.0.1:8000/broadcasting/auth within our Laravel app and the endpoint maps to the channel we are trying to connect ie channels then run the call back function on it 
+
+routes/channels.php
+Broadcast::channel('users.{id}', function (User $user, $id) {
+    return (int) $user->id === (int) $id;
+});
+if the call back returns false it will unauthorize
+
+-------------------------------------- 36:00
+so now if u provide is 1 it wll work well 
+x-init="console.log('test-private-channel')
+                Echo.private('users.1)"
+
+so in that call back we can add in even more logic
+
+============================== 37:44
+eg assume a chat room with a room id u can create a scripts that prevents users to access a room
+
+Broadcast::channel('chat.room.{roomId}', function (User $user, $roomId) {
+    if ($user->canAccessRoom($roomId)) {
+        return false;
+    }
+    return true;
+});
+
+
+
+
+=============================================
+its better we dynamically passin auth user id
+x-init="console.log('test-private-channel')
+                Echo.private('users.{{ auth()->id() }}')"
+
+
+================= Sending an event through a private channel 39:14 =========================
+php artisan make:event OrderDispatched
+
+we want channel name to be dynamic basing on user model
+new PrivateChannel('users' . $this->user->id),
+
+
+
+routes/web.php
+Route::get('/broadcast', function () {
+    // broadcast(new Example(User::find(1), Message::find(1)));
+    // broadcast(new ExampleTwo());
+    broadcast(new OrderDispatched(User::find(1)));
+
+});
+
+
+events/ordersDispatched
+
+------------------------------------
+class OrderDispatched implements ShouldBroadcast
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(public User $user)
+    {
+        //
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return array<int, \Illuminate\Broadcasting\Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel('users.' . $this->user->id),
+        ];
+    }
+}
+
+------------------------------------
+
+
+now if u check in reverb terminal uill see gthat e have an auth token this applies to private
+
+ {
+
+   2▕     "event": "pusher:subscribe",
+
+   3▕     "data": {
+
+   4▕         "auth": "txcwn6w7zrdlojao62ws:48b2f04e944de4cf23a614f387bb51231644f58016a003b63b7770f8b45fc155",
+
+   5▕         "channel": "private-users.1"
+
+   6▕     }
+
+   7▕ }
+
+
+================= Now lets listen to the event 42:00===============
+
+x-init="console.log('test-private-channel')
+                Echo.private('users.{{ auth()->id() }}')
+                    .listen('OrderDispatched', (event) => {
+                        console.log(event)
+                    })"
+
+There only working if u used class OrderDispatched implements ShouldBroadcastNow
+ShouldBroadcastnow hich doesn't require quewing but if you use should broad cast the event fails to be logged on the console
+
+stopped at 45:05
+
+
+  

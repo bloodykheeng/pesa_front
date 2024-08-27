@@ -1,0 +1,519 @@
+//next js and Laravel reverb
+https://youtu.be/xEV7ruVUEvs?si=ynE7afFpHeW3GODH
+
+
+Video filters
+Integrate Laravel Reverb with NextJS 14 (Private Messaging Example)
+
+
+we are using decoupled architecture where the back end is different from the front end
+
+Laravel echo helps to subscribe to channels
+when u install broadcast and Laravel echo
+lavel will automatically give u configs that u can use in next js eg 
+REVERRP_APP_ID
+REVERB_APP_KEY
+REVERB_APP_SECRET
+REVERB_HOST="localhost"
+REVERB_PORT=8000
+REVERB_SCHEME=http
+
+ass ur add in then in next env each line should start with
+NEXT_PUBLIC
+eg
+NEXT_PUBLIC_REVERRP_APP_ID
+
+7:11 -----------------------------------
+
+
+===========================================================================
+i started afresh 
+
+notification in ui has
+sadle animation and notification sound
+
+-------- 4:54
+in next js first install Laravel echo and the pusher package
+npm install laravel-echo pusher-js
+
+Laravel echo is the official package that makes it easier for us to subscribe to channels and listen to broadcasting events coming from our Laravel powers backend
+
+----------------5:35
+in Laravel install
+php artisan install:broadcasting
+
+This will create broadcasting config
+and also build the Node dependencies required for broadcasting?
+
+
+now ```run npm run dev``` to start nextjs
+
+now u can go here and login 
+http://localhost:3000/login
+
+
+in next js u install 
+pusher-js and laravel-echo packages
+5:07============
+Laravel echo helps us to subscribe to channels and listen to broadcasts in react
+
+npm install laravel-echo pusher-js
+
+
+set these in ur env
+NEXT_PUBLIC_REVERB_APP_ID=82cbc1fe78ac0fb32cf2
+NEXT_PUBLIC_REVERB_APP_KEY
+NEXT_PUBLIC_REVERB_APP_SECRET
+NEXT_PUBLIC_REVERB_HOST="localhost"
+NEXT_PUBLIC_REVERB_PORT=8000
+NEXT_PUBLIC_REVERB_SCHEME=http
+
+
+REACT_APP_REVERB_APP_ID=82cbc1fe78ac0fb32cf2
+REACT_APP_REVERB_APP_KEY=
+REACT_APP_REVERB_APP_SECRET=
+REACT_APP_REVERB_HOST="localhost"
+REACT_APP_REVERB_PORT=8000
+REACT_APP_REVERB_SCHEME=http
+
+
+const appId = process.env.REACT_APP_REVERB_APP_ID;
+const appKey = process.env.REACT_APP_REVERB_APP_KEY;
+const appSecret = process.env.REACT_APP_REVERB_APP_SECRET;
+const host = process.env.REACT_APP_REVERB_HOST;
+const port = process.env.REACT_APP_REVERB_PORT;
+const scheme = process.env.REACT_APP_REVERB_SCHEME;
+
+
+REVERB_APP_ID=153826
+REVERB_APP_KEY=txcwn6w7zrdlojao62ws
+REVERB_APP_SECRET=djbalgqn1urxgvdo0aht
+REVERB_HOST="localhost"
+REVERB_PORT=8080
+REVERB_SCHEME=http
+
+
+
+
+
+==============7:46 create echo.js file in ur app directory ============
+
+
+```
+import axios from 'axios';
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
+window.Pusher = Pusher;
+
+const echo = new Echo({
+    broadcaster: 'pusher',
+    key: process.env.REACT_APP_REVERB_APP_KEY,
+    authorizer: channel => {
+        return {
+            authorize: (socketId, callback) => {
+                axios
+                    .post('/api/broadcasting/auth', {
+                        socket_id: socketId,
+                        channel_name: channel.name,
+                    })
+                    .then(response => {
+                        callback(false, response.data);
+                    })
+                    .catch(error => {
+                        callback(true, error);
+                    });
+            },
+        };
+    },
+    wsHost: process.env.REACT_APP_REVERB_HOST,
+    wsPort: process.env.REACT_APP_REVERB_PORT ?? 80,
+    wssPort: process.env.REACT_APP_REVERB_PORT ?? 443,
+    forceTLS: (process.env.REACT_APP_REVERB_SCHEME ?? 'https') === 'https',
+    enabledTransports: ['ws', 'wss'],
+});
+
+export default echo;
+
+````
+
+
+================= 9:58
+now go to Laravel and change the channels name
+
+u need to disable channels middle ware
+from bootstrap/app.php
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+       // channels: __DIR__.'/../routes/channels.php',
+        health: '/up',
+    )
+
+coment it out and register with broad casting 
+
+to lern this go to Laravel official doc under sanctum under spa authentication
+
+```````````````````````````````important step 
+https://laravel.com/docs/11.x/sanctum#spa-authentication
+under this
+Authorizing Private Broadcast Channels
+
+
+This step helps us to easily access channels.php ith api prefix since we are workimg wit api
+
+
+this is how it will look like
+
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__ . '/../routes/web.php',
+        commands: __DIR__ . '/../routes/console.php',
+        // channels: __DIR__.'/../routes/channels.php',
+        health: '/up',
+    )
+    ->withBroadcasting(
+        __DIR__ . '/../routes/channels.php',
+        ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        //
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })->create();
+
+
+
+
+
+
+=================== 10:21==================
+
+we need now to eneable pusher authorisation
+add authoriser function in echo.php its already there in our react
+
+
+for playing a sound or bell he is using howler package reat
+import { Howl } from 'howler'
+app/navigation.js
+u can see there is a useeffect to fetch messages
+
+
+````` app/navigation.js `````
+
+  const sound = new Howl({
+        src: ['/media/bell.mp3'],
+    })
+
+  const handleEchoCallback = () => {
+        setUnreadMessages(prevUnread => prevUnread + 1)
+        triggerAnimation()
+        sound.play()
+    }
+
+useEffect(() => {
+        // Here we are going to listen for real-time events.
+        if (echo) {
+            echo.private(`chat.${user?.id}`).listen('MessageSent', event => {
+                if (event.receiver.id === user?.id)
+                    console.log('Real-time event received: ', event)
+
+                handleEchoCallback()
+            })
+        }
+
+        axios
+            .post('/api/get-unread-messages', {
+                user_id: user?.id,
+            })
+            .then(res => {
+                setUnreadMessages(res.data.length)
+                setMessages(res.data)
+            })
+    }, [memoizedValues])
+
+```````````````````````
+
+
+
+u can also create a hook called useEccho
+```````````````````````````````
+import { useEffect, useState } from 'react';
+import axios from 'axios'; // Import axios directly from the library
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
+window.Pusher = Pusher;
+
+const useEcho = () => {
+    const [echoInstance, setEchoInstance] = useState(null);
+
+    useEffect(() => {
+        // Create the Echo instance here...
+        const echo = new Echo({
+            broadcaster: 'pusher', // Assuming you're using Pusher
+            key: process.env.REACT_APP_REVERB_APP_KEY,
+            authorizer: channel => {
+                return {
+                    authorize: (socketId, callback) => {
+                        axios
+                            .post('/api/broadcasting/auth', {
+                                socket_id: socketId,
+                                channel_name: channel.name,
+                            })
+                            .then(response => {
+                                callback(false, response.data);
+                            })
+                            .catch(error => {
+                                callback(true, error);
+                            });
+                    },
+                };
+            },
+            wsHost: process.env.REACT_APP_REVERB_HOST,
+            wsPort: process.env.REACT_APP_REVERB_PORT ?? 80,
+            wssPort: process.env.REACT_APP_REVERB_PORT ?? 443,
+            forceTLS:
+                (process.env.REACT_APP_REVERB_SCHEME ?? 'https') === 'https',
+            enabledTransports: ['ws', 'wss'],
+        });
+
+        setEchoInstance(echo);
+
+        // Cleanup function to disconnect Echo instance when component unmounts
+        return () => {
+            echo.disconnect();
+        };
+    }, []);
+
+    return echoInstance;
+};
+
+export default useEcho;
+
+
+
+============================ 14:55
+then we can start using it like in navigation 
+import useEcho from '@/hooks/echo'
+
+  const echo = useEcho()
+
+
+    useEffect(() => {
+        // Here we are going to listen for real-time events.
+        if (echo) {
+            echo.private(`chat.${user?.id}`).listen('MessageSent', event => {
+                if (event.receiver.id === user?.id)
+                    console.log('Real-time event received: ', event)
+
+                handleEchoCallback()
+            })
+        }
+
+        axios
+            .post('/api/get-unread-messages', {
+                user_id: user?.id,
+            })
+            .then(res => {
+                setUnreadMessages(res.data.length)
+                setMessages(res.data)
+            })
+    }, [memoizedValues])
+
+
+
+
+
+
+
+
+
+
+
+
+============= 16:56 ===============in laravel======== 
+
+create messageSent Event
+
+php artisan make:event MessageSent
+
+Thats what lavel backent=d will use to emit to our front end
+
+add shouldBroadcast
+then specify the channel and id of the reciver
+
+in construct specify the load of our event thus it will be the data the receiver gets
+
+thus reciver, sender and message
+
+in the broadcast on u have to specify the id of the receiver going to recive the event
+
+new PrivateChannel('chat.{$this->receiver->id}')
+
+17:40------------
+this will work because we have id param in channels route
+routes/channels.php which helps to verify who can listen to our channel
+
+```````````
+<?php
+
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::channel('chat.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
+});
+
+
+``````` MessageSent Event
+<?php
+
+namespace App\Events;
+
+use App\Models\User;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class MessageSent implements ShouldBroadcast
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(public User $receiver, public User $sender, public string $message)
+    {
+        //
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return array<int, \Illuminate\Broadcasting\Channel>
+     */
+    public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel("chat.{$this->receiver->id}"),
+        ];
+    }
+}
+
+
+============================================= 18:22
+next step is we need to broad cast our event to the front end
+
+```````` create chatMessageController file ````````````````````
+
+from there after storing the message u can then broadcast the event
+
+retun noContent because all payload is broadcasted to the front end
+
+
+`````` ChatMessageController.php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Events\MessageSent;
+use App\Models\ChatMessage;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
+class ChatMessageController extends Controller
+{
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): Response
+    {
+        ChatMessage::create($request->toArray());
+
+        $receiver = User::find($request->user_id);
+        $sender = User::find($request->from);
+
+        broadcast(new MessageSent($receiver, $sender, $request->message));
+
+        return response()->noContent();
+    }
+
+    /**
+     * Get the messages for the user along with messages count.
+     */
+    public function getUnreadMessages(Request $request): Collection
+    {
+        return ChatMessage::with('from')->where('user_id', $request->user_id)
+            ->get();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+============== 19:21=====================
+
+logic to send a message in react is in app/dashboard/page.js
+
+ const sendMessage = receiver => {
+        setIsSending(true)
+
+        axios
+            .post('/api/send-message', {
+                user_id: receiver,
+                from: user?.id,
+                message: message,
+            })
+            .then(res => {
+                if (res.statusText === 'No Content') {
+                    setIsSending(false)
+                    onClose()
+                }
+            })
+    }
+
+
+
+
+
+lets start our reverb server
+php artisan reverb start
+pass --debug so that we can see incoming events
+
+php artisan reverb:start --debug
+
+php artisan queue:work
+
+
+================= 20:52 ================
+ensure u pass in bearer token for authorisation in axios when sending requests
+
+
+
+esure to set reverb port to 8000 in ur env
+by default its 8080
+
+8080
+
+no just set ur react to port 8080 in the reverb configs seems 
+that reverbs port with laravel

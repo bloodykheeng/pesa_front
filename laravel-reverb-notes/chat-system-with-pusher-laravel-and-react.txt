@@ -1,0 +1,78 @@
+Chat app Laravel react
+
+https://youtube.com/playlist?list=PLlameCF3cMEvanEG-QYO8z2GaBZdQVi-K&si=3tqjBAiQQzmChSM3
+
+To send messages we use Laravel pusher
+https://pusher.com/tutorials/chat-laravel/
+
+go sign up and create your own account
+Then create a channel in the dashboard
+
+then it will give u the code
+
+now in Laravel uill need to install
+composer require pusher/pusher-php-serve:5.0.3
+
+add version 5.0.3 cos its most stable
+:5
+------------------------------------------------------
+
+then add credentials in env file
+the dashboard gives u
+
+broadcast driver should be pusher not log in ur env
+
+PUSHER_APP_ID=1848892
+PUSHER_APP_KEY=82cbc1fe78ac0fb32cf2
+PUSHER_APP_SECRET=3f4117b1944245b2995e
+PUSHER_APP_CLUSTER=ap2
+------ 5:37
+now lets create an event 
+php artisan make:event Message
+
+app/events/message.php
+thats where the file will be created
+
+
+in broadcastOn add the channel eg return ['chat']
+
+also add broadCastAs function it will return message
+
+we need to add the message too as the last thing in the construct
+
+public $message;
+public function __construct($message){
+$this->message = $message
+}
+
+we need message and user name 
+--------------- 7:24
+
+for php 8 do this 
+public function __construct(
+public string $username,
+public string $message,
+){
+
+}
+
+now we hgave to use that event in the chat controller
+
+
+=================== video 2 react and pusher with laravel ===========================
+
+pusher react get his code from react
+
+
+
+new tutorial
+https://youtu.be/Aeeb47ztO8o?si=LsUE8BBfjlRjTMQc
+
+https://youtu.be/tQCAF5sGwuw?si=cOGubF2Xe5Mw8RyY
+
+
+pusher is paid
+reverb is free
+
+https://www.youtube.com/live/BEKiNgcBqJw?si=nPWS3K3GP2ifjJM2
+

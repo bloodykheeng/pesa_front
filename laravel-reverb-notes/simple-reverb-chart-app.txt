@@ -1,0 +1,164 @@
+https://youtu.be/huLSxcxFRl4?si=o6kA6rCw3Ge3woDA
+
+====================start =========================
+install new Laravel project eg
+
+Laravel new reverbdemo
+add in live wire
+
+composer require livewire/livewire
+
+we are to create a small app that allows us to chat
+thus two users need to be looged in and a data table for themessage
+
+1:00
+
+lets creat two users in the seder and a model of message and 
+seeder
+public function run(){
+
+User::factory()->create([
+	'name'=>'Freddy',
+	'email'=>'freddy@example.com',
+]);
+
+User::factory()->create([
+	'name'=>'Eddy',
+	'email'=>'eddy@example.com',
+]);
+
+}
+
+migration
+fields
+id , user_id, message, timestamp
+
+4:13========
+in model
+public function(){
+	return $this->hasMany(Message::class)
+}
+
+============== 5:00 ===================
+now create a live wire component with a chat
+
+add it our routes
+
+Route::get('/chat',function(){
+	return view('chat')->name('chat');
+})
+
+
+
+13:47 =================
+
+create a message event and install reverb too
+
+php artisan make:event MessageEvent
+
+-----------installing reverb------------
+php artisan install:broadcasting
+question will come install reverb : yes
+install node dependacies : yes
+
+
+so in our event we use ShouldBroadcastNow because e dont want que to be running
+
+class MessageEvent implemets ShouldBroadcastNow{}
+
+--------------------------- 15:01
+lets be on a normal channel not a private one
+
+so in our event under broadcastOn
+public function broadcastOn(){
+	return [
+		new Channel('our-channel')
+]
+}
+
+
+--------------------------------------
+in our constructor lets accept a message and a user id
+and save them to the database
+
+public function __construct($user_id,$message){
+	$newMessage = New Message();
+	$newMessage->user_id = $user_id;
+	$newMessage->message = $message;
+	$newMessage->save();
+}
+
+
+//-------------------------- 16:00---------------------
+in the event ite self which is gonna be broad casted lets add to event properties to be able to be listened for so whenever the event is triggered we should be able to share the message and username
+
+``````````````` message event
+public $username;
+public $message;
+
+public function __construct($user_id,$message){
+	$newMessage = New Message();
+	$newMessage->user_id = $user_id;
+	$newMessage->message = $message;
+	$newMessage->save();
+
+	$this->message = $message;
+	$this->username = User::find($user_id)->name;
+	
+}
+
+
+```````````````
+
+
+================================== 18:47 =======================
+
+
+so in our live wire chat component when user presses submit button we then go ahead and dispatch the event
+
+remember our event takes in user id and message
+
+``` view file to sumit message
+public function submitMessage(){
+	MessageEvent::dispatch(Auth::user()->id,$this->message);
+}
+
+====================== test the event 19:59===================
+php artisan migrate
+php artisan db:seed
+php artisan reverb:start
+
+
+so now every time u sent the event will be triggerd and the data will be sent to the database
+
+now
+note in the view he gets all messages from the database
+
+
+================ 24:11 =================
+listening to the event in blade view
+
+go into the view and add a listenr for the message
+so he will be pusing every new message to the all messages convo the convo array includes all messages fetched from the database
+
+public function listenForMessage(){
+	$this->convo[] = [
+		'username'=>$data->username,
+		'message'=>$data->message
+	]
+}
+
+-------------------- 25:00
+then we need to tell it to listen to a particular reverb channel where the event is
+
+we are using live wire attributes On
+which uses echo under the hood
+
+
+#[On('echo:our-channel, MessageEvent')]
+public function listenForMessage(){
+	$this->convo[] = [
+		'username'=>$data['username'],
+		'message'=>$data['message']
+	]
+}
