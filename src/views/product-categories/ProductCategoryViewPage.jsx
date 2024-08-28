@@ -25,7 +25,8 @@ const ProductCategoryViewPage = () => {
                     <div style={{ minHeight: "50vh", display: "flex", flexWrap: "wrap", gap: "1rem" }}>
                         {/* Display Image */}
                         <div className="card flex justify-content-center">
-                            <Image src={productCategoryData.cloudinary_photo_url} alt="Category Image" width="250" preview />
+                            {/* <Image src={productCategoryData.cloudinary_photo_url} alt="Category Image" width="250" preview /> */}
+                            <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${productCategoryData?.photo_url}`} alt="Category Image" width="250" preview />
                         </div>
                         <div>
                             <p>

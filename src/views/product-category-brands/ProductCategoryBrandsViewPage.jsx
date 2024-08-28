@@ -26,7 +26,8 @@ const ProductCategoryBrandsViewPage = () => {
                     <div style={{ minHeight: "50vh", display: "flex", flexWrap: "wrap", gap: "1rem" }}>
                         {/* Display Image */}
                         <div className="card flex justify-content-center">
-                            <Image src={productCategoryBrandData?.cloudinary_photo_url || productCategoryBrandData?.photo_url} alt="Brand Image" width="250" preview />
+                            {/* <Image src={productCategoryBrandData?.cloudinary_photo_url || productCategoryBrandData?.photo_url} alt="Brand Image" width="250" preview /> */}
+                            <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${productCategoryBrandData.photo_url}`} alt="Category Image" width="250" preview />
                         </div>
                         <div>
                             <p>

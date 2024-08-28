@@ -20,6 +20,10 @@ import { Delete as DeleteIcon } from "@mui/icons-material";
 //============ get Auth Context ===============
 import useAuthContext from "../../../context/AuthContext";
 
+//
+import useHandleQueryError from "../../../hooks/useHandleQueryError";
+import handleMutationError from "../../../hooks/handleMutationError";
+
 function ListRecords() {
     const { user: loggedInUserData, logoutMutation, logoutMutationIsLoading } = useAuthContext();
     console.log("🚀 ~ ListRecords ~ loggedInUserData:", loggedInUserData);
@@ -88,16 +92,8 @@ function ListRecords() {
 
     // //===================end handle table server side rendering ==================
 
-    useEffect(() => {
-        if (getListOfPermissionServices?.isError) {
-            console.log("Error fetching List of Hospitals :", getListOfPermissionServices?.error);
-            getListOfPermissionServices?.error?.response?.data?.message
-                ? toast.error(getListOfPermissionServices?.error?.response?.data?.message)
-                : !getListOfPermissionServices?.error?.response
-                ? toast.warning("Check Your Internet Connection Please")
-                : toast.error("An Error Occured Please Contact Admin");
-        }
-    }, [getListOfPermissionServices?.isError]);
+    // Use the custom hook to handle errors with useMemo on the error object
+    useHandleQueryError(getListOfPermissionServices?.isError, getListOfPermissionServices?.error);
 
     console.log("User Permissions list : ", getListOfPermissionServices?.data?.data);
 

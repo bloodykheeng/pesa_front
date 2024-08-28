@@ -8,6 +8,7 @@ import ProductCategoryBrandsViewPage from "./views/product-category-brands/Produ
 
 import ProductTypesPage from "./views/product-types/ProductTypesPage.jsx";
 import PackagesPage from "./views/packages/PackagesPage.jsx";
+import PackagesViewPage from "./views/packages/PackagesViewPage.jsx";
 import OrdersPage from "./views/orders/OrdersPage.jsx";
 import OrdersViewPage from "./views/orders/OrdersViewPage.jsx";
 import CustomersPage from "./views/customers/UserPage";
@@ -221,6 +222,13 @@ function AppRoutes() {
             element: PackagesPage,
             layout: "/admin",
         },
+        {
+            path: "/packages/package",
+            name: "packages/package",
+            element: PackagesViewPage,
+            layout: "/admin",
+        },
+
         {
             path: "/customers",
             name: "customers",

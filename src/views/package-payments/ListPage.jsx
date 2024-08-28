@@ -4,53 +4,56 @@ import CreateForm from "./CreateForm";
 
 import EditForm from "./EditForm";
 
-import moment from "moment";
-
 import { useNavigate } from "react-router-dom";
 
-import { getAllPackages, getPackageById, postPackage, updatePackage, deletePackageById } from "../../services/packages/packages-service";
+import { getAllPackagePayments, getPackagePaymentById, postPackagePayment, updatePackagePayment, deletePackagePaymentById } from "../../services/packages/package-payments-service";
 
 import MuiTable from "../../components/general_components/MuiTable";
 import { toast } from "react-toastify";
-import { Button } from "primereact/button";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { confirmDialog } from "primereact/confirmdialog";
 import { Panel } from "primereact/panel";
-import { Image } from "primereact/image";
 
 import useAuthContext from "../../context/AuthContext";
 import useHandleQueryError from "../../hooks/useHandleQueryError";
 import handleMutationError from "../../hooks/handleMutationError";
 
-function ListPage({ customerData, ...props }) {
+//
+import { Dialog } from "primereact/dialog";
+import { Button } from "primereact/button";
+import { Image } from "primereact/image";
+import moment from "moment";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+
+function ListPage({ packageData, ...props }) {
     const { getUserQuery } = useAuthContext();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["packages", "by_customer_id", customerData?.id],
-        queryFn: () => getAllPackages({ created_by: customerData?.id }),
+        queryKey: ["package-payments", "get_by_package_id", packageData?.id],
+        queryFn: () => getAllPackagePayments({ package_id: packageData?.id }),
     });
-    console.log("🚀Packages ~ ListPage ~ data:", data);
+    console.log("🚀Payments ~ ListPage ~ data:", data);
     // useEffect(() => {
     //     if (isError) {
     //         console.log("Error fetching List of data :", error);
     //         error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
     //     }
     // }, [isError]);
-    console.log("Error fetching packages List of data :", error);
+
     // Use the custom hook to handle errors with useMemo on the error object
     useHandleQueryError(isError, error);
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
-        mutationFn: (variables) => deletePackageById(variables),
+        mutationFn: (variables) => deletePackagePaymentById(variables),
         onSuccess: (data) => {
-            queryClient.invalidateQueries(["packages"]);
+            queryClient.invalidateQueries(["package-payments"]);
             setDeleteMutationIsLoading(false);
             toast.success("deleted Successfully");
         },
         onError: (error) => {
-            console.log("🚀 ~ ListPage ~ error:", error);
             // setDeleteMutationIsLoading(false);
             // error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
             // Custom hook to handle mutation error
@@ -114,6 +117,15 @@ function ListPage({ customerData, ...props }) {
         setShowBudjetOutPutAddForm(false);
     };
 
+    ///=================
+    const [selectedProducts, setSelectedProducts] = useState([]);
+    const [isDialogVisible, setIsDialogVisible] = useState(false);
+
+    const handlePackageClick = (products) => {
+        setSelectedProducts(products);
+        setIsDialogVisible(true);
+    };
+
     let tableId = 0;
     const columns = [
         {
@@ -128,106 +140,73 @@ function ListPage({ customerData, ...props }) {
             },
         },
         {
-            title: "Photo",
-            field: "photo_url",
+            title: "Order Number",
+            field: "order.order_number",
             render: (rowData) => {
-                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-            },
-        },
-        // {
-        //     title: "Photo",
-        //     field: "cloudinary_photo_url",
-        //     render: (rowData) => {
-        //         return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-        //     },
-        // },
-        {
-            title: "Name",
-            field: "name",
-        },
-
-        {
-            title: "order number",
-            field: "order_number",
-        },
-        {
-            title: "Status",
-            field: "status",
-            render: (rowData) => {
-                let statusColor;
-
-                if (rowData?.status === "pending") {
-                    statusColor = "orange";
-                } else if (rowData?.status?.toLowerCase() === "processing") {
-                    statusColor = "blue";
-                } else if (rowData?.status?.toLowerCase() === "transit") {
-                    statusColor = "purple";
-                } else if (rowData?.status?.toLowerCase() === "delivered") {
-                    statusColor = "green";
-                } else if (rowData?.status?.toLowerCase() === "cancelled") {
-                    statusColor = "red";
-                } else {
-                    statusColor = "gray";
-                }
-
-                return <span style={{ color: statusColor, fontWeight: "bold" }}>{rowData?.status?.charAt(0).toUpperCase() + rowData?.status?.slice(1)}</span>;
+                return <div>{rowData?.order?.order_number}</div>;
             },
         },
         {
-            title: "Pickup",
-            field: "pickup",
+            title: "Customer",
+            field: "customer.name",
         },
         {
-            title: "destination",
-            field: "destination",
+            title: "Amount",
+            field: "amount",
+            render: (rowData) => {
+                return rowData.amount ? parseFloat(rowData.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "No amount";
+            },
         },
         {
-            title: "Owner Name",
+            title: "Payment Method",
+            field: "payment_method",
+        },
+        {
+            title: "Transaction Number",
+            field: "transaction_number",
+        },
+        {
+            title: "Details",
+            field: "details",
+        },
+        {
+            title: "Created By Name",
             field: "created_by.name",
+            hidden: false,
         },
         {
-            title: "Owner Phone",
-            field: "created_by.phone",
-        },
-        {
-            title: "Owner Email",
+            title: "Created By Email",
             field: "created_by.email",
+            hidden: true,
         },
 
         {
-            title: "Extra Info",
-            field: "extraInfo",
-        },
-        // {
-        //     title: "Details",
-        //     field: "details",
-        // },
-
-        // {
-        //     title: "Photo",
-        //     field: "photo_url",
-        //     render: (rowData) => {
-        //         return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-        //     },
-        // },
-
-        {
-            title: "Date",
+            title: "Created At",
             field: "created_at",
+            hidden: true,
             render: (rowData) => {
                 return moment(rowData.created_at).format("lll");
             },
         },
+
+        {
+            title: "Updated By Name",
+            field: "updated_by.name",
+            hidden: false,
+        },
+        {
+            title: "Updated By Email",
+            field: "updated_by.email",
+            hidden: true,
+        },
+
         {
             title: "Updated At",
             field: "updated_at",
+            hidden: true,
             render: (rowData) => {
                 return moment(rowData.updated_at).format("lll");
             },
-        },
-        {
-            title: "Updated By",
-            field: "updated_by.email",
         },
     ];
 
@@ -238,14 +217,14 @@ function ListPage({ customerData, ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
-            <Panel header="Packages" style={{ marginBottom: "20px" }} toggleable>
-                {/* <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
-                    {activeUser?.permissions.includes("create") && <Button label="Add Package" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
-                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
-                </div> */}
+            <Panel header="Package Payments" style={{ marginBottom: "20px" }} toggleable>
+                <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+                    {activeUser?.permissions.includes("create") && <Button label="Add Payment" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
+                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} orderData={packageData} />
+                </div>
 
                 <MuiTable
-                    tableTitle="Packages"
+                    tableTitle="Payments"
                     tableData={data?.data?.data ?? []}
                     tableColumns={columns}
                     handleShowEditForm={handleShowEditForm}
@@ -254,19 +233,33 @@ function ListPage({ customerData, ...props }) {
                     showDelete={activeUser?.permissions.includes("delete")}
                     loading={isLoading || status === "loading" || deleteMutationIsLoading}
                     //
-                    handleViewPage={(rowData) => {
-                        navigate("package", { state: { packageData: rowData } });
-                    }}
-                    showViewPage={true}
-                    hideRowViewPage={false}
+                    // hideRowEdit={(rowData) => (rowData?.delivery_status === "received" ? true : false)}
+                    // //
+                    // handleViewPage={(rowData) => {
+                    //     navigate("order", { state: { orderData: rowData } });
+                    // }}
+                    // showViewPage={true}
+                    // hideRowViewPage={false}
                     //
                     //
                     exportButton={true}
-                    pdfExportTitle="Packages"
-                    csvExportTitle="Packages"
+                    pdfExportTitle="Payments"
+                    csvExportTitle="Payments"
                 />
 
                 {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}
+
+                {/* Dialog to show products */}
+                {/* <Dialog header="Products in Order" maximizable visible={isDialogVisible} style={{ minWidth: "50vw" }} onHide={() => setIsDialogVisible(false)}>
+                    <DataTable value={selectedProducts} responsiveLayout="scroll">
+                        <Column field="image" header="Image" body={(rowData) => <Image src={rowData.product.cloudinary_photo_url || rowData.product.photo_url} alt={rowData.product.name} width="100" preview />} />
+                        <Column field="name" header="Name" sortable body={(rowData) => rowData.product.name} />
+                        <Column field="price" header="Price" sortable body={(rowData) => `(UGX) ${rowData.price}`} />
+                        <Column field="quantity" header="Quantity" sortable body={(rowData) => rowData.quantity} />
+                        <Column field="created_at" header="Created At" sortable body={(rowData) => moment(rowData.created_at).format("YYYY-MM-DD HH:mm:ss")} />
+                        <Column field="updated_at" header="Updated At" sortable body={(rowData) => moment(rowData.updated_at).format("YYYY-MM-DD HH:mm:ss")} />
+                    </DataTable>
+                </Dialog> */}
             </Panel>
         </div>
     );

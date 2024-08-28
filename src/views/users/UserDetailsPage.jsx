@@ -13,7 +13,12 @@ function UserDetailsPage({ user, showModal, handleCloseModal }) {
                 <div className="p-col-12 p-md-6">
                     <Panel header="Profile Image" toggleable>
                         <div className="card flex justify-content-center p-2">
-                            {user?.cloudinary_photo_url ? <Image src={user.cloudinary_photo_url} alt={user.name} height="250" preview /> : <div style={{ width: "300px", height: "250px", display: "flex", justifyContent: "center", alignItems: "center", border: "1px dashed #ccc" }}>No Image</div>}
+                            {/* {user?.cloudinary_photo_url ? <Image src={user.cloudinary_photo_url} alt={user.name} height="250" preview /> : <div style={{ width: "300px", height: "250px", display: "flex", justifyContent: "center", alignItems: "center", border: "1px dashed #ccc" }}>No Image</div>} */}
+                            {user?.photo_url ? (
+                                <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${user?.photo_url}`} alt={user.name} height="250" preview />
+                            ) : (
+                                <div style={{ width: "300px", height: "250px", display: "flex", justifyContent: "center", alignItems: "center", border: "1px dashed #ccc" }}>No Image</div>
+                            )}
                         </div>
                     </Panel>
                 </div>

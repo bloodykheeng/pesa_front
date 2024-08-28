@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { getAllOrders, getOrderById, postOrder, updateOrder, deleteOrderById } from "../../services/orders/orders-service";
+import { getAllPackagePayments, getPackagePaymentById, postPackagePayment, updatePackagePayment, deletePackagePaymentById } from "../../services/packages/package-payments-service";
 
 import RowForm from "./widgets/RowForm";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
@@ -17,15 +17,14 @@ function EditForm(props) {
 
     const [editMutationIsLoading, setEditMutationIsLoading] = useState(false);
     const editMutation = useMutation({
-        mutationFn: (variables) => updateOrder(props?.rowData?.id, variables),
+        mutationFn: (variables) => updatePackagePayment(props?.rowData?.id, variables),
         onSuccess: () => {
             setEditMutationIsLoading(false);
             props.onClose();
             toast.success("Edited Successfully");
-            queryClient.invalidateQueries(["orders"]);
+            queryClient.invalidateQueries(["package-payments"]);
         },
         onError: (error) => {
-            console.log("🚀product category  ~ EditForm ~ error:", error);
             handleMutationError(error, setEditMutationIsLoading);
         },
     });
@@ -42,9 +41,12 @@ function EditForm(props) {
 
         const formData = new FormData();
         formData.append("_method", "PUT");
-        formData.append("delivery_status", data.delivery_status);
-        formData.append("payment_status", data.payment_status);
-        formData.append("charged_amount", data.charged_amount);
+        formData.append("order_id", data.order_id);
+        formData.append("user_id", data.user_id);
+        formData.append("amount", data.amount);
+        formData.append("payment_method", data.payment_method);
+        formData.append("transaction_number", data.transaction_number);
+        formData.append("details", data.details);
         // formData.append("description", data.description);
         // formData.append("status", data.status);
         // formData.append("photo", data.photo); // Assuming 'photo' is the field name for the file upload
@@ -57,7 +59,7 @@ function EditForm(props) {
         editMutation.mutate(formData);
     };
     return (
-        <Dialog header="Orders Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
+        <Dialog header="Payments Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
             {/* <h3>Programs Edit Form</h3> */}
             <p>Edit Data Below</p>
             <RowForm initialData={props.rowData} handleSubmit={handleSubmit} />

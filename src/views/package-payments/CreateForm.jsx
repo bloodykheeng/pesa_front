@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { Dialog } from "primereact/dialog";
 
-import { getAllProductCategoryBrands, getProductCategoryBrandById, postProductCategoryBrand, updateProductCategoryBrand, deleteProductCategoryBrandById } from "../../services/products/product-category-brands-service";
+import { getAllPackagePayments, getPackagePaymentById, postPackagePayment, updatePackagePayment, deletePackagePaymentById } from "../../services/packages/package-payments-service";
 
 import RowForm from "./widgets/RowForm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 //
 import handleMutationError from "../../hooks/handleMutationError";
 
-function CreateForm({ productCategoryData, ...props }) {
+function CreateForm(props) {
     const [name, setName] = useState();
     const [details, setDetails] = useState();
     const [loading, setLoading] = useState(false);
@@ -23,14 +23,15 @@ function CreateForm({ productCategoryData, ...props }) {
 
     const [creactMutationIsLoading, setCreactMutationIsLoading] = useState(false);
     const creactMutation = useMutation({
-        mutationFn: postProductCategoryBrand,
+        mutationFn: postPackagePayment,
         onSuccess: () => {
-            queryClient.invalidateQueries(["category_brands"]);
+            queryClient.invalidateQueries(["package-payments"]);
             toast.success("created Successfully");
             props.onClose();
             setCreactMutationIsLoading(false);
         },
         onError: (error) => {
+            // props.onClose();
             handleMutationError(error, setCreactMutationIsLoading);
         },
     });
@@ -43,9 +44,9 @@ function CreateForm({ productCategoryData, ...props }) {
     };
 
     return (
-        <Dialog header="Product Category Brand Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
+        <Dialog header="Payments Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
             <p>Fill in the form below</p>
-            <RowForm handleSubmit={handleSubmit} productCategoryData={productCategoryData} />
+            <RowForm handleSubmit={handleSubmit} orderData={props?.orderData} />
             {/* <h4>{creactProgramsMutation.status}</h4> */}
             {creactMutationIsLoading && (
                 <center>

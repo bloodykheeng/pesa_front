@@ -9,6 +9,9 @@ import { Dialog } from "primereact/dialog";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { toast } from "react-toastify";
 
+//
+import handleMutationError from "../../hooks/handleMutationError";
+
 function EditForm(props) {
     const queryClient = useQueryClient();
 
@@ -22,9 +25,7 @@ function EditForm(props) {
             queryClient.invalidateQueries(["category_brands"]);
         },
         onError: (error) => {
-            setEditMutationIsLoading(false);
-            // props.onClose();
-            error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+            handleMutationError(error, setEditMutationIsLoading);
         },
     });
 
