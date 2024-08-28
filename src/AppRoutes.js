@@ -16,8 +16,10 @@ import CustomersViewPage from "./views/customers/UsersViewPage";
 
 import ReferalsPage from "./views/referals/ReferalsPage.jsx";
 
+import DashboardPage from "./views/dashboard/DashboardPage";
+
 // ============ Customm component routes ========================
-const DashboardPage = lazy(() => import("./components/Dashboard"));
+// const DashboardPage = lazy(() => import("./components/Dashboard"));
 const FormLayoutDemo = lazy(() => import("./components/FormLayoutDemo"));
 const InputDemo = lazy(() => import("./components/InputDemo"));
 const FloatLabelDemo = lazy(() => import("./components/FloatLabelDemo"));
