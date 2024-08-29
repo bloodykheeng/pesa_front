@@ -240,7 +240,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
                                     </Stack>
                                 </Grid>
 
-                                <Grid item xs={12} md={6} lg={3}>
+                                <Grid item xs={12} md={6} lg={4}>
                                     <Stack spacing={1}>
                                         <InputLabel htmlFor="endDate">End Date</InputLabel>
                                         <Field name="endDate">

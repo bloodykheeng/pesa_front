@@ -25,7 +25,7 @@ const formatNumber = (number) => {
     return numeral(number).format("0.[00]a"); // e.g., 3.5k, 3.45m, 3.4b
 };
 
-const OrdersCard = () => {
+const PackageStatsCard = () => {
     //==================== chart filters ===================
     const [showFiltersFormDialog, setShowFiltersFormDialog] = useState(false);
 
@@ -52,30 +52,29 @@ const OrdersCard = () => {
     //==================== end chart filters ===================
 
     // Products
-    const OrderStatisticsDataQuery = useQuery({
+    const PackageStatisticsDataQuery = useQuery({
         disable: false,
-        queryKey: ["order-statistics", ...Object.values(filtersFormInitialDataValues)],
-        queryFn: () => getAllOrderStatistics({ ...filtersFormInitialDataValues }),
+        queryKey: ["package-statistics", ...Object.values(filtersFormInitialDataValues)],
+        queryFn: () => getAllPackageStatistics({ ...filtersFormInitialDataValues }),
     });
 
     // Use the custom hook to handle errors with useMemo on the error object
-    useHandleQueryError(OrderStatisticsDataQuery?.isError, OrderStatisticsDataQuery?.error);
+    useHandleQueryError(PackageStatisticsDataQuery?.isError, PackageStatisticsDataQuery?.error);
 
-    const OrderStatisticsData = OrderStatisticsDataQuery?.data?.data?.data;
-    console.log("🚀 ~ OrdersCard ~ OrderStatisticsData:", OrderStatisticsData);
+    console.log("🚀 ~ OrdersCard ~ PackageStatisticsDataQuery?.data?.data?.data: ", PackageStatisticsDataQuery?.data?.data?.data);
 
     //========================
 
-    const SalesCard = ({ total_orders, total_sales }) => {
+    const SalesCard = ({ total_packages, total_sales }) => {
         const [visible, setVisible] = useState(false);
 
         return (
             <div className="card mb-0">
                 <div className="flex justify-content-between mb-3">
                     <div>
-                        <span className="block text-500 font-medium mb-3">Orders</span>
-                        <Tooltip title="total number of orders" arrow>
-                            <div className={`text-900 font-medium text-xl`}>{formatNumber(total_orders)}</div>
+                        <span className="block text-500 font-medium mb-3">Packages</span>
+                        <Tooltip title="total number of packages" arrow>
+                            <div className={`text-900 font-medium text-xl`}>{formatNumber(total_packages)}</div>
                         </Tooltip>
                     </div>
                     <div
@@ -116,7 +115,7 @@ const OrdersCard = () => {
     return (
         <>
             <Grid item xs={12} md={6} lg={3}>
-                {OrderStatisticsDataQuery?.isLoading ? (
+                {PackageStatisticsDataQuery?.isLoading ? (
                     <div className="col-12">
                         {/* <ProgressBar mode="indeterminate" style={{ height: "6px" }} /> */}
                         <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -126,7 +125,7 @@ const OrdersCard = () => {
                             </div>
                         </div>
                     </div>
-                ) : OrderStatisticsDataQuery?.isError ? (
+                ) : PackageStatisticsDataQuery?.isError ? (
                     <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <div style={{ maxWidth: "400px" }}>
                             <Lottie animationData={SnailErrorLottie} loop={true} autoplay={true} />
@@ -134,7 +133,7 @@ const OrdersCard = () => {
                     </div>
                 ) : (
                     <>
-                        <SalesCard {...OrderStatisticsData} />
+                        <SalesCard {...PackageStatisticsDataQuery?.data?.data?.data} />
                     </>
                 )}
             </Grid>
@@ -142,4 +141,4 @@ const OrdersCard = () => {
     );
 };
 
-export default OrdersCard;
+export default PackageStatsCard;

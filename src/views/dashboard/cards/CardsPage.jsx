@@ -4,18 +4,18 @@ import { Grid, Stack } from "@mui/material";
 
 //
 import OrdersCard from "./OrdersCard";
+import CustomersStatsCard from "./CustomersStatsCard";
+import PackageStatsCard from "./PackageStatsCard";
+import TransactionStatsCard from "./TransactionStatsCard";
 
 const CardsPage = ({ measure = "sales_value" }) => {
     return (
         // <div style={{ padding: "10px" }}>
         <Grid style={{ padding: "10px" }} container spacing={2} justifyContent="center" alignItems="center">
-            <OrdersCard measure={measure} />
-
-            {/* <RevenueWeekToDate measure={measure} />
-
-            <RevenueMonthToDate measure={measure} />
-
-            <RevenueYearToDate measure={measure} /> */}
+            <OrdersCard />
+            <PackageStatsCard />
+            <CustomersStatsCard />
+            <TransactionStatsCard />
         </Grid>
         // </div>
     );

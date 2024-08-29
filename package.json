@@ -32,6 +32,8 @@
         "final-form": "^4.20.10",
         "final-form-set-field-touched": "^1.0.1",
         "formik": "^2.4.6",
+        "highcharts": "^11.4.7",
+        "highcharts-react-official": "^3.2.1",
         "howler": "^2.2.4",
         "jwt-decode": "^4.0.0",
         "lottie-react": "^2.4.0",
