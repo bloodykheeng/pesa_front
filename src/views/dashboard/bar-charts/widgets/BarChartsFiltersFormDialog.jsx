@@ -93,6 +93,22 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
         { id: 5, label: "Cancelled", value: "CANCELLED" },
     ];
 
+    //
+    const orderByOptions = [
+        { id: 1, label: "Default", value: "default" },
+        { id: 2, label: "Ascending", value: "asc" },
+        { id: 3, label: "Descending", value: "desc" },
+    ];
+
+    const dataLimitOptions = [
+        { id: 1, label: "All", value: "all" },
+        { id: 2, label: "5", value: 5 },
+        { id: 3, label: "10", value: 10 },
+        { id: 4, label: "20", value: 20 },
+        { id: 5, label: "25", value: 25 },
+        { id: 6, label: "30", value: 30 },
+    ];
+
     //-=========== handle reset ===============
     const handleReset = (resetForm) => {
         // setShowResetConfirmDialog(true);
@@ -108,6 +124,8 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
             regions: [],
             routes: [],
             statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
+            orderBy: { id: 3, label: "Descending", value: "desc" },
+            dataLimit: { id: 2, label: "5", value: 5 },
             productCategories: [],
             productCategoryBrand: [],
             products: [],
@@ -123,6 +141,8 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
             startDate: null,
             endDate: null,
             statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
+            orderBy: { id: 3, label: "Descending", value: "desc" },
+            dataLimit: { id: 2, label: "5", value: 5 },
             productCategories: [],
             productCategoryBrand: [],
             products: [],
@@ -419,6 +439,78 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
                                 </Stack>
                             </Grid>
                             {/* Multi-select fields */}
+
+                            {/* orderBy Single Select */}
+                            <Grid item xs={12} md={6} lg={4}>
+                                <Stack spacing={1}>
+                                    <InputLabel htmlFor="orderBy">Order By</InputLabel>
+                                    <Field name="orderBy">
+                                        {({ field }) => (
+                                            <Autocomplete
+                                                options={orderByOptions}
+                                                //isOptionEqualToValue helps to define how comparison is gonna be made
+                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                getOptionLabel={(option) => option.label}
+                                                value={field.value}
+                                                onChange={(event, newValue) => setFieldValue("orderBy", newValue)}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        variant="outlined"
+                                                        placeholder="Select order by"
+                                                        error={Boolean(touched.order && errors.order)}
+                                                        InputProps={{
+                                                            ...params.InputProps,
+                                                            endAdornment: <>{params.InputProps.endAdornment}</>,
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        )}
+                                    </Field>
+                                    <ErrorMessage name="orderBy" component="div" style={{ color: "red" }} />
+                                </Stack>
+                            </Grid>
+
+                            {/* <Grid item xs={12} md={6} lg={3}>
+                                <Stack spacing={1}>
+                                    <InputLabel htmlFor="dataLimitNumber">Data Limit Number</InputLabel>
+                                    <Field name="dataLimitNumber">
+                                        {({ field }) => <TextField {...field} id="dataLimitNumber" variant="outlined" placeholder="Enter data limit" type="number" InputProps={{ inputProps: { min: 1 } }} error={Boolean(touched.dataLimitNumber && errors.dataLimitNumber)} />}
+                                    </Field>
+                                    <ErrorMessage name="dataLimitNumber" component="div" style={{ color: "red" }} />
+                                </Stack>
+                            </Grid> */}
+
+                            <Grid item xs={12} md={6} lg={4}>
+                                <Stack spacing={1}>
+                                    <InputLabel htmlFor="dataLimit">Data Limit</InputLabel>
+                                    <Field name="dataLimit">
+                                        {({ field }) => (
+                                            <Autocomplete
+                                                options={dataLimitOptions}
+                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                getOptionLabel={(option) => option.label}
+                                                value={field.value}
+                                                onChange={(event, newValue) => setFieldValue("dataLimit", newValue)}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        variant="outlined"
+                                                        placeholder="Select data limit"
+                                                        error={Boolean(touched.dataLimit && errors.dataLimit)}
+                                                        InputProps={{
+                                                            ...params.InputProps,
+                                                            endAdornment: <>{params.InputProps.endAdornment}</>,
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        )}
+                                    </Field>
+                                    <ErrorMessage name="dataLimit" component="div" style={{ color: "red" }} />
+                                </Stack>
+                            </Grid>
 
                             <Grid item xs={12} md={12} lg={12}>
                                 <center>
