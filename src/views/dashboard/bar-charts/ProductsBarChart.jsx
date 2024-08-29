@@ -221,7 +221,7 @@ const ProductsBarChart = () => {
                         />
                     </div>
 
-                    <div style={{ height: "400px", overflowY: "auto" }}>
+                    <div style={{ height: "400px" }}>
                         <HighchartsReact highcharts={Highcharts} options={getChartOptions(seriesData, ProductBarChartStatisticsPerfomanceChartQuery?.data?.data?.requestParams)} immutable={true} />
                     </div>
                 </>
