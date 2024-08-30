@@ -124,8 +124,8 @@ const ChatPage = () => {
             ...messages,
             {
                 id: messages.length + 1,
-                senderId: selectedUser.id,
-                receiverId: selectedUser.id === 1 ? 2 : 1, // This is a simplification
+                senderId: selectedUser?.id,
+                receiverId: selectedUser?.id === 1 ? 2 : 1, // This is a simplification
                 text: newMessage,
                 timestamp: new Date(),
             },
@@ -136,7 +136,7 @@ const ChatPage = () => {
             chat_id: null,
             sender_id: loggedInUserData?.id,
             sender: loggedInUserData,
-            reciver_id: selectedUser.id,
+            reciver_id: selectedUser?.id,
             reciever: selectedUser,
             content: newMessage,
             created_at: moment().toISOString(),
