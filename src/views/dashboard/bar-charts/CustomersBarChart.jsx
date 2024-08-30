@@ -122,6 +122,18 @@ const getChartOptions = (data, dataFilters) => {
         credits: {
             enabled: false,
         },
+        noData: {
+            style: {
+                fontWeight: "bold",
+                fontSize: "16px",
+                color: "#303030",
+            },
+            position: {
+                align: "center",
+                verticalAlign: "middle",
+            },
+            text: "No data to display",
+        },
         series: [
             {
                 name: "Sales",

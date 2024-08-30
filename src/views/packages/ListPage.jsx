@@ -128,6 +128,21 @@ function ListPage({ customerData, ...props }) {
             },
         },
         {
+            title: "Photo",
+            field: "photo_url",
+            render: (rowData) => {
+                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+            },
+        },
+
+        // {
+        //     title: "Photo",
+        //     field: "cloudinary_photo_url",
+        //     render: (rowData) => {
+        //         return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+        //     },
+        // },
+        {
             title: "Package Number",
             field: "package_number",
             render: (rowData) => {

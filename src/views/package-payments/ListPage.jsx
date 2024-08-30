@@ -143,7 +143,7 @@ function ListPage({ packageData, ...props }) {
             title: "Package Number",
             field: "package.package_number",
             render: (rowData) => {
-                return <div>{rowData?.order?.order_number}</div>;
+                return <div>{rowData?.package?.package_number}</div>;
             },
         },
         {

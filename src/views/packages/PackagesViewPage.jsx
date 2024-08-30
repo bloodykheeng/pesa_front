@@ -53,9 +53,14 @@ const PackagesViewPage = () => {
         <div className="product-category-view">
             <BreadcrumbNav />
             <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
-                <TabPanel header="Order Details">
+                <TabPanel header="Package Order Details">
                     <div style={{ minHeight: "50vh", display: "flex", gap: "1rem", flexWrap: "wrap", flexDirection: "column" }}>
                         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                            {/* Display Image */}
+                            <div className="card flex justify-content-center">
+                                {/* <Image src={productCategoryData.cloudinary_photo_url} alt="Category Image" width="250" preview /> */}
+                                <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${packageData?.photo_url}`} alt="package Image" width="250" preview />
+                            </div>
                             <div>
                                 <p>
                                     <strong>Package Number: </strong>

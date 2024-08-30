@@ -42,6 +42,9 @@ function EditForm(props) {
         const formData = new FormData();
         formData.append("_method", "PUT");
         formData.append("name", data.name);
+        formData.append("price", data.price);
+        formData.append("quantity", data.quantity);
+        formData.append("product_types_id", data.product_types_id);
 
         // formData.append("code", data.code);
         formData.append("details", data.details);

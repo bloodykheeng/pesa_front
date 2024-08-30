@@ -19,7 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { FileUpload } from "primereact/fileupload";
 
 function RowForm({ handleSubmit, initialData, packageData, ...props }) {
-    console.log("🚀 payements ~ RowForm ~ initialData:", initialData);
+    console.log("🚀pkg payements ~ RowForm ~ initialData:", initialData);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);

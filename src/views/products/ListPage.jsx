@@ -129,6 +129,14 @@ function ListPage({ loggedInUserData, productCategoryBrandData, ...props }) {
             },
         },
         {
+            title: "Photo",
+            field: "photo_url",
+            hidden: false,
+            render: (rowData) => {
+                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+            },
+        },
+        {
             title: "Name",
             field: "name",
         },
@@ -157,14 +165,6 @@ function ListPage({ loggedInUserData, productCategoryBrandData, ...props }) {
                 return <div>{isNaN(amount) ? rowData.quantity : amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>;
             },
         },
-        {
-            title: "Photo",
-            field: "photo_url",
-            hidden: true,
-            render: (rowData) => {
-                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_API_BASE_URL}${rowData.photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-            },
-        },
 
         // {
         //     title: "Photo",
@@ -191,6 +191,11 @@ function ListPage({ loggedInUserData, productCategoryBrandData, ...props }) {
         {
             title: "Created By Email",
             field: "created_by.email",
+            hidden: true,
+        },
+        {
+            title: "Details",
+            field: "details",
             hidden: true,
         },
     ];

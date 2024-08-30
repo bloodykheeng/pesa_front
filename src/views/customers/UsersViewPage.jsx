@@ -27,7 +27,12 @@ const UsersViewPage = () => {
                         {/* Display Image */}
                         <div className="card flex justify-content-center">
                             {/* <Image src={customerData.cloudinary_photo_url} alt="Category Image" width="250" preview /> */}
-                            {customerData.cloudinary_photo_url ? <Image src={`${customerData.cloudinary_photo_url}`} alt={customerData.name} height="250" preview /> : <div style={{ width: "300px" }}>No Image</div>}
+                            {/* {customerData.cloudinary_photo_url ? <Image src={`${customerData.cloudinary_photo_url}`} alt={customerData.name} height="250" preview /> : <div style={{ width: "300px" }}>No Image</div>} */}
+                            {customerData?.photo_url ? (
+                                <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${customerData?.photo_url}`} alt={customerData.name} height="250" preview />
+                            ) : (
+                                <div style={{ width: "300px", height: "250px", display: "flex", justifyContent: "center", alignItems: "center", border: "1px dashed #ccc" }}>No Image</div>
+                            )}
                         </div>
                         <div>
                             <p>
@@ -43,9 +48,9 @@ const UsersViewPage = () => {
                                 <strong>Last Login:</strong> {customerData?.lastlogin}
                             </p>
 
-                            <p>
+                            {/* <p>
                                 <strong>Cloudinary Photo Public ID:</strong> {customerData?.cloudinary_photo_public_id}
-                            </p>
+                            </p> */}
                             <p>
                                 <strong>Agree:</strong> {customerData?.agree ? "Yes" : "No"}
                             </p>
