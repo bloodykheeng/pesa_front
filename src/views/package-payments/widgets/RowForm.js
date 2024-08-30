@@ -18,7 +18,7 @@ import { Column } from "primereact/column";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FileUpload } from "primereact/fileupload";
 
-function RowForm({ handleSubmit, initialData, orderData, ...props }) {
+function RowForm({ handleSubmit, initialData, packageData, ...props }) {
     console.log("🚀 payements ~ RowForm ~ initialData:", initialData);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
@@ -29,10 +29,10 @@ function RowForm({ handleSubmit, initialData, orderData, ...props }) {
     const [photoTouched, setPhotoTouched] = useState(false);
 
     //
-    const [orderNumber, setOrderNumber] = useState(orderData?.order_number ?? initialData?.order?.order_number);
-    const [orderId, setOrderId] = useState(orderData?.id ?? initialData?.order_id);
-    const [customerName, setCustomerName] = useState(orderData?.created_by?.name ?? initialData?.customer?.name);
-    const [customerId, setCustomerId] = useState(orderData?.created_by?.id ?? initialData?.user_id);
+    const [pakageNumber, setPackageNumber] = useState(packageData?.package_number ?? initialData?.package?.package_number);
+    const [packageId, setPackageId] = useState(packageData?.id ?? initialData?.package_id);
+    const [customerName, setCustomerName] = useState(packageData?.created_by?.name ?? initialData?.customer?.name);
+    const [customerId, setCustomerId] = useState(packageData?.created_by?.id ?? initialData?.user_id);
 
     const validate = (values) => {
         const errors = {};
@@ -66,7 +66,7 @@ function RowForm({ handleSubmit, initialData, orderData, ...props }) {
         const errors = validate(data);
 
         if (Object.keys(errors).length === 0 && !photoError) {
-            const formData = { ...data, order_id: orderId, user_id: customerId, photo: uploadedFile };
+            const formData = { ...data, package_id: packageId, user_id: customerId, photo: uploadedFile };
             setPendingData(formData);
             setShowConfirmDialog(true);
         } else {
@@ -139,8 +139,8 @@ function RowForm({ handleSubmit, initialData, orderData, ...props }) {
                             </Field> */}
 
                             <div className="p-field m-4">
-                                <label htmlFor="order_number">Order Number</label>
-                                <InputText disabled id="order_number" type="text" value={orderNumber} onChange={(e) => setOrderNumber(e.target.value)} />
+                                <label htmlFor="package_number">Package Number</label>
+                                <InputText disabled id="package_number" type="text" value={pakageNumber} onChange={(e) => setPackageNumber(e.target.value)} />
                             </div>
                             <div className="p-field m-4">
                                 <label htmlFor="customer_name">Customer Name</label>

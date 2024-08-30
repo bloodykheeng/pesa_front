@@ -140,8 +140,8 @@ function ListPage({ packageData, ...props }) {
             },
         },
         {
-            title: "Order Number",
-            field: "order.order_number",
+            title: "Package Number",
+            field: "package.package_number",
             render: (rowData) => {
                 return <div>{rowData?.order?.order_number}</div>;
             },
@@ -220,7 +220,7 @@ function ListPage({ packageData, ...props }) {
             <Panel header="Package Payments" style={{ marginBottom: "20px" }} toggleable>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
                     {activeUser?.permissions.includes("create") && <Button label="Add Payment" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
-                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} orderData={packageData} />
+                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} packageData={packageData} />
                 </div>
 
                 <MuiTable

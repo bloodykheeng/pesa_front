@@ -46,7 +46,7 @@ function CreateForm(props) {
     return (
         <Dialog header="Payments Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
             <p>Fill in the form below</p>
-            <RowForm handleSubmit={handleSubmit} orderData={props?.orderData} />
+            <RowForm handleSubmit={handleSubmit} packageData={props?.packageData} />
             {/* <h4>{creactProgramsMutation.status}</h4> */}
             {creactMutationIsLoading && (
                 <center>

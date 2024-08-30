@@ -160,7 +160,7 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                             <Field name="order_number">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
-                                        <label htmlFor="order_number">Order Number</label>
+                                        <label htmlFor="package_number">Package Number</label>
                                         <InputText {...input} id="order_number" type="text" />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                     </div>
