@@ -15,6 +15,7 @@ import * as Yup from "yup";
 import { getAllProductCategories, getProductCategorieById, postProductCategorie, updateProductCategorie, deleteProductCategorieById } from "../../../../services/products/product-categories-service";
 import { getAllProductCategoryBrands, getProductCategoryBrandById, postProductCategoryBrand, updateProductCategoryBrand, deleteProductCategoryBrandById } from "../../../../services/products/product-category-brands-service";
 import { getAllProducts, getProductById, postProduct, updateProduct, deleteProductById } from "../../../../services/products/products-service";
+import { getAllProductTypes, getProductTypeById, postProductType, updateProductType, deleteProductTypeById } from "../../../../services/products/product-types-service";
 
 //
 import useHandleQueryError from "../../../../hooks/useHandleQueryError";
@@ -25,16 +26,27 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
     const [pendingData, setPendingData] = useState(null);
 
     //product
+    const [selectedProductTypes, setselectedProductTypes] = useState(filtersFormInitialDataValues?.productTypes);
     const [selectedProductCategories, setSelectedProductCategories] = useState(filtersFormInitialDataValues?.productCategories);
     const [selectedProductCategoryBrands, setSelectedProductCategoryBrands] = useState(filtersFormInitialDataValues?.productCategoryBrands);
     const memoizedFiltersFormInitialDataValues = useMemo(() => filtersFormInitialDataValues, [filtersFormInitialDataValues]);
 
     useEffect(() => {
+        setselectedProductTypes(filtersFormInitialDataValues?.productTypes);
         setSelectedProductCategories(filtersFormInitialDataValues?.productCategories);
         setSelectedProductCategoryBrands(filtersFormInitialDataValues?.productCategoryBrands);
     }, [memoizedFiltersFormInitialDataValues]);
 
     // Queries and useEffects
+
+    // product types
+    const productTypesQuery = useQuery({
+        queryKey: ["product-types"],
+        queryFn: () => getAllProductTypes({}),
+    });
+
+    useHandleQueryError(productTypesQuery?.isError, productTypesQuery?.error);
+
     // Product Categories Query
     const productCategoriesQuery = useQuery({
         queryKey: ["product-categories"],
@@ -54,8 +66,8 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
 
     // Products Query (depends on selected product subcategory)
     const productsQuery = useQuery({
-        queryKey: ["products", selectedProductCategoryBrands],
-        queryFn: () => getAllProducts({ subCategories: selectedProductCategoryBrands }),
+        queryKey: ["products", "by_category_brands", selectedProductCategoryBrands, "by_product_types", selectedProductTypes],
+        queryFn: () => getAllProducts({ categoryBrands: selectedProductCategoryBrands, productTypes: selectedProductTypes }),
         enabled: selectedProductCategoryBrands.length > 0,
     });
 
@@ -126,6 +138,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
             statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
             orderBy: { id: 3, label: "Descending", value: "desc" },
             dataLimit: { id: 2, label: "5", value: 5 },
+            productTypes: [],
             productCategories: [],
             productCategoryBrand: [],
             products: [],
@@ -143,6 +156,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
             statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
             orderBy: { id: 3, label: "Descending", value: "desc" },
             dataLimit: { id: 2, label: "5", value: 5 },
+            productTypes: [],
             productCategories: [],
             productCategoryBrand: [],
             products: [],
@@ -288,6 +302,46 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
 
                             <Grid item xs={12} md={6} lg={4}>
                                 <Stack spacing={1}>
+                                    <InputLabel htmlFor="productTypes">Product Types</InputLabel>
+                                    <Field name="productTypes">
+                                        {({ field }) => (
+                                            <Autocomplete
+                                                //isOptionEqualToValue helps to define how comparison is gonna be made
+                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                multiple
+                                                options={productTypesQuery?.data?.data?.data || []}
+                                                getOptionLabel={(option) => option.name}
+                                                value={selectedProductTypes}
+                                                onChange={(event, newValue) => {
+                                                    setselectedProductTypes(newValue);
+                                                    setFieldValue("productTypes", newValue);
+                                                }}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        variant="outlined"
+                                                        placeholder="Select product types"
+                                                        error={Boolean(touched.productTypes && errors.productTypes)}
+                                                        InputProps={{
+                                                            ...params.InputProps,
+                                                            endAdornment: (
+                                                                <>
+                                                                    {productTypesQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                                    {params.InputProps.endAdornment}
+                                                                </>
+                                                            ),
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        )}
+                                    </Field>
+                                    <ErrorMessage name="productTypes" component="div" />
+                                </Stack>
+                            </Grid>
+
+                            <Grid item xs={12} md={6} lg={4}>
+                                <Stack spacing={1}>
                                     <InputLabel htmlFor="productCategories">Product Categories</InputLabel>
                                     <Field name="productCategories">
                                         {({ field }) => (
@@ -368,6 +422,50 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
                                     <ErrorMessage name="productCategoryBrands" component="div" style={{ color: "red" }} />
                                 </Stack>
                             </Grid>
+
+                            <Grid item xs={12} md={6} lg={4}>
+                                <Stack spacing={1}>
+                                    <InputLabel htmlFor="productTypes">Product Types</InputLabel>
+                                    <Field name="productTypes">
+                                        {({ field }) => (
+                                            <Autocomplete
+                                                //isOptionEqualToValue helps to define how comparison is gonna be made
+                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                multiple
+                                                options={productTypesQuery?.data?.data?.data || []}
+                                                getOptionLabel={(option) => option.name}
+                                                value={selectedProductTypes}
+                                                onChange={(event, newValue) => {
+                                                    setselectedProductTypes(newValue);
+                                                    setFieldValue("productTypes", newValue);
+
+                                                    //
+                                                    setFieldValue("products", []);
+                                                }}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        variant="outlined"
+                                                        placeholder="Select product types"
+                                                        error={Boolean(touched.productTypes && errors.productTypes)}
+                                                        InputProps={{
+                                                            ...params.InputProps,
+                                                            endAdornment: (
+                                                                <>
+                                                                    {productTypesQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                                    {params.InputProps.endAdornment}
+                                                                </>
+                                                            ),
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        )}
+                                    </Field>
+                                    <ErrorMessage name="productTypes" component="div" />
+                                </Stack>
+                            </Grid>
+
                             <Grid item xs={12} md={6} lg={4}>
                                 <Stack spacing={1}>
                                     <InputLabel htmlFor="products">Products</InputLabel>

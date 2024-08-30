@@ -33,8 +33,11 @@ const OrdersCard = () => {
     const [filtersFormInitialDataValues, setFiltersFormInitialDataValues] = useState({
         startDate: moment().startOf("month").format("YYYY-MM-DD"),
         endDate: moment().format("YYYY-MM-DD"), // Set to now
-        statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
+        // statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
+        deliveryStatuses: [{ label: "Delivered", value: "delivered" }],
+        paymentStatuses: [{ label: "Paid", value: "Paid" }],
         // dataLimitNumber: null,
+        productTypes: [],
         productCategories: [],
         productCategoryBrands: [],
         products: [],
@@ -45,7 +48,7 @@ const OrdersCard = () => {
     };
 
     const handleSubmitForFilters = (data) => {
-        console.log("🚀 ~ handleSubmitForFilters ~ data:", data);
+        console.log("🚀 ~cards  handleSubmitForFilters ~ data:", data);
         setFiltersFormInitialDataValues(data);
     };
 

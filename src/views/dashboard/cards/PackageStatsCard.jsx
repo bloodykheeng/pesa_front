@@ -14,7 +14,7 @@ import Lottie from "lottie-react";
 import moment from "moment";
 
 //
-import CardsFiltersFormDialog from "./widgets/CardsFiltersFormDialog";
+import CardsFiltersFormWithStatustesDialog from "./widgets/CardsFiltersFormWithStatustesDialog";
 import { Button } from "primereact/button";
 import { Tooltip } from "@mui/material";
 
@@ -33,11 +33,10 @@ const PackageStatsCard = () => {
     const [filtersFormInitialDataValues, setFiltersFormInitialDataValues] = useState({
         startDate: moment().startOf("month").format("YYYY-MM-DD"),
         endDate: moment().format("YYYY-MM-DD"), // Set to now
-        statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
+        // statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
+        deliveryStatuses: [{ label: "Delivered", value: "delivered" }],
+        paymentStatuses: [{ label: "Paid", value: "Paid" }],
         // dataLimitNumber: null,
-        productCategories: [],
-        productCategoryBrands: [],
-        products: [],
     });
 
     const toggleFiltersFormDialog = () => {
@@ -90,7 +89,7 @@ const PackageStatsCard = () => {
                             <Button icon="pi pi-filter" onClick={toggleFiltersFormDialog} />
                         </Tooltip>
 
-                        <CardsFiltersFormDialog
+                        <CardsFiltersFormWithStatustesDialog
                             onSubmit={handleSubmitForFilters}
                             filtersFormInitialDataValues={filtersFormInitialDataValues}
                             setFiltersFormInitialDataValues={setFiltersFormInitialDataValues}

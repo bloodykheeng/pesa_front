@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 
 import { Grid, Stack } from "@mui/material";
+import { Panel } from "primereact/panel";
 
 //
 import OrdersCard from "./OrdersCard";
@@ -11,12 +12,14 @@ import TransactionStatsCard from "./TransactionStatsCard";
 const CardsPage = ({ measure = "sales_value" }) => {
     return (
         // <div style={{ padding: "10px" }}>
-        <Grid style={{ padding: "10px" }} container spacing={2} justifyContent="center" alignItems="center">
-            <OrdersCard />
-            <PackageStatsCard />
-            <CustomersStatsCard />
-            <TransactionStatsCard />
-        </Grid>
+        <Panel header={`Statistics`} toggleable style={{ minWidth: "100%" }}>
+            <Grid style={{ padding: "10px" }} container spacing={2} justifyContent="center" alignItems="center">
+                <OrdersCard />
+                <PackageStatsCard />
+                <CustomersStatsCard />
+                <TransactionStatsCard />
+            </Grid>
+        </Panel>
         // </div>
     );
 };

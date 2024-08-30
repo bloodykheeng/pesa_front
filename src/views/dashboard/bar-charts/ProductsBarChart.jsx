@@ -151,6 +151,7 @@ const ProductsBarChart = () => {
         orderBy: { id: 1, label: "Default", value: "default" },
         dataLimit: { id: 1, label: "All", value: "all" },
         // dataLimitNumber: null,
+        productTypes: [],
         productCategories: [],
         productCategoryBrands: [],
         products: [],

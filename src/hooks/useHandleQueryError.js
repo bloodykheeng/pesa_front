@@ -10,7 +10,7 @@ const useHandleQueryError = (isError, error) => {
 
     useEffect(() => {
         if (isError) {
-            console.log("🚀 ~ useHandleQueryError ~ isError fetching List of data : ", isError);
+            console.log("🚀 ~ useHandleQueryError ~ isError fetching List of data : ", error);
 
             if (memoizedError?.response?.data?.message) {
                 const errorMessage = memoizedError.response.data.message;

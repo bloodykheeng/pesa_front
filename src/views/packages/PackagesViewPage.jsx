@@ -58,11 +58,14 @@ const PackagesViewPage = () => {
                         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
                             <div>
                                 <p>
-                                    <strong>Order Number: </strong>
-                                    <span>{packageData?.order_number}</span>
+                                    <strong>Package Number: </strong>
+                                    <span>{packageData?.package_number}</span>
                                 </p>
                                 <p>
-                                    <strong>Address: </strong> {packageData?.address}
+                                    <strong>Pickup: </strong> {packageData?.pickup}
+                                </p>
+                                <p>
+                                    <strong>Destination: </strong> {packageData?.destination}
                                 </p>
                                 <p>
                                     <strong>Payment Mode: </strong> {packageData?.payment_mode}
@@ -72,8 +75,8 @@ const PackagesViewPage = () => {
                                     <span style={{ color: getStatusColor(packageData?.payment_status), fontWeight: "bold" }}>{packageData?.payment_status?.charAt(0).toUpperCase() + packageData?.payment_status?.slice(1)}</span>
                                 </p>
                                 <p>
-                                    <strong>Amount: </strong>
-                                    {packageData?.amount ? parseFloat(packageData.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "No amount"}
+                                    <strong>Amount Paid: </strong>
+                                    {packageData?.amount_paid ? parseFloat(packageData.amount_paid).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "No amount paid"}
                                 </p>
                             </div>
                             <div>

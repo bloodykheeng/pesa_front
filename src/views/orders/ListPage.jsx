@@ -144,7 +144,7 @@ function ListPage({ customerData, ...props }) {
             field: "order_number",
             render: (rowData) => {
                 return (
-                    <div onClick={() => handleOrderClick(rowData?.products)} style={{ cursor: "pointer", color: "blue" }}>
+                    <div onClick={() => handleOrderClick(rowData?.order_products)} style={{ cursor: "pointer", color: "blue" }}>
                         {rowData?.order_number}
                     </div>
                 );

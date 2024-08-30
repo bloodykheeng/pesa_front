@@ -128,53 +128,14 @@ function ListPage({ customerData, ...props }) {
             },
         },
         {
-            title: "Photo",
-            field: "photo_url",
+            title: "Package Number",
+            field: "package_number",
             render: (rowData) => {
-                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-            },
-        },
-        // {
-        //     title: "Photo",
-        //     field: "cloudinary_photo_url",
-        //     render: (rowData) => {
-        //         return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-        //     },
-        // },
-        {
-            title: "Name",
-            field: "name",
-        },
-
-        {
-            title: "order number",
-            field: "order_number",
-        },
-        {
-            title: "Status",
-            field: "status",
-            render: (rowData) => {
-                let statusColor;
-
-                if (rowData?.status === "pending") {
-                    statusColor = "orange";
-                } else if (rowData?.status?.toLowerCase() === "processing") {
-                    statusColor = "blue";
-                } else if (rowData?.status?.toLowerCase() === "transit") {
-                    statusColor = "purple";
-                } else if (rowData?.status?.toLowerCase() === "delivered") {
-                    statusColor = "green";
-                } else if (rowData?.status?.toLowerCase() === "cancelled") {
-                    statusColor = "red";
-                } else {
-                    statusColor = "gray";
-                }
-
-                return <span style={{ color: statusColor, fontWeight: "bold" }}>{rowData?.status?.charAt(0).toUpperCase() + rowData?.status?.slice(1)}</span>;
+                return <div>{rowData?.package_number}</div>;
             },
         },
         {
-            title: "Pickup",
+            title: "pickup",
             field: "pickup",
         },
         {
@@ -182,52 +143,117 @@ function ListPage({ customerData, ...props }) {
             field: "destination",
         },
         {
-            title: "Owner Name",
-            field: "created_by.name",
-        },
-        {
-            title: "Owner Phone",
-            field: "created_by.phone",
-        },
-        {
-            title: "Owner Email",
-            field: "created_by.email",
+            title: "Payment Mode",
+            field: "payment_mode",
         },
 
         {
-            title: "Extra Info",
-            field: "extraInfo",
+            title: "Payment Status",
+            field: "payment_status",
+            render: (rowData) => {
+                let statusColor;
+
+                if (rowData?.payment_status?.toLowerCase() === "pending") {
+                    statusColor = "orange";
+                } else if (rowData?.payment_status?.toLowerCase() === "paid") {
+                    statusColor = "green";
+                } else if (rowData?.payment_status?.toLowerCase() === "cancelled") {
+                    statusColor = "red";
+                } else {
+                    statusColor = "gray";
+                }
+
+                return <span style={{ color: statusColor, fontWeight: "bold" }}>{rowData?.payment_status?.charAt(0).toUpperCase() + rowData?.payment_status?.slice(1)}</span>;
+            },
+        },
+
+        {
+            title: "Amount Paid",
+            field: "amount_paid",
+            render: (rowData) => {
+                return rowData.amount_paid ? parseFloat(rowData.amount_paid).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "No amount_paid";
+            },
+        },
+        {
+            title: "Delivery Status",
+            field: "delivery_status",
+            render: (rowData) => {
+                let statusColor;
+
+                if (rowData?.delivery_status === "pending") {
+                    statusColor = "orange";
+                } else if (rowData?.delivery_status?.toLowerCase() === "processing") {
+                    statusColor = "blue";
+                } else if (rowData?.delivery_status?.toLowerCase() === "transit") {
+                    statusColor = "purple";
+                } else if (rowData?.delivery_status?.toLowerCase() === "delivered") {
+                    statusColor = "green";
+                } else if (rowData?.delivery_status?.toLowerCase() === "received") {
+                    statusColor = "green";
+                } else if (rowData?.delivery_status?.toLowerCase() === "cancelled") {
+                    statusColor = "red";
+                } else {
+                    statusColor = "gray";
+                }
+
+                return <span style={{ color: statusColor, fontWeight: "bold" }}>{rowData?.delivery_status?.charAt(0).toUpperCase() + rowData?.delivery_status?.slice(1)}</span>;
+            },
+        },
+        {
+            title: "Charged Amount",
+            field: "charged_amount",
+            render: (rowData) => {
+                return rowData.charged_amount ? parseFloat(rowData.charged_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "No charged amount";
+            },
         },
         // {
-        //     title: "Details",
-        //     field: "details",
-        // },
-
-        // {
-        //     title: "Photo",
-        //     field: "photo_url",
+        //     title: "Quantity",
+        //     field: "quantity",
         //     render: (rowData) => {
-        //         return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+        //         const quantityString = String(rowData.quantity); // Ensure it's a string
+        //         const amount = parseFloat(quantityString.replace(/,/g, ""));
+        //         return <div>{isNaN(amount) ? rowData.quantity : amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>;
         //     },
         // },
 
         {
-            title: "Date",
+            title: "Created By Name",
+            field: "created_by.name",
+            hidden: false,
+        },
+        {
+            title: "Created By Email",
+            field: "created_by.email",
+            hidden: true,
+        },
+
+        {
+            title: "Created At",
             field: "created_at",
+            hidden: true,
             render: (rowData) => {
                 return moment(rowData.created_at).format("lll");
             },
         },
+
+        {
+            title: "Updated By Name",
+            field: "updated_by.name",
+            hidden: false,
+        },
+        {
+            title: "Updated By Email",
+            field: "updated_by.email",
+            hidden: true,
+        },
+
         {
             title: "Updated At",
             field: "updated_at",
+            hidden: true,
             render: (rowData) => {
                 return moment(rowData.updated_at).format("lll");
             },
-        },
-        {
-            title: "Updated By",
-            field: "updated_by.email",
         },
     ];
 

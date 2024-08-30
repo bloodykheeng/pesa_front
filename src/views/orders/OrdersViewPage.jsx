@@ -109,7 +109,7 @@ const OrdersViewPage = () => {
                         </div>
                         <div style={{ maxWidth: "100%" }}>
                             <h3>Order Products</h3>
-                            <DataTable value={orderData?.products} responsiveLayout="scroll">
+                            <DataTable value={orderData?.order_products} responsiveLayout="scroll">
                                 {/* <Column field="image" header="Image" body={(rowData) => <Image src={rowData.product.cloudinary_photo_url || rowData.product.photo_url} alt={rowData.product.name} height="30" preview />} /> */}
                                 <Column field="image" header="Image" body={(rowData) => <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData?.product?.photo_url}`} alt={rowData.product.name} height="30" preview />} />
                                 <Column field="name" header="Name" sortable body={(rowData) => rowData.product.name} />
