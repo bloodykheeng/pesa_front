@@ -200,7 +200,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
         // if (!Array.isArray(values.agents) || values.agents.length === 0) errors.agents = "Agent is required";
         // Ensure at least one field is filled and check if fields are arrays
         if (
-            (!Array.isArray(values.statuses) || values.statuses.length === 0) &&
+            (!Array.isArray(values.deliveryStatuses) || values.deliveryStatuses.length === 0) &&
             (!Array.isArray(values.productCategories) || values.productCategories.length === 0) &&
             (!Array.isArray(values.productCategoryBrand) || values.productCategoryBrand.length === 0) &&
             (!Array.isArray(values.products) || values.products.length === 0) &&

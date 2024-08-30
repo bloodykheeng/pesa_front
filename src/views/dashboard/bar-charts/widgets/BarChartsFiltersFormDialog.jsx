@@ -105,6 +105,20 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
         { id: 5, label: "Cancelled", value: "CANCELLED" },
     ];
 
+    const deliveryStatusesOptions = [
+        { label: "Pending", value: "pending" },
+        { label: "Processing", value: "processing" },
+        { label: "Transit", value: "transit" },
+        { label: "Delivered", value: "delivered" },
+        { label: "Cancelled", value: "cancelled" },
+    ];
+
+    const paymentStatusesOptions = [
+        { label: "Pending", value: "pending" },
+        { label: "Paid", value: "Paid" },
+        { label: "Cancelled", value: "cancelled" },
+    ];
+
     //
     const orderByOptions = [
         { id: 1, label: "Default", value: "default" },
@@ -135,7 +149,9 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
             salesAssociates: [],
             regions: [],
             routes: [],
-            statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
+            // statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
+            deliveryStatuses: [{ label: "Delivered", value: "delivered" }],
+            paymentStatuses: [{ label: "Paid", value: "Paid" }],
             orderBy: { id: 3, label: "Descending", value: "desc" },
             dataLimit: { id: 2, label: "5", value: 5 },
             productTypes: [],
@@ -153,7 +169,9 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
         setFiltersFormInitialDataValues({
             startDate: null,
             endDate: null,
-            statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
+            // statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
+            deliveryStatuses: [{ label: "Delivered", value: "delivered" }],
+            paymentStatuses: [{ label: "Paid", value: "Paid" }],
             orderBy: { id: 3, label: "Descending", value: "desc" },
             dataLimit: { id: 2, label: "5", value: 5 },
             productTypes: [],
@@ -202,7 +220,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
         // if (!Array.isArray(values.agents) || values.agents.length === 0) errors.agents = "Agent is required";
         // Ensure at least one field is filled and check if fields are arrays
         if (
-            (!Array.isArray(values.statuses) || values.statuses.length === 0) &&
+            (!Array.isArray(values.deliveryStatuses) || values.deliveryStatuses.length === 0) &&
             (!Array.isArray(values.productCategories) || values.productCategories.length === 0) &&
             (!Array.isArray(values.productCategoryBrand) || values.productCategoryBrand.length === 0) &&
             (!Array.isArray(values.products) || values.products.length === 0)
@@ -299,46 +317,6 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
                                     </Stack>
                                 </Grid>
                             </LocalizationProvider>
-
-                            <Grid item xs={12} md={6} lg={4}>
-                                <Stack spacing={1}>
-                                    <InputLabel htmlFor="productTypes">Product Types</InputLabel>
-                                    <Field name="productTypes">
-                                        {({ field }) => (
-                                            <Autocomplete
-                                                //isOptionEqualToValue helps to define how comparison is gonna be made
-                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
-                                                multiple
-                                                options={productTypesQuery?.data?.data?.data || []}
-                                                getOptionLabel={(option) => option.name}
-                                                value={selectedProductTypes}
-                                                onChange={(event, newValue) => {
-                                                    setselectedProductTypes(newValue);
-                                                    setFieldValue("productTypes", newValue);
-                                                }}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        variant="outlined"
-                                                        placeholder="Select product types"
-                                                        error={Boolean(touched.productTypes && errors.productTypes)}
-                                                        InputProps={{
-                                                            ...params.InputProps,
-                                                            endAdornment: (
-                                                                <>
-                                                                    {productTypesQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
-                                                                    {params.InputProps.endAdornment}
-                                                                </>
-                                                            ),
-                                                        }}
-                                                    />
-                                                )}
-                                            />
-                                        )}
-                                    </Field>
-                                    <ErrorMessage name="productTypes" component="div" />
-                                </Stack>
-                            </Grid>
 
                             <Grid item xs={12} md={6} lg={4}>
                                 <Stack spacing={1}>
@@ -504,38 +482,6 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
                                 </Stack>
                             </Grid>
 
-                            {/* Status Multiple Select */}
-                            <Grid item xs={12} md={6} lg={4}>
-                                <Stack spacing={1}>
-                                    <InputLabel htmlFor="statuses">Statuses</InputLabel>
-                                    <Field name="statuses">
-                                        {({ field }) => (
-                                            <Autocomplete
-                                                //isOptionEqualToValue helps to define how comparison is gonna be made
-                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
-                                                multiple
-                                                options={statusOptions}
-                                                getOptionLabel={(option) => option.label}
-                                                value={Array.isArray(field.value) ? field.value : []}
-                                                onChange={(event, newValue) => setFieldValue("statuses", newValue)}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        variant="outlined"
-                                                        placeholder="Select statuses"
-                                                        error={Boolean(touched.statuses && errors.statuses)}
-                                                        InputProps={{
-                                                            ...params.InputProps,
-                                                            endAdornment: <>{params.InputProps.endAdornment}</>,
-                                                        }}
-                                                    />
-                                                )}
-                                            />
-                                        )}
-                                    </Field>
-                                    <ErrorMessage name="statuses" component="div" style={{ color: "red" }} />
-                                </Stack>
-                            </Grid>
                             {/* Multi-select fields */}
 
                             {/* orderBy Single Select */}
@@ -607,6 +553,103 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
                                         )}
                                     </Field>
                                     <ErrorMessage name="dataLimit" component="div" style={{ color: "red" }} />
+                                </Stack>
+                            </Grid>
+
+                            {/* Status Multiple Select */}
+                            {/* <Grid item xs={12} md={6} lg={4}>
+                                <Stack spacing={1}>
+                                    <InputLabel htmlFor="statuses">Statuses</InputLabel>
+                                    <Field name="statuses">
+                                        {({ field }) => (
+                                            <Autocomplete
+                                                //isOptionEqualToValue helps to define how comparison is gonna be made
+                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                multiple
+                                                options={statusOptions}
+                                                getOptionLabel={(option) => option.label}
+                                                value={Array.isArray(field.value) ? field.value : []}
+                                                onChange={(event, newValue) => setFieldValue("statuses", newValue)}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        variant="outlined"
+                                                        placeholder="Select statuses"
+                                                        error={Boolean(touched.statuses && errors.statuses)}
+                                                        InputProps={{
+                                                            ...params.InputProps,
+                                                            endAdornment: <>{params.InputProps.endAdornment}</>,
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        )}
+                                    </Field>
+                                    <ErrorMessage name="statuses" component="div" style={{ color: "red" }} />
+                                </Stack>
+                            </Grid> */}
+
+                            <Grid item xs={12} md={6} lg={4}>
+                                <Stack spacing={1}>
+                                    <InputLabel htmlFor="deliveryStatuses">Delivery Status</InputLabel>
+                                    <Field name="deliveryStatuses">
+                                        {({ field }) => (
+                                            <Autocomplete
+                                                //isOptionEqualToValue helps to define how comparison is gonna be made
+                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                multiple
+                                                options={deliveryStatusesOptions}
+                                                getOptionLabel={(option) => option.label}
+                                                value={Array.isArray(field.value) ? field.value : []}
+                                                onChange={(event, newValue) => setFieldValue("deliveryStatuses", newValue)}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        variant="outlined"
+                                                        placeholder="Select delivery Status"
+                                                        error={Boolean(touched.deliveryStatuses && errors.deliveryStatuses)}
+                                                        InputProps={{
+                                                            ...params.InputProps,
+                                                            endAdornment: <>{params.InputProps.endAdornment}</>,
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        )}
+                                    </Field>
+                                    <ErrorMessage name="deliveryStatuses" component="div" style={{ color: "red" }} />
+                                </Stack>
+                            </Grid>
+
+                            <Grid item xs={12} md={6} lg={4}>
+                                <Stack spacing={1}>
+                                    <InputLabel htmlFor="paymentStatuses">Payment Status</InputLabel>
+                                    <Field name="paymentStatuses">
+                                        {({ field }) => (
+                                            <Autocomplete
+                                                //isOptionEqualToValue helps to define how comparison is gonna be made
+                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                multiple
+                                                options={paymentStatusesOptions}
+                                                getOptionLabel={(option) => option.label}
+                                                value={Array.isArray(field.value) ? field.value : []}
+                                                onChange={(event, newValue) => setFieldValue("paymentStatuses", newValue)}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        variant="outlined"
+                                                        placeholder="Select Payment Status"
+                                                        error={Boolean(touched.paymentStatuses && errors.paymentStatuses)}
+                                                        InputProps={{
+                                                            ...params.InputProps,
+                                                            endAdornment: <>{params.InputProps.endAdornment}</>,
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                        )}
+                                    </Field>
+                                    <ErrorMessage name="paymentStatuses" component="div" style={{ color: "red" }} />
                                 </Stack>
                             </Grid>
 

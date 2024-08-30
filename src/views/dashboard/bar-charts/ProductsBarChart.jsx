@@ -141,15 +141,17 @@ const ProductsBarChart = () => {
     const [filtersFormInitialDataValues, setFiltersFormInitialDataValues] = useState({
         startDate: moment().startOf("month").format("YYYY-MM-DD"),
         endDate: moment().format("YYYY-MM-DD"), // Set to now
-        statuses: [
-            { id: 1, label: "Pending", value: "PENDING" },
-            { id: 2, label: "Processing", value: "PROCESSING" },
-            { id: 3, label: "Transit", value: "TRANSIT" },
-            { id: 4, label: "Delivered", value: "DELIVERED" },
-            { id: 5, label: "Cancelled", value: "CANCELLED" },
-        ],
+        // statuses: [
+        //     { id: 1, label: "Pending", value: "PENDING" },
+        //     { id: 2, label: "Processing", value: "PROCESSING" },
+        //     { id: 3, label: "Transit", value: "TRANSIT" },
+        //     { id: 4, label: "Delivered", value: "DELIVERED" },
+        //     { id: 5, label: "Cancelled", value: "CANCELLED" },
+        // ],
+        deliveryStatuses: [{ label: "Delivered", value: "delivered" }],
+        paymentStatuses: [{ label: "Paid", value: "Paid" }],
         orderBy: { id: 1, label: "Default", value: "default" },
-        dataLimit: { id: 1, label: "All", value: "all" },
+        dataLimit: { id: 2, label: "5", value: 5 },
         // dataLimitNumber: null,
         productTypes: [],
         productCategories: [],
