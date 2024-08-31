@@ -47,9 +47,14 @@ noData(Highcharts);
 HC_accessibility(Highcharts);
 
 const getChartOptions = (data, dataFilters) => {
-    if (!data || !Array.isArray(data) || data.length === 0) {
+    // if (!data || !Array.isArray(data) || data.length === 0) {
+    //     return null;
+    // }
+
+    if (!data || !Array.isArray(data)) {
         return null;
     }
+
     function formatArray(arr, key) {
         if (!Array.isArray(arr) || arr.length === 0) return "";
         return arr.map((item) => item[key]).join(", ");

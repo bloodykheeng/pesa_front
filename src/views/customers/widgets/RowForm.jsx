@@ -44,6 +44,13 @@ function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
         if (!values.email) {
             errors.email = "Email is required";
         }
+        if (!values.phone) {
+            errors.phone = "Phone is required";
+        }
+
+        if (!values.nin) {
+            errors.nin = "Nin number is required";
+        }
         if (!values.status) {
             errors.status = "Status is required";
         }
@@ -168,6 +175,25 @@ function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
                                                 placeholder="Select a Status"
                                                 className={classNames({ "p-invalid": meta.touched && meta.error })}
                                             />
+                                            {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                        </div>
+                                    )}
+                                </Field>
+                                <Field name="phone">
+                                    {({ input, meta }) => (
+                                        <div className="p-field m-4">
+                                            <label htmlFor="phone">Phone</label>
+                                            <InputText {...input} id="phone" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                            {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                        </div>
+                                    )}
+                                </Field>
+
+                                <Field name="nin">
+                                    {({ input, meta }) => (
+                                        <div className="p-field m-4">
+                                            <label htmlFor="nin">Nin number</label>
+                                            <InputText {...input} id="nin" className={classNames({ "p-invalid": meta.touched && meta.error })} />
                                             {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
                                         </div>
                                     )}

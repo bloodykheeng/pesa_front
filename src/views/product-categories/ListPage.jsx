@@ -116,27 +116,8 @@ function ListPage({ ...props }) {
         {
             title: "#",
             width: "5%",
-            field: "name",
-            render: (rowData) => {
-                // tableId = rowData.tableData.id;
-                tableId = tableId++;
-                return <div>{rowData.tableData.index + 1}</div>;
-                // return <div>{rowData.tableData.id}</div>;
-            },
+            field: "id",
         },
-        {
-            title: "Name",
-            field: "name",
-        },
-        {
-            title: "Code",
-            field: "code",
-        },
-        {
-            title: "Details",
-            field: "details",
-        },
-
         {
             title: "Photo",
             field: "photo_url",
@@ -152,6 +133,18 @@ function ListPage({ ...props }) {
         //         return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
         //     },
         // },
+        {
+            title: "Name",
+            field: "name",
+        },
+        {
+            title: "Code",
+            field: "code",
+        },
+        {
+            title: "Details",
+            field: "details",
+        },
 
         {
             title: "Date",

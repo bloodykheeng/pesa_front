@@ -117,14 +117,24 @@ function ListPage({ loggedInUserData, productCategoryData, ...props }) {
         {
             title: "#",
             width: "5%",
-            field: "name",
+            field: "id",
+        },
+        {
+            title: "Photo",
+            field: "photo_url",
+            hidden: false,
             render: (rowData) => {
-                // tableId = rowData.tableData.id;
-                tableId = tableId++;
-                return <div>{rowData.tableData.index + 1}</div>;
-                // return <div>{rowData.tableData.id}</div>;
+                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
             },
         },
+
+        // {
+        //     title: "Photo",
+        //     field: "cloudinary_photo_url",
+        //     render: (rowData) => {
+        //         return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+        //     },
+        // },
         {
             title: "Name",
             field: "name",
@@ -145,22 +155,6 @@ function ListPage({ loggedInUserData, productCategoryData, ...props }) {
             title: "Product Category",
             field: "product_category.name",
         },
-        {
-            title: "Photo",
-            field: "photo_url",
-            hidden: true,
-            render: (rowData) => {
-                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-            },
-        },
-
-        // {
-        //     title: "Photo",
-        //     field: "cloudinary_photo_url",
-        //     render: (rowData) => {
-        //         return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-        //     },
-        // },
 
         {
             title: "Date",

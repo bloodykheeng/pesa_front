@@ -12,17 +12,52 @@ import useAuthContext from "../../context/AuthContext";
 
 import { Image } from "primereact/image";
 
+//
+import EditForm from "./EditForm";
+import { Button } from "primereact/button";
+
 const UsersViewPage = () => {
     const { getUserQuery } = useAuthContext();
     const location = useLocation();
     const { customerData } = location.state;
     const [activeIndex, setActiveIndex] = useState(0);
 
+    let activeUser = getUserQuery?.data?.data;
+    //
+
+    const [selectedItem, setSelectedItem] = useState();
+    const [showEditForm, setShowEditForm] = useState(false);
+
+    const handleShowEditForm = (item) => {
+        setSelectedItem(item);
+        setShowEditForm(true);
+        console.log("handleShowEditForm is : ", item);
+    };
+    const handleCloseEditForm = () => {
+        setSelectedItem({ id: null });
+        setShowEditForm(false);
+    };
+
     return (
         <div className="product-category-view">
             <BreadcrumbNav />
             <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                 <TabPanel header="Customer Details">
+                    {activeUser?.permissions.includes("update") && (
+                        <div
+                            style={{
+                                height: "3rem",
+                                margin: "1rem",
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                gap: "1rem",
+                            }}
+                        >
+                            <Button label="Edit Customer" className="p-button-primary" onClick={() => handleShowEditForm(customerData)} />
+                        </div>
+                    )}
+
+                    {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}
                     <div style={{ minHeight: "50vh", display: "flex", flexWrap: "wrap", gap: "1rem" }}>
                         {/* Display Image */}
                         <div className="card flex justify-content-center">

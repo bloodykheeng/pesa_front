@@ -47,7 +47,10 @@ noData(Highcharts);
 HC_accessibility(Highcharts);
 
 const getChartOptions = (data, dataFilters) => {
-    if (!data || !Array.isArray(data) || data.length === 0) {
+    // if (!data || !Array.isArray(data) || data.length === 0) {
+    //     return null;
+    // }
+    if (!data || !Array.isArray(data)) {
         return null;
     }
     function formatArray(arr, key) {
@@ -235,7 +238,7 @@ const ProductsBarChart = () => {
                             setShowFiltersFormDialog={setShowFiltersFormDialog}
                         />
                     </div>
-
+                    <h1>testing</h1>
                     <div style={{ height: "400px" }}>
                         <HighchartsReact highcharts={Highcharts} options={getChartOptions(seriesData, ProductBarChartStatisticsPerfomanceChartQuery?.data?.data?.requestParams)} immutable={true} />
                     </div>
