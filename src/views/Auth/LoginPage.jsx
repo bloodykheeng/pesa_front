@@ -135,7 +135,7 @@ const LoginPage = () => {
                     `}
                 ></div> */}
                 <div className="flex justify-content-center" style={{ zIndex: 2, position: "relative" }}>
-                    <div className="card p-fluid">
+                    <div className="card p-fluid" style={{ minWidth: "400px" }}>
                         <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
                             <img src="assets/pesa_photos/pesa_with_green_bg.jpg" alt="logo" style={{ height: "100px" }} />
                         </div>
