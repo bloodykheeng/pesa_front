@@ -9,6 +9,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { toast } from "react-toastify";
 
+//
+import handleMutationError from "../../hooks/handleMutationError";
+
 function CreateForm({ loggedInUserData, ...props }) {
     const queryClient = useQueryClient();
 
@@ -23,9 +26,7 @@ function CreateForm({ loggedInUserData, ...props }) {
         },
         onError: (error) => {
             // props.onClose();
-            setCreactMutationIsLoading(false);
-            error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-            console.log("create programs error : ", error);
+            handleMutationError(error, setCreactMutationIsLoading);
         },
     });
 

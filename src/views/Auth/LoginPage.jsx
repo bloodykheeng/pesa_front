@@ -27,6 +27,9 @@ import axios from "axios";
 
 import { FaGoogle } from "react-icons/fa";
 
+//
+import handleMutationError from "../../hooks/handleMutationError";
+
 const LoginPage = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -44,8 +47,7 @@ const LoginPage = () => {
             // window.location.reload();
         },
         onError: (error) => {
-            error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-            setIsLoading(false);
+            handleMutationError(error, setIsLoading);
 
             console.log("login error : ", error);
         },
@@ -89,8 +91,7 @@ const LoginPage = () => {
             // window.location.reload();
         },
         onError: (error) => {
-            error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-            setIsLoading(false);
+            handleMutationError(error, setIsLoading);
 
             console.log("login error : ", error);
         },

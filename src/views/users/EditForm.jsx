@@ -9,6 +9,9 @@ import { Dialog } from "primereact/dialog";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { toast } from "react-toastify";
 
+//
+import handleMutationError from "../../hooks/handleMutationError";
+
 function EditForm({ loggedInUserData, ...props }) {
     const queryClient = useQueryClient();
 
@@ -23,9 +26,7 @@ function EditForm({ loggedInUserData, ...props }) {
         },
         onError: (error) => {
             // props.onClose();
-            setEditMutationIsLoading(false);
-            error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-            console.log("create programs error : ", error);
+            handleMutationError(error, setEditMutationIsLoading);
         },
     });
 

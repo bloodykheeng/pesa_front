@@ -1,0 +1,73 @@
+{
+    "startDate": "2024-08-01",
+    "endDate": "2024-08-30",
+    "statuses": [
+        {
+            "id": 1,
+            "label": "Pending",
+            "value": "PENDING"
+        }
+    ],
+    "productCategories": [
+        {
+            "id": 1,
+            "name": "Water",
+            "code": "01",
+            "status": "active"
+        },
+        {
+            "id": 2,
+            "name": "Gas",
+            "code": "02",
+            "status": "active"
+        }
+    ],
+    "productCategoryBrands": [
+        {
+            "id": 1,
+            "name": "Aqua",
+            "code": "01",
+            "status": "active",
+            "details": "Aqua",
+            "product_categories_id": 1
+        }
+    ],
+    "products": [
+        {
+            "id": 4,
+            "name": "Rubis",
+            "status": "active",
+            "photo_url": null,
+            "cloudinary_photo_url": "https://res.cloudinary.com/dvq3sbctj/image/upload/v1723679809/product_photos/ovgs6dw9hyedguynden2.jpg",
+            "cloudinary_photo_public_id": "product_photos/ovgs6dw9hyedguynden2",
+            "price": "20000.00",
+            "quantity": -5,
+            "details": "rubis gas",
+            "category_brands_id": 2,
+            "product_types_id": 2
+        }
+    ],
+
+    "productTypes": [
+        {
+            "id": 1,
+            "name": "Assessory",
+            "code": "01",
+            "status": "active",
+            "photo_url": null,
+            "cloudinary_photo_url": null,
+            "cloudinary_photo_public_id": null,
+            "details": "Assessory"
+        },
+        {
+            "id": 2,
+            "name": "New Product",
+            "code": "02",
+            "status": "active",
+            "photo_url": null,
+            "cloudinary_photo_url": null,
+            "cloudinary_photo_public_id": null,
+            "details": "New Product"
+        }
+    ]
+}

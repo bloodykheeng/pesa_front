@@ -10,22 +10,18 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress"; // Import CircularProgress
 
+//
+import useHandleQueryError from "../../../hooks/useHandleQueryError";
+import handleMutationError from "../../../hooks/handleMutationError";
+
 function RolesPage() {
     const getListOfRolesAndModifiedPermissionServices = useQuery({
         queryKey: ["roles-with-modified-permissions"],
         queryFn: () => getAllRolesAndModifiedPermissionsService(),
     });
 
-    useEffect(() => {
-        if (getListOfRolesAndModifiedPermissionServices?.isError) {
-            console.log("Error fetching List of Hospitals :", getListOfRolesAndModifiedPermissionServices?.error);
-            getListOfRolesAndModifiedPermissionServices?.error?.response?.data?.message
-                ? toast.error(getListOfRolesAndModifiedPermissionServices?.error?.response?.data?.message)
-                : !getListOfRolesAndModifiedPermissionServices?.error?.response
-                ? toast.warning("Check Your Internet Connection Please")
-                : toast.error("An Error Occured Please Contact Admin");
-        }
-    }, [getListOfRolesAndModifiedPermissionServices?.isError]);
+    // Use the custom hook to handle errors with useMemo on the error object
+    useHandleQueryError(getListOfRolesAndModifiedPermissionServices?.isError, getListOfRolesAndModifiedPermissionServices?.error);
 
     console.log("getListOfRolesAndModifiedPermissionServices list : ", getListOfRolesAndModifiedPermissionServices?.data?.data);
     return (

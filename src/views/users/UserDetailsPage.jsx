@@ -2,88 +2,82 @@ import React from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
+import { Image } from "primereact/image";
 import moment from "moment";
-import "primeicons/primeicons.css"; // Ensure PrimeIcons are imported for use
+import "primeicons/primeicons.css";
 
 function UserDetailsPage({ user, showModal, handleCloseModal }) {
-    console.log("userDetail xxxxxx : ", user);
     return (
-        <Dialog header="Bio Data" visible={showModal} onHide={handleCloseModal} maximizable modal>
-            <div style={{ margin: "1rem" }}>
-                {" "}
-                <Panel header="Bio" toggleable>
-                    <div className="p-grid">
-                        <div className="p-col-12 p-md-6">
-                            <strong>Name:</strong> {user?.name}
+        <Dialog header="User Details" visible={showModal} onHide={handleCloseModal} maximizable modal className="p-fluid">
+            <div className="p-grid">
+                <div className="p-col-12 p-md-6">
+                    <Panel header="Profile Image" toggleable>
+                        <div className="card flex justify-content-center p-2">
+                            {/* {user?.cloudinary_photo_url ? <Image src={user.cloudinary_photo_url} alt={user.name} height="250" preview /> : <div style={{ width: "300px", height: "250px", display: "flex", justifyContent: "center", alignItems: "center", border: "1px dashed #ccc" }}>No Image</div>} */}
+                            {user?.photo_url ? (
+                                <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${user?.photo_url}`} alt={user.name} height="250" preview />
+                            ) : (
+                                <div style={{ width: "300px", height: "250px", display: "flex", justifyContent: "center", alignItems: "center", border: "1px dashed #ccc" }}>No Image</div>
+                            )}
                         </div>
-
-                        <div className="p-col-12 p-md-6">
-                            <strong>Email:</strong> {user?.email}
+                    </Panel>
+                </div>
+                <div className="p-col-12 p-md-6">
+                    <Panel header="Bio Data" toggleable>
+                        <div className="p-grid p-2">
+                            <div className="p-col-12">
+                                <strong>Name:</strong> {user?.name}
+                            </div>
+                            <div className="p-col-12">
+                                <strong>Email:</strong> {user?.email}
+                            </div>
+                            <div className="p-col-12">
+                                <strong>Status:</strong> {user?.status}
+                            </div>
+                            <div className="p-col-12">
+                                <strong>Last Login:</strong> {user?.lastlogin}
+                            </div>
+                            <div className="p-col-12">
+                                <strong>Phone:</strong> {user?.phone}
+                            </div>
+                            <div className="p-col-12">
+                                <strong>NIN:</strong> {user?.nin}
+                            </div>
+                            <div className="p-col-12">
+                                <strong>Agree:</strong> {user?.agree ? "Yes" : "No"}
+                            </div>
                         </div>
-
-                        <div className="p-col-12 p-md-6">
-                            <strong>Status:</strong> {user?.status}
-                        </div>
-
-                        <div className="p-col-12 p-md-6">
-                            <strong>Last Login:</strong> {user?.lastlogin}
-                        </div>
-                    </div>
-                </Panel>
-            </div>
-            <div style={{ margin: "1rem" }}>
-                {" "}
-                <Panel header="Work Details" toggleable>
-                    <div className="p-grid">
-                        <div className="p-col-12 p-md-6">
-                            <strong>Role:</strong> {user?.role}
-                        </div>
-                        {["Admin", "Department Commissioner", "Assistant Commissioner", "District Water Engineer", "Project Manager", "Engineer", "Utility Manager"].includes(user?.role) && (
-                            <div className="p-col-12 p-md-6">
-                                <strong>Directorate:</strong> {user?.user_directorate?.directorate?.name}
-                            </div>
-                        )}
-                        {["Department Commissioner", "Assistant Commissioner", "District Water Engineer", "Project Manager", "Engineer", "Utility Manager"].includes(user?.role) && (
-                            <div className="p-col-12 p-md-6">
-                                <strong>Department:</strong> {user?.user_department?.department?.name}
-                            </div>
-                        )}
-                        {["District Water Engineer", "Project Manager", "Engineer"].includes(user?.role) && (
-                            <div className="p-col-12 p-md-6">
-                                <strong>Department Administration:</strong> {user?.department_administration?.department_administration?.name}
-                            </div>
-                        )}
-                        {["Project Manager", "Engineer"].includes(user?.role) && (
-                            <div className="p-col-12 p-md-6">
-                                <strong>Project:</strong> {user?.user_project?.project?.project_title}
-                            </div>
-                        )}
-                        {user?.role === "Engineer" && (
-                            <div className="p-col-12 p-md-6">
-                                <strong>Sub Project:</strong> {user?.user_sub_project?.sub_project?.name}
-                            </div>
-                        )}
-
-                        {user?.role === "Utility Manager" && (
-                            <div className="p-col-12 p-md-6">
-                                <strong>Utility:</strong> {user?.user_utility?.utility?.name}
-                            </div>
-                        )}
-                    </div>
-                </Panel>
+                    </Panel>
+                </div>
             </div>
 
-            <div style={{ margin: "1rem" }}>
-                <Panel header="Additional Information" toggleable>
-                    <div className="p-field">
-                        <strong>Created At:</strong> {moment(user?.created_at).format("MMMM Do, YYYY, h:mm:ss A")}
-                    </div>
-                </Panel>
+            <div className="p-grid">
+                <div className="p-col-12">
+                    <Panel header="Additional Information" toggleable>
+                        <div className="p-grid p-2">
+                            <div className="p-col-12 p-md-6">
+                                <strong>Cloudinary Photo Public ID:</strong> {user?.cloudinary_photo_public_id}
+                            </div>
+                            <div className="p-col-12 p-md-6">
+                                <strong>Created By:</strong> {user?.created_by?.name}
+                            </div>
+                            <div className="p-col-12 p-md-6">
+                                <strong>Updated By:</strong> {user?.updated_by?.name}
+                            </div>
+                            <div className="p-col-12 p-md-6">
+                                <strong>Created At:</strong> {moment(user?.created_at).format("YYYY-MM-DD HH:mm:ss")}
+                            </div>
+                            <div className="p-col-12 p-md-6">
+                                <strong>Updated At:</strong> {moment(user?.updated_at).format("YYYY-MM-DD HH:mm:ss")}
+                            </div>
+                        </div>
+                    </Panel>
+                </div>
             </div>
 
-            {/* <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+            <div style={{ marginTop: "1rem", display: "flex", justifyContent: "flex-end" }}>
                 <Button label="Close" icon="pi pi-times" onClick={handleCloseModal} className="p-button-outlined p-button-secondary" />
-            </div> */}
+            </div>
         </Dialog>
     );
 }

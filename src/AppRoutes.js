@@ -8,13 +8,18 @@ import ProductCategoryBrandsViewPage from "./views/product-category-brands/Produ
 
 import ProductTypesPage from "./views/product-types/ProductTypesPage.jsx";
 import PackagesPage from "./views/packages/PackagesPage.jsx";
+import PackagesViewPage from "./views/packages/PackagesViewPage.jsx";
 import OrdersPage from "./views/orders/OrdersPage.jsx";
 import OrdersViewPage from "./views/orders/OrdersViewPage.jsx";
 import CustomersPage from "./views/customers/UserPage";
+import CustomersViewPage from "./views/customers/UsersViewPage";
 
-import ChatPage from "./views/chat/ChatPage.jsx";
+import ReferalsPage from "./views/referals/ReferalsPage.jsx";
+
+import DashboardPage from "./views/dashboard/DashboardPage";
+
 // ============ Customm component routes ========================
-const DashboardPage = lazy(() => import("./components/Dashboard"));
+// const DashboardPage = lazy(() => import("./components/Dashboard"));
 const FormLayoutDemo = lazy(() => import("./components/FormLayoutDemo"));
 const InputDemo = lazy(() => import("./components/InputDemo"));
 const FloatLabelDemo = lazy(() => import("./components/FloatLabelDemo"));
@@ -220,16 +225,34 @@ function AppRoutes() {
             layout: "/admin",
         },
         {
+            path: "/packages/package",
+            name: "packages/package",
+            element: PackagesViewPage,
+            layout: "/admin",
+        },
+
+        {
             path: "/customers",
             name: "customers",
             element: CustomersPage,
             layout: "/admin",
         },
-
         {
-            path: "/customer-care",
-            name: "customers-care",
-            element: ChatPage,
+            path: "/customers/customer",
+            name: "customer",
+            element: CustomersViewPage,
+            layout: "/admin",
+        },
+        {
+            path: "/customers/customer/order",
+            name: "OrdersViewPage",
+            element: OrdersViewPage,
+            layout: "/admin",
+        },
+        {
+            path: "/referrals",
+            name: "referrals",
+            element: ReferalsPage,
             layout: "/admin",
         },
     ];

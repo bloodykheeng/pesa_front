@@ -14,6 +14,11 @@ import { Button } from "primereact/button";
 import { confirmDialog } from "primereact/confirmdialog";
 
 import { Panel } from "primereact/panel";
+import { Image } from "primereact/image";
+
+//
+import useHandleQueryError from "../../hooks/useHandleQueryError";
+import handleMutationError from "../../hooks/handleMutationError";
 
 function UserList({ loggedInUserData }) {
     const queryClient = useQueryClient();
@@ -51,15 +56,11 @@ function UserList({ loggedInUserData }) {
     };
 
     const getListOfUsers = useQuery({ queryKey: ["users"], queryFn: getAllUsers });
+
     console.log("users list : ", getListOfUsers?.data?.data);
 
-    useEffect(() => {
-        if (getListOfUsers?.isError) {
-            console.log("Error fetching List of Users :", getListOfUsers?.error);
-            getListOfUsers?.error?.response?.data?.message ? toast.error(getListOfUsers?.error?.response?.data?.message) : !getListOfUsers?.error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-        }
-    }, [getListOfUsers?.isError]);
-    console.log("users list : ", getListOfUsers?.data?.data);
+    // Use the custom hook to handle errors with useMemo on the error object
+    useHandleQueryError(getListOfUsers?.isError, getListOfUsers?.error);
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
@@ -72,10 +73,8 @@ function UserList({ loggedInUserData }) {
         },
         onError: (error) => {
             console.log("The error is : ", error);
-            toast.error("An error occurred!");
-            setDeleteMutationIsLoading(false);
             setLoading(false);
-            error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+            handleMutationError(error, setDeleteMutationIsLoading);
         },
     });
 
@@ -125,6 +124,21 @@ function UserList({ loggedInUserData }) {
                 return <div>{rowData.tableData.id}</div>;
             },
         },
+        // {
+        //     title: "Photo",
+        //     field: "cloudinary_photo_url",
+        //     render: (rowData) => {
+        //         return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+        //     },
+        // },
+
+        {
+            title: "Photo",
+            field: "photo_url",
+            render: (rowData) => {
+                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+            },
+        },
         {
             title: "Name",
             field: "name",
@@ -151,6 +165,38 @@ function UserList({ loggedInUserData }) {
         {
             title: "lastlogin",
             field: "lastlogin",
+        },
+        {
+            title: "Agree",
+            field: "agree",
+            render: (rowData) => (rowData.agree ? "Yes" : "No"),
+        },
+        {
+            title: "Phone",
+            field: "phone",
+        },
+        {
+            title: "NIN",
+            field: "nin",
+        },
+        {
+            title: "Date",
+            field: "created_at",
+            hidden: true,
+            render: (rowData) => {
+                return moment(rowData.created_at).format("lll");
+            },
+        },
+
+        {
+            title: "Created By Name",
+            field: "created_by.name",
+            hidden: true,
+        },
+        {
+            title: "Created By Email",
+            field: "created_by.email",
+            hidden: true,
         },
     ];
 

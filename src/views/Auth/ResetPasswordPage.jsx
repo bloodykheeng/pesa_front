@@ -16,6 +16,9 @@ import CarInParkingPhoto from "./assets/istockphoto-1133561369-612x612.jpg";
 
 import { css } from "@emotion/react";
 
+//
+import handleMutationError from "../../hooks/handleMutationError";
+
 const ResetPasswordPage = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
@@ -28,8 +31,7 @@ const ResetPasswordPage = () => {
         },
         onError: (error) => {
             setIsLoading(false);
-            // toast.error(error?.message ? error?.message : "An error Occured while processing your Email ! please Contact Administrator");
-            error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+            handleMutationError(error, setIsLoading);
         },
     });
 
