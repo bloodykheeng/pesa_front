@@ -12,6 +12,10 @@ import moment from "moment";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
+//
+import EditForm from "./EditForm";
+import { Button } from "primereact/button";
+
 const OrdersViewPage = () => {
     const { getUserQuery } = useAuthContext();
     const location = useLocation();
@@ -49,12 +53,46 @@ const OrdersViewPage = () => {
         }
     };
 
+    let activeUser = getUserQuery?.data?.data;
+    console.log("🚀 ~ OrdersViewPage ~ activeUser:", activeUser);
+
+    //
+
+    const [selectedItem, setSelectedItem] = useState();
+    const [showEditForm, setShowEditForm] = useState(false);
+
+    const handleShowEditForm = (item) => {
+        setSelectedItem(item);
+        setShowEditForm(true);
+        console.log("handleShowEditForm is : ", item);
+    };
+    const handleCloseEditForm = () => {
+        setSelectedItem({ id: null });
+        setShowEditForm(false);
+    };
+
     return (
         <div className="product-category-view">
             <BreadcrumbNav />
             <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                 <TabPanel header="Order Details">
                     <div style={{ minHeight: "50vh", display: "flex", gap: "1rem", flexWrap: "wrap", flexDirection: "column" }}>
+                        {activeUser?.permissions.includes("update") && (
+                            <div
+                                style={{
+                                    height: "3rem",
+                                    margin: "1rem",
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    gap: "1rem",
+                                }}
+                            >
+                                <Button label="Edit Order" className="p-button-primary" onClick={() => handleShowEditForm(orderData)} />
+                            </div>
+                        )}
+
+                        {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}
+
                         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
                             <div>
                                 <p>

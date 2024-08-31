@@ -18,11 +18,18 @@ import { ProgressSpinner } from "primereact/progressspinner";
 
 import { Password } from "primereact/password";
 
+import { FileUpload } from "primereact/fileupload";
+
 function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
     const [showProjectField, setShowProjectField] = useState(false);
     console.log("loggedInUserData on user list page : ", loggedInUserData);
 
     console.log("testing lll fdgdsgsdf : ", initialData);
+
+    //file
+    const [photoError, setPhotoError] = useState(null);
+    const [photoTouched, setPhotoTouched] = useState(false);
+    const [uploadedFile, setUploadedFile] = useState(null);
 
     useEffect(() => {
         // Reset project field when the form is closed
@@ -46,6 +53,13 @@ function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
         }
         if (!values.status) {
             errors.status = "Status is required";
+        }
+        if (!values.phone) {
+            errors.phone = "Phone is required";
+        }
+
+        if (!values.nin) {
+            errors.nin = "Nin number is required";
         }
         // Improved Password Validation
         if (!values.password) {
@@ -79,18 +93,39 @@ function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
 
+    // const onSubmit = (data, form) => {
+    //     // Add 'form' as an argument
+    //     const errors = validate(data);
+    //     if (Object.keys(errors).length === 0) {
+    //         setPendingData(data);
+    //         setShowConfirmDialog(true);
+    //     } else {
+    //         // Mark all fields as touched to show validation errors
+    //         Object.keys(errors).forEach((field) => {
+    //             form.mutators.setFieldTouched(field, true);
+    //         });
+    //         toast.warning("First fill in all required fields.");
+    //     }
+    // };
+
     const onSubmit = (data, form) => {
-        // Add 'form' as an argument
         const errors = validate(data);
-        if (Object.keys(errors).length === 0) {
-            setPendingData(data);
+        // Check if photo is uploaded
+        if (!uploadedFile && !initialData) {
+            setPhotoError("A photo is required");
+        }
+
+        if (Object.keys(errors).length === 0 && !photoError) {
+            const formData = { ...data, photo: uploadedFile };
+            setPendingData(formData);
             setShowConfirmDialog(true);
         } else {
             // Mark all fields as touched to show validation errors
             Object.keys(errors).forEach((field) => {
                 form.mutators.setFieldTouched(field, true);
             });
-            toast.warning("First fill in all required fields.");
+            setPhotoTouched(true); // Make sure to mark the photo as touched to show the error
+            toast.warning("Please fill in all required fields and upload a photo.");
         }
     };
 
@@ -119,6 +154,28 @@ function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
     if (initialData) {
         initialData = { role: initialData?.role, ...initialData };
     }
+
+    //file
+
+    const onFileUpload = (e) => {
+        // Clear previous errors
+        setPhotoError(null);
+        setPhotoTouched(true); // Indicate that the user has interacted with the file input
+
+        const file = e.files && e.files.length > 0 ? e.files[0] : null;
+        if (file) {
+            if (file.size > 2097152) {
+                // Check file size
+                setPhotoError("File size should be less than 2MB");
+                setUploadedFile(null); // Clear the uploaded file on error
+            } else {
+                setUploadedFile(file); // Update the state with the new file
+            }
+        } else {
+            setPhotoError("A photo is required");
+            setUploadedFile(null); // Clear the uploaded file if no file is selected
+        }
+    };
 
     return (
         <div>
@@ -172,6 +229,26 @@ function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
                                         </div>
                                     )}
                                 </Field>
+
+                                <Field name="phone">
+                                    {({ input, meta }) => (
+                                        <div className="p-field m-4">
+                                            <label htmlFor="phone">Phone</label>
+                                            <InputText {...input} id="phone" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                            {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                        </div>
+                                    )}
+                                </Field>
+
+                                <Field name="nin">
+                                    {({ input, meta }) => (
+                                        <div className="p-field m-4">
+                                            <label htmlFor="nin">Nin number</label>
+                                            <InputText {...input} id="nin" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                            {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                        </div>
+                                    )}
+                                </Field>
                                 <Field name="password">
                                     {({ input, meta }) => (
                                         <div className="p-field m-4">
@@ -204,6 +281,13 @@ function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
                                 </Field>
 
                                 {/* Conditional Field Rendering based on the role */}
+
+                                {/* FileUpload for photo with validation */}
+                                <div className="p-field m-4">
+                                    <label htmlFor="photo">Photo</label>
+                                    <FileUpload name="photo" customUpload uploadHandler={onFileUpload} accept="image/*" maxFileSize={2097152} />
+                                    {photoTouched && photoError && <small className="p-error">{photoError}</small>}
+                                </div>
 
                                 {/* Add more fields as needed */}
                                 <div className="p-field m-4">

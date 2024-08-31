@@ -131,19 +131,19 @@ function ListPage({ packageData, ...props }) {
         {
             title: "#",
             width: "5%",
-            field: "name",
-            render: (rowData) => {
-                // tableId = rowData.tableData.id;
-                tableId = tableId++;
-                return <div>{rowData.tableData.index + 1}</div>;
-                // return <div>{rowData.tableData.id}</div>;
-            },
+            field: "id",
+            // render: (rowData) => {
+            //     // tableId = rowData.tableData.id;
+            //     tableId = tableId++;
+            //     return <div>{rowData.tableData.index + 1}</div>;
+            //     // return <div>{rowData.tableData.id}</div>;
+            // },
         },
         {
             title: "Package Number",
             field: "package.package_number",
             render: (rowData) => {
-                return <div>{rowData?.order?.order_number}</div>;
+                return <div>{rowData?.package?.package_number}</div>;
             },
         },
         {

@@ -249,6 +249,13 @@ function AppRoutes() {
             element: OrdersViewPage,
             layout: "/admin",
         },
+
+        {
+            path: "/customers/customer/package",
+            name: "packages/package",
+            element: PackagesViewPage,
+            layout: "/admin",
+        },
         {
             path: "/referrals",
             name: "referrals",

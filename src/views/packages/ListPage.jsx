@@ -119,20 +119,39 @@ function ListPage({ customerData, ...props }) {
         {
             title: "#",
             width: "5%",
-            field: "name",
+            field: "id",
+            // render: (rowData) => {
+            //     // tableId = rowData.tableData.id;
+            //     tableId = tableId++;
+            //     return <div>{rowData.tableData.index + 1}</div>;
+            //     // return <div>{rowData.tableData.id}</div>;
+            // },
+        },
+        {
+            title: "Photo",
+            field: "photo_url",
             render: (rowData) => {
-                // tableId = rowData.tableData.id;
-                tableId = tableId++;
-                return <div>{rowData.tableData.index + 1}</div>;
-                // return <div>{rowData.tableData.id}</div>;
+                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
             },
         },
+
+        // {
+        //     title: "Photo",
+        //     field: "cloudinary_photo_url",
+        //     render: (rowData) => {
+        //         return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+        //     },
+        // },
         {
             title: "Package Number",
             field: "package_number",
             render: (rowData) => {
                 return <div>{rowData?.package_number}</div>;
             },
+        },
+        {
+            title: "name",
+            field: "name",
         },
         {
             title: "pickup",
@@ -142,10 +161,10 @@ function ListPage({ customerData, ...props }) {
             title: "destination",
             field: "destination",
         },
-        {
-            title: "Payment Mode",
-            field: "payment_mode",
-        },
+        // {
+        //     title: "Payment Mode",
+        //     field: "payment_mode",
+        // },
 
         {
             title: "Payment Status",

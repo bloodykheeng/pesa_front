@@ -55,9 +55,9 @@ function UserDetailsPage({ user, showModal, handleCloseModal }) {
                 <div className="p-col-12">
                     <Panel header="Additional Information" toggleable>
                         <div className="p-grid p-2">
-                            <div className="p-col-12 p-md-6">
+                            {/* <div className="p-col-12 p-md-6">
                                 <strong>Cloudinary Photo Public ID:</strong> {user?.cloudinary_photo_public_id}
-                            </div>
+                            </div> */}
                             <div className="p-col-12 p-md-6">
                                 <strong>Created By:</strong> {user?.created_by?.name}
                             </div>

@@ -12,6 +12,10 @@ import moment from "moment";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
+//
+import EditForm from "./EditForm";
+import { Button } from "primereact/button";
+
 const PackagesViewPage = () => {
     const { getUserQuery } = useAuthContext();
     const location = useLocation();
@@ -49,17 +53,58 @@ const PackagesViewPage = () => {
         }
     };
 
+    let activeUser = getUserQuery?.data?.data;
+    console.log("🚀 ~ OrdersViewPage ~ activeUser:", activeUser);
+
+    //
+
+    const [selectedItem, setSelectedItem] = useState();
+    const [showEditForm, setShowEditForm] = useState(false);
+
+    const handleShowEditForm = (item) => {
+        setSelectedItem(item);
+        setShowEditForm(true);
+        console.log("handleShowEditForm is : ", item);
+    };
+    const handleCloseEditForm = () => {
+        setSelectedItem({ id: null });
+        setShowEditForm(false);
+    };
+
     return (
         <div className="product-category-view">
             <BreadcrumbNav />
             <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
-                <TabPanel header="Order Details">
+                <TabPanel header="Package Order Details">
                     <div style={{ minHeight: "50vh", display: "flex", gap: "1rem", flexWrap: "wrap", flexDirection: "column" }}>
+                        {activeUser?.permissions.includes("update") && (
+                            <div
+                                style={{
+                                    height: "3rem",
+                                    margin: "1rem",
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    gap: "1rem",
+                                }}
+                            >
+                                <Button label="Edit Package" className="p-button-primary" onClick={() => handleShowEditForm(packageData)} />
+                            </div>
+                        )}
+
+                        {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}
                         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                            {/* Display Image */}
+                            <div className="card flex justify-content-center">
+                                {/* <Image src={productCategoryData.cloudinary_photo_url} alt="Category Image" width="250" preview /> */}
+                                <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${packageData?.photo_url}`} alt="package Image" width="250" preview />
+                            </div>
                             <div>
                                 <p>
                                     <strong>Package Number: </strong>
                                     <span>{packageData?.package_number}</span>
+                                </p>
+                                <p>
+                                    <strong>Name: </strong> {packageData?.name}
                                 </p>
                                 <p>
                                     <strong>Pickup: </strong> {packageData?.pickup}
@@ -67,9 +112,9 @@ const PackagesViewPage = () => {
                                 <p>
                                     <strong>Destination: </strong> {packageData?.destination}
                                 </p>
-                                <p>
+                                {/* <p>
                                     <strong>Payment Mode: </strong> {packageData?.payment_mode}
-                                </p>
+                                </p> */}
                                 <p>
                                     <strong>Payment Status: </strong>
                                     <span style={{ color: getStatusColor(packageData?.payment_status), fontWeight: "bold" }}>{packageData?.payment_status?.charAt(0).toUpperCase() + packageData?.payment_status?.slice(1)}</span>
@@ -98,6 +143,7 @@ const PackagesViewPage = () => {
                                     <strong>Created By Email:</strong> {packageData?.created_by?.email}
                                 </p>
                             </div>
+
                             <div>
                                 <p>
                                     <strong>Updated By Name:</strong> {packageData?.updated_by?.name}
@@ -107,6 +153,11 @@ const PackagesViewPage = () => {
                                 </p>
                                 <p>
                                     <strong>Updated At:</strong> {moment(packageData?.updated_at).format("YYYY-MM-DD HH:mm:ss")}
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    <strong>More Info:</strong> {packageData?.extraInfo}
                                 </p>
                             </div>
                         </div>

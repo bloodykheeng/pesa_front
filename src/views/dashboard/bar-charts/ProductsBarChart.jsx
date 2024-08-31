@@ -47,7 +47,10 @@ noData(Highcharts);
 HC_accessibility(Highcharts);
 
 const getChartOptions = (data, dataFilters) => {
-    if (!data || !Array.isArray(data) || data.length === 0) {
+    // if (!data || !Array.isArray(data) || data.length === 0) {
+    //     return null;
+    // }
+    if (!data || !Array.isArray(data)) {
         return null;
     }
     function formatArray(arr, key) {
@@ -121,6 +124,18 @@ const getChartOptions = (data, dataFilters) => {
         },
         credits: {
             enabled: false,
+        },
+        noData: {
+            style: {
+                fontWeight: "bold",
+                fontSize: "16px",
+                color: "#303030",
+            },
+            position: {
+                align: "center",
+                verticalAlign: "middle",
+            },
+            text: "No data to display",
         },
         series: [
             {
@@ -223,7 +238,6 @@ const ProductsBarChart = () => {
                             setShowFiltersFormDialog={setShowFiltersFormDialog}
                         />
                     </div>
-
                     <div style={{ height: "400px" }}>
                         <HighchartsReact highcharts={Highcharts} options={getChartOptions(seriesData, ProductBarChartStatisticsPerfomanceChartQuery?.data?.data?.requestParams)} immutable={true} />
                     </div>

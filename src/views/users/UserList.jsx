@@ -117,12 +117,12 @@ function UserList({ loggedInUserData }) {
         {
             title: "#",
             width: "5%",
-            field: "name",
-            render: (rowData) => {
-                tableId = rowData.tableData.id;
-                tableId++;
-                return <div>{rowData.tableData.id}</div>;
-            },
+            field: "id",
+            // render: (rowData) => {
+            //     tableId = rowData.tableData.id;
+            //     tableId++;
+            //     return <div>{rowData.tableData.id}</div>;
+            // },
         },
         // {
         //     title: "Photo",
@@ -136,7 +136,7 @@ function UserList({ loggedInUserData }) {
             title: "Photo",
             field: "photo_url",
             render: (rowData) => {
-                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
             },
         },
         {

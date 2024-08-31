@@ -117,13 +117,13 @@ function ListPage({ ...props }) {
         {
             title: "#",
             width: "5%",
-            field: "name",
-            render: (rowData) => {
-                // tableId = rowData.tableData.id;
-                tableId = tableId++;
-                return <div>{rowData.tableData.index + 1}</div>;
-                // return <div>{rowData.tableData.id}</div>;
-            },
+            field: "id",
+            // render: (rowData) => {
+            //     // tableId = rowData.tableData.id;
+            //     tableId = tableId++;
+            //     return <div>{rowData.tableData.index + 1}</div>;
+            //     // return <div>{rowData.tableData.id}</div>;
+            // },
         },
         {
             title: "Name",

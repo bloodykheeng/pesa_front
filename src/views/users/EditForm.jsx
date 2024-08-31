@@ -30,10 +30,39 @@ function EditForm({ loggedInUserData, ...props }) {
         },
     });
 
-    const handleSubmit = (data) => {
-        console.log("updating user : ", data);
+    // const handleSubmit = (data) => {
+    //     console.log("updating user : ", data);
+    //     setEditMutationIsLoading(true);
+    //     editMutation.mutate(data);
+    // };
+
+    const handleSubmit = async (data) => {
         setEditMutationIsLoading(true);
-        editMutation.mutate(data);
+        console.log("Data we are submitting: ", data);
+
+        const formData = new FormData();
+        formData.append("_method", "PUT");
+
+        // Adding the new fields
+        formData.append("name", data?.name);
+        formData.append("phone", data?.phone ?? null);
+        formData.append("email", data?.email);
+        formData.append("role", data?.role);
+        formData.append("nin", data.nin ?? null);
+        // formData.append("date_of_birth", data.date_of_birth ?? null);
+        formData.append("gender", data.gender ?? null);
+        formData.append("status", data.status);
+        formData.append("lastlogin", data.lastlogin ?? new Date().toISOString());
+        // formData.append("description", data.description);
+
+        formData.append("photo", data.photo); // Assuming 'photo' is the field name for the file upload
+
+        // Log formData keys and values for debugging (optional)
+        // formData.forEach((value, key) => {
+        //     console.log(`${key}: ${value}`);
+        // });
+
+        editMutation.mutate(formData);
     };
 
     return (
