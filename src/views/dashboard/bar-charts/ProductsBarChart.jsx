@@ -238,7 +238,6 @@ const ProductsBarChart = () => {
                             setShowFiltersFormDialog={setShowFiltersFormDialog}
                         />
                     </div>
-                    <h1>testing</h1>
                     <div style={{ height: "400px" }}>
                         <HighchartsReact highcharts={Highcharts} options={getChartOptions(seriesData, ProductBarChartStatisticsPerfomanceChartQuery?.data?.data?.requestParams)} immutable={true} />
                     </div>
