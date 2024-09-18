@@ -34,8 +34,8 @@ const TransactionStatsCard = () => {
         startDate: moment().startOf("month").format("YYYY-MM-DD"),
         endDate: moment().format("YYYY-MM-DD"), // Set to now
         // statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
-        deliveryStatuses: [{ label: "Delivered", value: "delivered" }],
-        paymentStatuses: [{ label: "Paid", value: "Paid" }],
+        deliveryStatuses: [{ id: 1, label: "Pending", value: "pending" }],
+        paymentStatuses: [],
         // dataLimitNumber: null,
     });
 
