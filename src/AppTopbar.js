@@ -9,6 +9,7 @@ import { Sidebar } from "primereact/sidebar";
 import { confirmDialog } from "primereact/confirmdialog";
 import useAuthContext from "./context/AuthContext";
 import { Button } from "primereact/button";
+import Tooltip from "@mui/material/Tooltip";
 
 export const AppTopbar = (props) => {
     const { active, setActive } = useActive();
@@ -60,7 +61,7 @@ export const AppTopbar = (props) => {
 
     //=============== logout =======================
 
-    const { logoutMutation } = useAuthContext();
+    const { logoutMutation, logoutMutationIsLoading } = useAuthContext();
 
     const handleLogout = () => {
         confirmDialog({
@@ -143,14 +144,16 @@ export const AppTopbar = (props) => {
                     {/* <Menu ref={profileMenuRef} model={profileMenuItems} popup appendTo={document.body} onHide={hideProfileMenu} /> */}
                 </li>
                 {/* Add the logout button */}
-                {logoutMutation.isLoading ? (
+                {logoutMutationIsLoading ? (
                     <i className="fa fa-running" />
                 ) : (
                     <li>
-                        <button className="p-link layout-topbar-button" onClick={handleLogout}>
-                            <i className="pi pi-power-off" />
-                            <span>Logout</span>
-                        </button>
+                        <Tooltip title="Logout" arrow>
+                            <button className="p-link layout-topbar-button" onClick={handleLogout}>
+                                <i className="pi pi-power-off" />
+                                <span>Logout</span>
+                            </button>
+                        </Tooltip>
                     </li>
                 )}
             </ul>

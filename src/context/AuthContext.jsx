@@ -50,7 +50,19 @@ export const AuthProvider = ({ children }) => {
                 navigate("/login");
             }
             console.log("Error getUserQuery :", getUserQuery?.error);
-            getUserQuery?.error?.response?.data?.message ? toast.error(getUserQuery?.error?.response?.data?.message) : !getUserQuery?.error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
+            if (getUserQuery?.error?.response?.data?.message) {
+                if (getUserQuery.error.response.data.message === "Unauthenticated.") {
+                    navigate("/login"); // Navigate to the login page
+                    toast.warning("No Active Session. Please log in.");
+                    // window.location.reload(); // Reload the window
+                } else {
+                    toast.error(getUserQuery.error.response.data.message);
+                }
+            } else if (!getUserQuery?.error?.response) {
+                toast.warning("Check Your Internet Connection Please");
+            } else {
+                toast.error("An Error Occurred. Please Contact Admin");
+            }
         }
     }, [getUserQuery?.isError]);
 
@@ -86,8 +98,7 @@ export const AuthProvider = ({ children }) => {
         onSuccess: (data) => {
             setLogoutMutationIsLoading(false);
             // Reset the user state to null
-            queryClient.resetQueries(["logged-in-user"]);
-            queryClient.resetQueries([]);
+            queryClient.resetQueries();
             queryClient.clear();
             queryClient.refetchQueries();
 

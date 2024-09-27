@@ -13,7 +13,12 @@ import PermissionsList from "./old-components/permissions/PermissionsList.js";
 import RolesPage from "./roles/RolesPage";
 import PermissionsPage from "./permissions/PermissionsPage";
 
-function UserPage({ loggedInUserData }) {
+//
+import useAuthContext from "../../context/AuthContext";
+
+function UserPage() {
+    const { getUserQuery } = useAuthContext();
+    const loggedInUserData = getUserQuery?.data?.data;
     console.log("loggedInUserData user page : ", loggedInUserData);
     return (
         <div>

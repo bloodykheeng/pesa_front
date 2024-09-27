@@ -1,4 +1,8 @@
 import React, { lazy, Suspense, useState } from "react";
+import { useRoutes, Navigate } from "react-router-dom";
+
+//
+import useAuthContext from "./context/AuthContext";
 
 //==================== my car routes ====================
 import NewUsersPage from "./views/users/UserPage";
@@ -17,6 +21,9 @@ import CustomersViewPage from "./views/customers/UsersViewPage";
 import ReferalsPage from "./views/referals/ReferalsPage.jsx";
 
 import DashboardPage from "./views/dashboard/DashboardPage";
+
+//
+import NotFoundPage from "./components/not_found/NotFoundPage";
 
 // ============ Customm component routes ========================
 // const DashboardPage = lazy(() => import("./components/Dashboard"));
@@ -41,125 +48,128 @@ const EmptyPage = lazy(() => import("./pages/EmptyPage"));
 const TimelineDemo = lazy(() => import("./pages/TimelineDemo"));
 
 function AppRoutes() {
-    const privateDefaultRoutes = [
+    const { getUserQuery } = useAuthContext();
+    const activeUser = getUserQuery?.data?.data;
+
+    const adminRoutes = [
         {
             path: "/dashboard",
             name: "dashboard",
-            element: DashboardPage, // Replace with the actual component
+            element: <DashboardPage />, // Replace with the actual component
             layout: "/private",
         },
         {
             path: "/formlayout",
             name: "formlayout",
-            element: FormLayoutDemo,
+            element: <FormLayoutDemo />,
             layout: "/private",
         },
         {
             path: "/input",
             name: "input",
-            element: InputDemo,
+            element: <InputDemo />,
             layout: "/private",
         },
         {
             path: "/floatlabel",
             name: "floatlabel",
-            element: FloatLabelDemo,
+            element: <FloatLabelDemo />,
             layout: "/private",
         },
         {
             path: "/invalidstate",
             name: "invalidstate",
-            element: InvalidStateDemo,
+            element: <InvalidStateDemo />,
             layout: "/private",
         },
         {
             path: "/button",
             name: "button",
-            element: ButtonDemo,
+            element: <ButtonDemo />,
             layout: "/private",
         },
         {
             path: "/table",
             name: "table",
-            element: TableDemo,
+            element: <TableDemo />,
             layout: "/private",
         },
         {
             path: "/list",
             name: "list",
-            element: ListDemo,
+            element: <ListDemo />,
             layout: "/private",
         },
         {
             path: "/tree",
             name: "tree",
-            element: TreeDemo,
+            element: <TreeDemo />,
             layout: "/private",
         },
         {
             path: "/panel",
             name: "panel",
-            element: PanelDemo,
+            element: <PanelDemo />,
             layout: "/private",
         },
         {
             path: "/overlay",
             name: "overlay",
-            element: OverlayDemo,
+            element: <OverlayDemo />,
             layout: "/private",
         },
         {
             path: "/media",
             name: "media",
-            element: MediaDemo,
+            element: <MediaDemo />,
             layout: "/private",
         },
         {
             path: "/menu",
             name: "menu",
-            element: MenuDemo,
+            element: <MenuDemo />,
             layout: "/private",
         },
         {
             path: "/messages",
             name: "messages",
-            element: MessagesDemo,
+            element: <MessagesDemo />,
             layout: "/private",
         },
         {
             path: "/file",
             name: "file",
-            element: FileDemo,
+            element: <FileDemo />,
             layout: "/private",
         },
         {
             path: "/chart",
             name: "chart",
-            element: ChartDemo,
+            element: <ChartDemo />,
             layout: "/private",
         },
         {
             path: "/misc",
             name: "misc",
-            element: MiscDemo,
+            element: <MiscDemo />,
             layout: "/private",
         },
         {
             path: "/timeline",
             name: "timeline",
-            element: TimelineDemo,
+            element: <TimelineDemo />,
             layout: "/private",
         },
         {
             path: "/crud",
             name: "crud",
-            element: Crud,
+            element: <Crud />,
             layout: "/private",
         },
         {
             path: "/empty",
             name: "empty",
-            element: EmptyPage,
+            element: <EmptyPage />,
             layout: "/private",
         },
 
@@ -168,105 +178,108 @@ function AppRoutes() {
         {
             path: "/users",
             name: "users",
-            element: NewUsersPage,
+            element: <NewUsersPage />,
             layout: "/admin",
         },
         {
             path: "/product-categories",
             name: "product-categories",
-            element: ProductCategoriesPage,
+            element: <ProductCategoriesPage />,
             layout: "/admin",
         },
         {
             path: "/product-categories/category",
             name: "category",
-            element: ProductCategoryViewPage,
+            element: <ProductCategoryViewPage />,
             layout: "/admin",
         },
 
         {
             path: "/product-categories/category/brand",
             name: "product-category-brand",
-            element: ProductCategoryBrandsViewPage,
+            element: <ProductCategoryBrandsViewPage />,
             layout: "/admin",
         },
 
         {
             path: "/product-types",
             name: "ProductTypesPage",
-            element: ProductTypesPage,
+            element: <ProductTypesPage />,
             layout: "/admin",
         },
         {
             path: "/orders",
             name: "ProductTypesPage",
-            element: OrdersPage,
+            element: <OrdersPage />,
             layout: "/admin",
         },
 
         {
             path: "/orders",
             name: "ProductTypesPage",
-            element: OrdersPage,
+            element: <OrdersPage />,
             layout: "/admin",
         },
 
         {
             path: "/orders/order",
             name: "OrdersViewPage",
-            element: OrdersViewPage,
+            element: <OrdersViewPage />,
             layout: "/admin",
         },
 
         {
             path: "/packages",
             name: "packages",
-            element: PackagesPage,
+            element: <PackagesPage />,
             layout: "/admin",
         },
         {
             path: "/packages/package",
             name: "packages/package",
-            element: PackagesViewPage,
+            element: <PackagesViewPage />,
             layout: "/admin",
         },
 
         {
             path: "/customers",
             name: "customers",
-            element: CustomersPage,
+            element: <CustomersPage />,
             layout: "/admin",
         },
         {
             path: "/customers/customer",
             name: "customer",
-            element: CustomersViewPage,
+            element: <CustomersViewPage />,
             layout: "/admin",
         },
         {
             path: "/customers/customer/order",
             name: "OrdersViewPage",
-            element: OrdersViewPage,
+            element: <OrdersViewPage />,
             layout: "/admin",
         },
 
         {
             path: "/customers/customer/package",
             name: "packages/package",
-            element: PackagesViewPage,
+            element: <PackagesViewPage />,
             layout: "/admin",
         },
         {
             path: "/referrals",
             name: "referrals",
-            element: ReferalsPage,
+            element: <ReferalsPage />,
             layout: "/admin",
         },
     ];
 
-    const [privateRoutes, setPrivateRoutes] = useState(privateDefaultRoutes);
+    const routes = useRoutes([
+        ...(activeUser?.role.includes("Admin") ? adminRoutes : []),
+        { path: "*", element: <NotFoundPage /> }, // Handle 404
+    ]);
 
-    return privateRoutes;
+    return routes;
 }
 
 export default AppRoutes;

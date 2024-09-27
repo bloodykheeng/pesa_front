@@ -385,12 +385,12 @@ const AdminLayout = () => {
     });
 
     // ===========  App routes ===========
-    let myroutes = AppRoutes();
-    const [defaultRoutes, setDefaultRoutes] = useState(myroutes);
+    // let myroutes = AppRoutes();
+    // const [defaultRoutes, setDefaultRoutes] = useState(myroutes);
 
-    useEffect(() => {
-        setDefaultRoutes(myroutes);
-    }, [myroutes]);
+    // useEffect(() => {
+    //     setDefaultRoutes(myroutes);
+    // }, [myroutes]);
 
     return (
         <div className={wrapperClass} onClick={onWrapperClick}>
@@ -404,7 +404,8 @@ const AdminLayout = () => {
 
             <div className="layout-main-container">
                 <div className="layout-main">
-                    <Suspense
+                    {AppRoutes()} {/* Automatically returns and renders the route elements */}
+                    {/* <Suspense
                         fallback={
                             <div
                                 style={{
@@ -426,11 +427,12 @@ const AdminLayout = () => {
                                     return <Route path={route.path} key={index} element={<route.element location={location} loggedInUserData={getUserQuery?.data?.data} />} />;
                                 }
                             })}
-
-                            {/* <Route path="/login" element={<NewLoginPage getUserLoggedInUserDataQuery={getUserLoggedInUserDataQuery} setUserId={setUserId} setAuthUserProfile={setAuthUserProfile} authUserProfile={authUserProfile} />} />
+                            // ----- WAS ORIGINALLY COMMENTED -------------------------
+                            <Route path="/login" element={<NewLoginPage getUserLoggedInUserDataQuery={getUserLoggedInUserDataQuery} setUserId={setUserId} setAuthUserProfile={setAuthUserProfile} authUserProfile={authUserProfile} />} />
                             <Route path="/signup" element={<RegistrationPage />} />
                             <Route path="403" element={<NotAuthorised />} />
-                            <Route path="*" element={<PageNotFound />} /> */}
+                            <Route path="*" element={<PageNotFound />} />
+                            // ----- WAS ORIGINALLY COMMENTED -------------------------
                             <Route
                                 path="*"
                                 element={
@@ -440,7 +442,7 @@ const AdminLayout = () => {
                                 }
                             />
                         </Routes>
-                    </Suspense>
+                    </Suspense> */}
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
