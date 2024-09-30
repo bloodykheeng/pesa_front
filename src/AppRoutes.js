@@ -22,6 +22,9 @@ import ReferalsPage from "./views/referals/ReferalsPage.jsx";
 
 import DashboardPage from "./views/dashboard/DashboardPage";
 
+import FaqsPage from "./views/faqs/FaqsPage";
+import NotificationsPage from "./views/notifications/NotificationsPage";
+
 //
 import NotFoundPage from "./components/not_found/NotFoundPage";
 
@@ -272,10 +275,22 @@ function AppRoutes() {
             element: <ReferalsPage />,
             layout: "/admin",
         },
+        {
+            path: "/faqs",
+            name: "faqs",
+            element: <FaqsPage />,
+            layout: "/admin",
+        },
+        {
+            path: "/notifications",
+            name: "notifications",
+            element: <NotificationsPage />,
+            layout: "/admin",
+        },
     ];
 
     const routes = useRoutes([
-        ...(activeUser?.role.includes("Admin") ? adminRoutes : []),
+        ...(activeUser?.role.includes("Admin") || activeUser?.role.includes("Editor") ? adminRoutes : []),
         { path: "*", element: <NotFoundPage /> }, // Handle 404
     ]);
 
