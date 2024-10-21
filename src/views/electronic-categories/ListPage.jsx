@@ -8,7 +8,7 @@ import moment from "moment";
 
 import { useNavigate } from "react-router-dom";
 
-import { getAllProductTypes, getProductTypeById, postProductType, updateProductType, deleteProductTypeById } from "../../services/products/product-types-service";
+import { getAllElectronicCategories, getElectronicCategorieById, postElectronicCategorie, updateElectronicCategorie, deleteElectronicCategorieById } from "../../services/electronics/electronic-categories-service";
 
 import MuiTable from "../../components/general_components/MuiTable";
 import { toast } from "react-toastify";
@@ -27,25 +27,24 @@ function ListPage({ ...props }) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["product-types"],
-        queryFn: getAllProductTypes,
+        queryKey: ["electronic-categories"],
+        queryFn: getAllElectronicCategories,
     });
-    console.log("🚀Product Types ~ ListPage ~ data:", data);
+    console.log("🚀Electronic categories ~ ListPage ~ data:", data);
     // useEffect(() => {
     //     if (isError) {
     //         console.log("Error fetching List of data :", error);
     //         error?.response?.data?.message ? toast.error(error?.response?.data?.message) : !error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
     //     }
     // }, [isError]);
-
     // Use the custom hook to handle errors with useMemo on the error object
     useHandleQueryError(isError, error);
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
-        mutationFn: (variables) => deleteProductTypeById(variables),
+        mutationFn: (variables) => deleteElectronicCategorieById(variables),
         onSuccess: (data) => {
-            queryClient.invalidateQueries(["product-types"]);
+            queryClient.invalidateQueries(["electronic-categories"]);
             setDeleteMutationIsLoading(false);
         },
         onError: (error) => {
@@ -118,13 +117,22 @@ function ListPage({ ...props }) {
             title: "#",
             width: "5%",
             field: "id",
-            // render: (rowData) => {
-            //     // tableId = rowData.tableData.id;
-            //     tableId = tableId++;
-            //     return <div>{rowData.tableData.index + 1}</div>;
-            //     // return <div>{rowData.tableData.id}</div>;
-            // },
         },
+        {
+            title: "Photo",
+            field: "photo_url",
+            render: (rowData) => {
+                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+            },
+        },
+
+        // {
+        //     title: "Photo",
+        //     field: "cloudinary_photo_url",
+        //     render: (rowData) => {
+        //         return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+        //     },
+        // },
         {
             title: "Name",
             field: "name",
@@ -137,22 +145,6 @@ function ListPage({ ...props }) {
             title: "Details",
             field: "details",
         },
-
-        // {
-        //     title: "Photo",
-        //     field: "photo_url",
-        //     render: (rowData) => {
-        //         return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-        //     },
-        // },
-
-        // {
-        //     title: "Photo",
-        //     field: "cloudinary_photo_url",
-        //     render: (rowData) => {
-        //         return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-        //     },
-        // },
 
         {
             title: "Date",
@@ -170,14 +162,14 @@ function ListPage({ ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
-            <Panel header="Product Types" style={{ marginBottom: "20px" }} toggleable>
+            <Panel header="Electronic Categories" style={{ marginBottom: "20px" }} toggleable>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
-                    {activeUser?.permissions.includes("create") && <Button label="Add Product Type" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
+                    {activeUser?.permissions.includes("create") && <Button label="Add Electronic Category" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
                     <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
                 </div>
 
                 <MuiTable
-                    tableTitle="Product Types"
+                    tableTitle="Electronic Categories"
                     tableData={data?.data?.data ?? []}
                     tableColumns={columns}
                     handleShowEditForm={handleShowEditForm}
@@ -185,17 +177,17 @@ function ListPage({ ...props }) {
                     showEdit={activeUser?.permissions.includes("update")}
                     showDelete={activeUser?.permissions.includes("delete")}
                     loading={isLoading || status === "loading" || deleteMutationIsLoading}
-                    // //
-                    // handleViewPage={(rowData) => {
-                    //     navigate("category", { state: { productCategoryData: rowData } });
-                    // }}
-                    // showViewPage={true}
-                    // hideRowViewPage={false}
+                    //
+                    handleViewPage={(rowData) => {
+                        navigate("category", { state: { electronicCategoryData: rowData } });
+                    }}
+                    showViewPage={true}
+                    hideRowViewPage={false}
                     //
                     //
                     exportButton={true}
-                    pdfExportTitle="Product Types"
-                    csvExportTitle="Product Types"
+                    pdfExportTitle="Electronic Categories"
+                    csvExportTitle="Electronic Categories"
                 />
 
                 {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}

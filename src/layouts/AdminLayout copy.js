@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect, useRef, useMemo } from "react";
+import React, { Suspense, useState, useEffect, useRef } from "react";
 
 import classNames from "classnames";
 import { Route, useLocation, Routes } from "react-router-dom";
@@ -50,11 +50,7 @@ import useAuthContext from "../context/AuthContext";
 
 const AdminLayout = () => {
     const { user, getUserQuery, isLoading } = useAuthContext();
-    // Memoize the loggedInUserData to prevent unnecessary rerenders
-    const loggedInUserData = useMemo(() => getUserQuery?.data?.data, [getUserQuery?.data?.data]);
-    console.log("🚀 ~ AdminLayout ~ loggedInUserData:", loggedInUserData);
-
-    const [layoutMode, setLayoutMode] = useState("static");
+    const [layoutMode, setLayoutMode] = useState("overlay");
     const [layoutColorMode, setLayoutColorMode] = useState("light");
     const [inputStyle, setInputStyle] = useState("outlined");
     const [ripple, setRipple] = useState(true);
@@ -78,10 +74,9 @@ const AdminLayout = () => {
         }
     }, [mobileMenuActive]);
 
-    const memorisedLocation = useMemo(() => location, [location]);
     useEffect(() => {
         copyTooltipRef && copyTooltipRef.current && copyTooltipRef.current.updateTargetEvents();
-    }, [memorisedLocation]);
+    }, [location]);
 
     const onInputStyleChange = (inputStyle) => {
         setInputStyle(inputStyle);
@@ -169,7 +164,7 @@ const AdminLayout = () => {
                 {
                     label: "Dashboard",
                     icon: "pi pi-fw pi-home",
-                    to: "/dashboard",
+                    to: "/",
                 },
                 {
                     label: "Product Categories",
@@ -178,7 +173,7 @@ const AdminLayout = () => {
                 },
                 {
                     label: "Electronic Categories",
-                    icon: "pi pi-fw pi-bolt",
+                    icon: "pi pi-fw pi-desktop",
                     to: "/electronic-categories",
                 },
                 {
@@ -245,7 +240,7 @@ const AdminLayout = () => {
             ],
         },
         {
-            label: "Users Mgt",
+            label: "User Management",
             items: [{ label: "Users", icon: "pi pi-fw pi-user-edit", to: "/users" }],
         },
         // {
@@ -412,7 +407,7 @@ const AdminLayout = () => {
         "layout-theme-light": layoutColorMode === "light",
     });
 
-    // // ===========  App routes ===========
+    // ===========  App routes ===========
     // let myroutes = AppRoutes();
     // const [defaultRoutes, setDefaultRoutes] = useState(myroutes);
 
@@ -455,11 +450,12 @@ const AdminLayout = () => {
                                     return <Route path={route.path} key={index} element={<route.element location={location} loggedInUserData={getUserQuery?.data?.data} />} />;
                                 }
                             })}
-
+                            // ----- WAS ORIGINALLY COMMENTED -------------------------
                             <Route path="/login" element={<NewLoginPage getUserLoggedInUserDataQuery={getUserLoggedInUserDataQuery} setUserId={setUserId} setAuthUserProfile={setAuthUserProfile} authUserProfile={authUserProfile} />} />
                             <Route path="/signup" element={<RegistrationPage />} />
                             <Route path="403" element={<NotAuthorised />} />
                             <Route path="*" element={<PageNotFound />} />
+                            // ----- WAS ORIGINALLY COMMENTED -------------------------
                             <Route
                                 path="*"
                                 element={

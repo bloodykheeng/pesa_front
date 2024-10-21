@@ -8,7 +8,7 @@ import moment from "moment";
 
 import { useNavigate } from "react-router-dom";
 
-import { getAllProductTypes, getProductTypeById, postProductType, updateProductType, deleteProductTypeById } from "../../services/products/product-types-service";
+import { getAllElectronicBrands, getElectronicBrandById, postElectronicBrand, updateElectronicBrand, deleteElectronicBrandById } from "../../services/electronics/electronic-brands-service";
 
 import MuiTable from "../../components/general_components/MuiTable";
 import { toast } from "react-toastify";
@@ -18,19 +18,18 @@ import { confirmDialog } from "primereact/confirmdialog";
 import { Panel } from "primereact/panel";
 import { Image } from "primereact/image";
 
-import useAuthContext from "../../context/AuthContext";
 import useHandleQueryError from "../../hooks/useHandleQueryError";
 import handleMutationError from "../../hooks/handleMutationError";
 
-function ListPage({ ...props }) {
-    const { getUserQuery } = useAuthContext();
+function ListPage({ loggedInUserData, electronicCategoryData, ...props }) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["product-types"],
-        queryFn: getAllProductTypes,
+        queryKey: ["electronic_brands", "by_electronic_categories_id", electronicCategoryData?.id],
+        queryFn: () => getAllElectronicBrands({ electronic_categories_id: electronicCategoryData?.id }),
     });
-    console.log("🚀Product Types ~ ListPage ~ data:", data);
+
+    console.log("🚀 ~electronic category brands ListPage ~ data:", data);
     // useEffect(() => {
     //     if (isError) {
     //         console.log("Error fetching List of data :", error);
@@ -43,9 +42,10 @@ function ListPage({ ...props }) {
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
-        mutationFn: (variables) => deleteProductTypeById(variables),
+        mutationFn: (variables) => deleteElectronicBrandById(variables),
         onSuccess: (data) => {
-            queryClient.invalidateQueries(["product-types"]);
+            queryClient.invalidateQueries(["electronic_brands"]);
+            toast.success("Deleted Successfully");
             setDeleteMutationIsLoading(false);
         },
         onError: (error) => {
@@ -102,7 +102,7 @@ function ListPage({ ...props }) {
     };
 
     // const activeUser = localStorage.getItem("profile") ? JSON.parse(localStorage.getItem("profile")) : undefined;
-    const activeUser = getUserQuery?.data?.data;
+    const activeUser = loggedInUserData;
 
     const onFormClose = () => {
         setShowAddForm(false);
@@ -118,33 +118,15 @@ function ListPage({ ...props }) {
             title: "#",
             width: "5%",
             field: "id",
-            // render: (rowData) => {
-            //     // tableId = rowData.tableData.id;
-            //     tableId = tableId++;
-            //     return <div>{rowData.tableData.index + 1}</div>;
-            //     // return <div>{rowData.tableData.id}</div>;
-            // },
         },
         {
-            title: "Name",
-            field: "name",
+            title: "Photo",
+            field: "photo_url",
+            hidden: false,
+            render: (rowData) => {
+                return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
+            },
         },
-        {
-            title: "Code",
-            field: "code",
-        },
-        {
-            title: "Details",
-            field: "details",
-        },
-
-        // {
-        //     title: "Photo",
-        //     field: "photo_url",
-        //     render: (rowData) => {
-        //         return rowData.photo_url ? <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData.photo_url}`} alt={rowData.name} width="100" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
-        //     },
-        // },
 
         // {
         //     title: "Photo",
@@ -153,10 +135,31 @@ function ListPage({ ...props }) {
         //         return rowData.cloudinary_photo_url ? <Image src={`${rowData.cloudinary_photo_url}`} alt={rowData.name} height="30" preview style={{ verticalAlign: "middle" }} /> : <div>No Image</div>;
         //     },
         // },
+        {
+            title: "Name",
+            field: "name",
+        },
+        // {
+        //     title: "Price",
+        //     field: "price",
+        // },
+        // {
+        //     title: "Quantity",
+        //     field: "quantity",
+        // },
+        {
+            title: "Code",
+            field: "code",
+        },
+        {
+            title: "Electronic Category",
+            field: "electronic_category.name",
+        },
 
         {
             title: "Date",
             field: "created_at",
+            hidden: true,
             render: (rowData) => {
                 return moment(rowData.created_at).format("lll");
             },
@@ -170,14 +173,14 @@ function ListPage({ ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
-            <Panel header="Product Types" style={{ marginBottom: "20px" }} toggleable>
+            <Panel header="Electronic Category Brands" style={{ marginBottom: "20px" }} toggleable>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
-                    {activeUser?.permissions.includes("create") && <Button label="Add Product Type" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
-                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
+                    {activeUser?.permissions.includes("create") && <Button label="Add Electronic Category Brand" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
+                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} electronicCategoryData={electronicCategoryData} />
                 </div>
 
                 <MuiTable
-                    tableTitle="Product Types"
+                    tableTitle="Electronic Category Brands"
                     tableData={data?.data?.data ?? []}
                     tableColumns={columns}
                     handleShowEditForm={handleShowEditForm}
@@ -185,17 +188,16 @@ function ListPage({ ...props }) {
                     showEdit={activeUser?.permissions.includes("update")}
                     showDelete={activeUser?.permissions.includes("delete")}
                     loading={isLoading || status === "loading" || deleteMutationIsLoading}
-                    // //
-                    // handleViewPage={(rowData) => {
-                    //     navigate("category", { state: { productCategoryData: rowData } });
-                    // }}
-                    // showViewPage={true}
-                    // hideRowViewPage={false}
                     //
+                    handleViewPage={(rowData) => {
+                        navigate("brand", { state: { electronicCategoryBrandData: rowData } });
+                    }}
+                    showViewPage={true}
+                    hideRowViewPage={false}
                     //
                     exportButton={true}
-                    pdfExportTitle="Product Types"
-                    csvExportTitle="Product Types"
+                    pdfExportTitle="Electronic Category Brands"
+                    csvExportTitle="Electronic Category Brands"
                 />
 
                 {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}

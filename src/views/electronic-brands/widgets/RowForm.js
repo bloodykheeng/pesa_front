@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
@@ -12,13 +12,20 @@ import { classNames } from "primereact/utils";
 import setFieldTouched from "final-form-set-field-touched";
 //
 import { toast } from "react-toastify";
-import { AutoComplete } from "primereact/autocomplete";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { FileUpload } from "primereact/fileupload";
 
-function RowForm({ handleSubmit, initialData, ...props }) {
+//
+import { AutoComplete } from "primereact/autocomplete";
+import { ProgressSpinner } from "primereact/progressspinner";
+import { getAllElectronicCategories, getElectronicCategorieById, postElectronicCategorie, updateElectronicCategorie, deleteElectronicCategorieById } from "../../../services/electronics/electronic-categories-service";
+
+import useHandleQueryError from "../../../hooks/useHandleQueryError";
+
+function RowForm({ handleSubmit, initialData, electronicCategoryData, ...props }) {
+    console.log("🚀 ~ RowForm ~ initialData:", initialData);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -31,14 +38,33 @@ function RowForm({ handleSubmit, initialData, ...props }) {
         const errors = {};
 
         if (!values.name) errors.name = "Name is required";
+
         if (!values.code) errors.code = "Code is required";
-        if (!values.details) errors.details = "details are required";
+        // if (!values.description) errors.description = "Description are required";
+        if (!values.electronic_categories_id) errors.electronic_categories_id = "electronic Category is required";
         if (!values.status) {
             errors.status = "Status is required";
         }
+        if (!values.details) errors.details = "Details is required";
 
         return errors;
     };
+
+    //====================== product categories ========================
+    const [selectedElectronicCategory, setSelectedElectronicCategory] = useState(initialData?.electronic_category ?? electronicCategoryData);
+    const [filteredElectronicCategory, setFilteredElectronicCategory] = useState();
+
+    if (!initialData) {
+        initialData = { electronic_categories_id: electronicCategoryData?.id };
+    }
+
+    const getAllElectronicCategoriesQuery = useQuery({
+        queryKey: ["electronic-categories"],
+        queryFn: getAllElectronicCategories,
+    });
+
+    // Use the custom hook to handle errors with useMemo on the error object
+    useHandleQueryError(getAllElectronicCategoriesQuery?.isError, getAllElectronicCategoriesQuery?.error);
 
     // const onSubmitForm = (data) => {
     //     const errors = validate(data);
@@ -140,6 +166,16 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                 )}
                             </Field>
 
+                            {/* <Field name="description">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="description">Description</label>
+                                        <InputTextarea {...input} rows={5} cols={30} id="description" className={classNames({ "p-invalid": meta.touched && meta.error })} />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field> */}
+
                             <Field name="status">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
@@ -154,6 +190,42 @@ function RowForm({ handleSubmit, initialData, ...props }) {
                                             className={classNames({ "p-invalid": meta.touched && meta.error })}
                                         />
                                         {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                    </div>
+                                )}
+                            </Field>
+
+                            <Field name="electronic_categories_id">
+                                {({ input, meta }) => (
+                                    <div className="p-field m-4">
+                                        <label htmlFor="electronic_categories_id">electronic Category</label>
+                                        <AutoComplete
+                                            value={selectedElectronicCategory?.name || ""}
+                                            suggestions={filteredElectronicCategory}
+                                            disabled={getAllElectronicCategoriesQuery.isLoading}
+                                            completeMethod={(e) => {
+                                                const results = getAllElectronicCategoriesQuery.data?.data?.data.filter((department) => {
+                                                    return department.name.toLowerCase().includes(e.query.toLowerCase());
+                                                });
+                                                setFilteredElectronicCategory(results);
+                                            }}
+                                            field="name"
+                                            dropdown={true}
+                                            onChange={(e) => {
+                                                if (typeof e.value === "string") {
+                                                    // Update the display value to the typed string and reset the selected department
+                                                    setSelectedElectronicCategory({ name: e.value });
+                                                    input.onChange("");
+                                                } else if (typeof e.value === "object" && e.value !== null) {
+                                                    // Update the selected department and set the form state with the selected department's ID
+                                                    setSelectedElectronicCategory(e.value);
+                                                    input.onChange(e.value.id);
+                                                }
+                                            }}
+                                            id="electronic_category"
+                                            selectedItemTemplate={(value) => <div>{value ? value.name : "Select a electronic Category"}</div>}
+                                        />
+                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                        {getAllElectronicCategoriesQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
                                     </div>
                                 )}
                             </Field>

@@ -28,6 +28,13 @@ import NotificationsPage from "./views/notifications/NotificationsPage";
 //
 import NotFoundPage from "./components/not_found/NotFoundPage";
 
+//
+import InventoryTypesPage from "./views/inventory-types/InventoryTypesPage";
+import ElectronicCategoriesPage from "./views/electronic-categories/ElectronicCategoriesPage";
+import ElectronicCategoriesViewPage from "./views/electronic-categories/ElectronicCategoriesViewPage";
+import ElectronicBrandsViewPage from "./views/electronic-brands/ElectronicBrandsViewPage";
+import ElectronicTypesViewPage from "./views/electronic-types/ElectronicTypesViewPage";
+
 // ============ Customm component routes ========================
 // const DashboardPage = lazy(() => import("./components/Dashboard"));
 const FormLayoutDemo = lazy(() => import("./components/FormLayoutDemo"));
@@ -285,6 +292,37 @@ function AppRoutes() {
             path: "/notifications",
             name: "notifications",
             element: <NotificationsPage />,
+            layout: "/admin",
+        },
+
+        {
+            path: "/inventory-types",
+            name: "inventory-types",
+            element: <InventoryTypesPage />,
+            layout: "/admin",
+        },
+        {
+            path: "/electronic-categories",
+            name: "electronic-categories",
+            element: <ElectronicCategoriesPage />,
+            layout: "/admin",
+        },
+        {
+            path: "/electronic-categories/category",
+            name: "category",
+            element: <ElectronicCategoriesViewPage />,
+            layout: "/admin",
+        },
+        {
+            path: "/electronic-categories/category/brand",
+            name: "brand",
+            element: <ElectronicBrandsViewPage />,
+            layout: "/admin",
+        },
+        {
+            path: "/electronic-categories/category/brand/type",
+            name: "type",
+            element: <ElectronicTypesViewPage />,
             layout: "/admin",
         },
     ];

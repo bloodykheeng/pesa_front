@@ -8,7 +8,7 @@ import moment from "moment";
 
 import { useNavigate } from "react-router-dom";
 
-import { getAllProductTypes, getProductTypeById, postProductType, updateProductType, deleteProductTypeById } from "../../services/products/product-types-service";
+import { getAllInventoryTypes, getInventoryTypeById, postInventoryType, updateInventoryType, deleteInventoryTypeById } from "../../services/products/inventory_types-service";
 
 import MuiTable from "../../components/general_components/MuiTable";
 import { toast } from "react-toastify";
@@ -27,10 +27,10 @@ function ListPage({ ...props }) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["product-types"],
-        queryFn: getAllProductTypes,
+        queryKey: ["inventory-types"],
+        queryFn: getAllInventoryTypes,
     });
-    console.log("🚀Product Types ~ ListPage ~ data:", data);
+    console.log("🚀Inventory Types ~ ListPage ~ data:", data);
     // useEffect(() => {
     //     if (isError) {
     //         console.log("Error fetching List of data :", error);
@@ -43,9 +43,9 @@ function ListPage({ ...props }) {
 
     const [deleteMutationIsLoading, setDeleteMutationIsLoading] = useState(false);
     const deleteMutation = useMutation({
-        mutationFn: (variables) => deleteProductTypeById(variables),
+        mutationFn: (variables) => deleteInventoryTypeById(variables),
         onSuccess: (data) => {
-            queryClient.invalidateQueries(["product-types"]);
+            queryClient.invalidateQueries(["inventory-types"]);
             setDeleteMutationIsLoading(false);
         },
         onError: (error) => {
@@ -170,14 +170,14 @@ function ListPage({ ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
-            <Panel header="Product Types" style={{ marginBottom: "20px" }} toggleable>
+            <Panel header="Inventory Types" style={{ marginBottom: "20px" }} toggleable>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
-                    {activeUser?.permissions.includes("create") && <Button label="Add Product Type" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
+                    {activeUser?.permissions.includes("create") && <Button label="Add Inventory Type" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
                     <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} projectId={props?.projectId} />
                 </div>
 
                 <MuiTable
-                    tableTitle="Product Types"
+                    tableTitle="Inventory Types"
                     tableData={data?.data?.data ?? []}
                     tableColumns={columns}
                     handleShowEditForm={handleShowEditForm}
@@ -187,15 +187,15 @@ function ListPage({ ...props }) {
                     loading={isLoading || status === "loading" || deleteMutationIsLoading}
                     // //
                     // handleViewPage={(rowData) => {
-                    //     navigate("category", { state: { productCategoryData: rowData } });
+                    //     navigate("category", { state: { InventoryCategoryData: rowData } });
                     // }}
                     // showViewPage={true}
                     // hideRowViewPage={false}
                     //
                     //
                     exportButton={true}
-                    pdfExportTitle="Product Types"
-                    csvExportTitle="Product Types"
+                    pdfExportTitle="Inventory Types"
+                    csvExportTitle="Inventory Types"
                 />
 
                 {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}
