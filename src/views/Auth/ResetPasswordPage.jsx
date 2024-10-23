@@ -26,6 +26,7 @@ const ResetPasswordPage = () => {
     const forgotPasswordMutation = useMutation({
         mutationFn: forgotPassword,
         onSuccess: (data) => {
+            console.log("🚀 ~ ResetPasswordPage ~ data:", data);
             setIsLoading(false);
             data?.data?.success ? toast.success(data?.data?.message) : toast.warning(data?.data?.message);
         },
@@ -67,7 +68,7 @@ const ResetPasswordPage = () => {
                     `}
                 ></div> */}
                 <div className="flex justify-content-center" style={{ zIndex: 2, position: "relative" }}>
-                    <div className="card">
+                    <div className="card" style={{ minWidth: "400px" }}>
                         <h5 className="text-center">Reset Password</h5>
                         <Form
                             onSubmit={onSubmit}

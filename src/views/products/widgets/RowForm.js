@@ -23,7 +23,14 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { getAllProductCategoryBrands, getProductCategoryBrandById, postProductCategoryBrand, updateProductCategoryBrand, deleteProductCategoryBrandById } from "../../../services/products/product-category-brands-service";
 import { getAllProductTypes, getProductTypeById, postProductType, updateProductType, deleteProductTypeById } from "../../../services/products/product-types-service";
 
-function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props }) {
+//
+import { getAllElectronicCategories } from "../../../services/electronics/electronic-categories-service";
+import { getAllElectronicBrands } from "../../../services/electronics/electronic-brands-service";
+import { getAllElectronicTypes } from "../../../services/electronics/electronic-types-service.js";
+import { getAllInventoryTypes } from "../../../services/products/inventory_types-service";
+
+import useHandleQueryError from "../../../hooks/useHandleQueryError";
+function RowForm({ handleSubmit, productCategoryBrandData, electronicTypeData, initialData, ...props }) {
     console.log("🚀df ~ RowForm ~ initialData:", initialData);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
@@ -40,8 +47,13 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
 
         // if (!values.code) errors.code = "Code is required";
         // if (!values.description) errors.description = "Description are required";
-        if (!values.category_brands_id) errors.category_brands_id = "Product Category is required";
-        if (!values.product_types_id) errors.product_types_id = "Product Type is required";
+        if (!values.category_brand && !electronicTypeData) errors.category_brand = "Product Category is required";
+        if (!values.product_type && !electronicTypeData) errors.product_type = "Product Type is required";
+
+        if (!values.inventory_type) errors.inventory_type = "Inventory Type is required";
+        if (!values.electronic_category && electronicTypeData) errors.electronic_category = "Electronic Category is required";
+        if (!values.electronic_brand && electronicTypeData) errors.electronic_brand = "Electronic Brand is required";
+        if (!values.electronic_type && electronicTypeData) errors.electronic_type = "Electronic Type is required";
 
         if (!values.status) {
             errors.status = "Status is required";
@@ -58,7 +70,7 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
     const [filteredProductCategoryBrand, setFilteredProductCategoryBrand] = useState();
 
     if (!initialData) {
-        initialData = { category_brands_id: productCategoryBrandData?.id };
+        initialData = { category_brand: productCategoryBrandData, electronic_category: electronicTypeData?.electronic_brand?.electronic_category, electronic_brand: electronicTypeData?.electronic_brand, electronic_type: electronicTypeData };
     }
 
     const getAllProductCategoryBrandsQuery = useQuery({
@@ -66,16 +78,8 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
         queryFn: getAllProductCategoryBrands,
     });
 
-    useEffect(() => {
-        if (getAllProductCategoryBrandsQuery?.isError) {
-            console.log("Error fetching List of data :", getAllProductCategoryBrandsQuery?.error);
-            getAllProductCategoryBrandsQuery?.error?.response?.data?.message
-                ? toast.error(getAllProductCategoryBrandsQuery?.error?.response?.data?.message)
-                : !getAllProductCategoryBrandsQuery?.error?.response
-                ? toast.warning("Check Your Internet Connection Please")
-                : toast.error("An Error Occured Please Contact Admin");
-        }
-    }, [getAllProductCategoryBrandsQuery?.isError]);
+    // Use the custom hook to handle errors with useMemo on the error object
+    useHandleQueryError(getAllProductCategoryBrandsQuery?.isError, getAllProductCategoryBrandsQuery?.error);
 
     //====================== product types========================
     const [selectedProductType, setSelectedProductType] = useState(initialData?.product_type);
@@ -86,12 +90,51 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
         queryFn: getAllProductTypes,
     });
 
-    useEffect(() => {
-        if (getAllProductTypesQuery?.isError) {
-            console.log("Error fetching List of data :", getAllProductTypesQuery?.error);
-            getAllProductTypesQuery?.error?.response?.data?.message ? toast.error(getAllProductTypesQuery?.error?.response?.data?.message) : !getAllProductTypesQuery?.error?.response ? toast.warning("Check Your Internet Connection Please") : toast.error("An Error Occured Please Contact Admin");
-        }
-    }, [getAllProductTypesQuery?.isError]);
+    // Use the custom hook to handle errors with useMemo on the error object
+    useHandleQueryError(getAllProductTypesQuery?.isError, getAllProductTypesQuery?.error);
+
+    //============ electronics ========================
+
+    // State management for selected values
+    const [selectedElectronicCategory, setSelectedElectronicCategory] = useState(initialData?.electronic_category ?? electronicTypeData?.electronic_brand?.electronic_category);
+    const [selectedElectronicBrand, setSelectedElectronicBrand] = useState(initialData?.electronic_brand ?? electronicTypeData?.electronic_brand);
+    const [selectedElectronicType, setSelectedElectronicType] = useState(initialData?.electronic_type ?? electronicTypeData);
+    const [selectedInventoryType, setSelectedInventoryType] = useState(initialData?.inventory_type ?? null);
+
+    const [filteredElectronicCategories, setFilteredElectronicCategories] = useState([]);
+    const [filteredElectronicBrands, setFilteredElectronicBrands] = useState([]);
+    const [filteredElectronicTypes, setFilteredElectronicTypes] = useState([]);
+    const [filteredInventoryTypes, setFilteredInventoryTypes] = useState([]);
+
+    console.log("🚀 ~sdfsdfgds RowForm ~ initialData:", initialData);
+
+    // Queries for data fetching
+    const getAllElectronicCategoriesQuery = useQuery({
+        queryKey: ["electronic_categories"],
+        queryFn: getAllElectronicCategories,
+    });
+
+    const getAllElectronicBrandsQuery = useQuery({
+        queryKey: ["electronic_brands", "by_electronic_categories_id", selectedElectronicCategory?.id],
+        queryFn: () => getAllElectronicBrands({ electronic_categories_id: selectedElectronicCategory?.id }),
+        enabled: !!selectedElectronicCategory, // Only fetch if category is selected
+    });
+
+    const getAllElectronicTypesQuery = useQuery({
+        queryKey: ["electronic_types", "by_electronic_brands_id", selectedElectronicBrand?.id],
+        queryFn: () => getAllElectronicTypes({ electronic_brands_id: selectedElectronicBrand?.id }),
+        enabled: !!selectedElectronicBrand, // Only fetch if brand is selected
+    });
+
+    const getAllInventoryTypesQuery = useQuery({
+        queryKey: ["inventory_types"],
+        queryFn: getAllInventoryTypes,
+    });
+
+    // Error handling
+    useHandleQueryError(getAllElectronicCategoriesQuery?.isError, getAllElectronicCategoriesQuery?.error);
+    useHandleQueryError(getAllElectronicBrandsQuery?.isError, getAllElectronicBrandsQuery?.error);
+    useHandleQueryError(getAllElectronicTypesQuery?.isError, getAllElectronicTypesQuery?.error);
 
     // const onSubmitForm = (data) => {
     //     const errors = validate(data);
@@ -105,6 +148,7 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
     // };
     const onSubmitForm = (data, form) => {
         const errors = validate(data);
+        console.log("🚀 ~ onSubmitForm ~ errors:", errors);
         // Check if photo is uploaded
         if (!uploadedFile && !initialData) {
             setPhotoError("A photo is required");
@@ -182,7 +226,6 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
                                     </div>
                                 )}
                             </Field>
-
                             <Field name="price">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
@@ -192,7 +235,6 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
                                     </div>
                                 )}
                             </Field>
-
                             <Field name="quantity">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
@@ -202,7 +244,6 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
                                     </div>
                                 )}
                             </Field>
-
                             {/* <Field name="code">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
@@ -222,7 +263,6 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
                                     </div>
                                 )}
                             </Field> */}
-
                             <Field name="status">
                                 {({ input, meta }) => (
                                     <div className="p-field m-4">
@@ -241,77 +281,240 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
                                 )}
                             </Field>
 
-                            <Field name="category_brands_id">
-                                {({ input, meta }) => (
-                                    <div className="p-field m-4">
-                                        <label htmlFor="category_brands_id">Product Category</label>
-                                        <AutoComplete
-                                            value={selectedProductCategoryBrand?.name || ""}
-                                            suggestions={filteredProductCategoryBrand}
-                                            disabled={getAllProductCategoryBrandsQuery.isLoading}
-                                            completeMethod={(e) => {
-                                                const results = getAllProductCategoryBrandsQuery.data?.data?.data.filter((department) => {
-                                                    return department.name.toLowerCase().includes(e.query.toLowerCase());
-                                                });
-                                                setFilteredProductCategoryBrand(results);
-                                            }}
-                                            field="name"
-                                            dropdown={true}
-                                            onChange={(e) => {
-                                                if (typeof e.value === "string") {
-                                                    // Update the display value to the typed string and reset the selected department
-                                                    setSelectedProductCategoryBrand({ name: e.value });
-                                                    input.onChange("");
-                                                } else if (typeof e.value === "object" && e.value !== null) {
-                                                    // Update the selected department and set the form state with the selected department's ID
-                                                    setSelectedProductCategoryBrand(e.value);
-                                                    input.onChange(e.value.id);
-                                                }
-                                            }}
-                                            id="product_category"
-                                            selectedItemTemplate={(value) => <div>{value ? value.name : "Select a Product Category"}</div>}
-                                        />
-                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                        {getAllProductCategoryBrandsQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
-                                    </div>
-                                )}
+                            <Field name="inventory_type">
+                                {({ input, meta }) => {
+                                    const inventoryTypes = getAllInventoryTypesQuery?.data?.data?.data || [];
+                                    const fetchInventoryTypeSuggestions = (event) => {
+                                        let query = event.query.toLowerCase();
+                                        let filtered = inventoryTypes.filter((type) => type?.name?.toLowerCase().includes(query));
+                                        setFilteredInventoryTypes(filtered);
+                                    };
+
+                                    return (
+                                        <div className="p-field m-4">
+                                            <label htmlFor="inventory_type">Inventory Type</label>
+                                            <AutoComplete
+                                                {...input}
+                                                multiple={false}
+                                                suggestions={filteredInventoryTypes}
+                                                completeMethod={fetchInventoryTypeSuggestions}
+                                                field="name"
+                                                value={selectedInventoryType}
+                                                onChange={(e) => {
+                                                    setSelectedInventoryType(e.value);
+                                                    input.onChange(e.value);
+                                                }}
+                                                dropdown
+                                                disabled={getAllInventoryTypesQuery?.isLoading}
+                                                placeholder="Select inventory type"
+                                                className={classNames({ "p-invalid": meta.touched && meta.error })}
+                                            />
+                                            {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                            {getAllInventoryTypesQuery?.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
+                                        </div>
+                                    );
+                                }}
                             </Field>
 
-                            <Field name="product_types_id">
-                                {({ input, meta }) => (
-                                    <div className="p-field m-4">
-                                        <label htmlFor="product_types_id">Product Type</label>
-                                        <AutoComplete
-                                            value={selectedProductType?.name || ""}
-                                            suggestions={filteredProductType}
-                                            disabled={getAllProductTypesQuery.isLoading}
-                                            completeMethod={(e) => {
-                                                const results = getAllProductTypesQuery.data?.data?.data.filter((department) => {
-                                                    return department.name.toLowerCase().includes(e.query.toLowerCase());
-                                                });
-                                                setFilteredProductType(results);
-                                            }}
-                                            field="name"
-                                            dropdown={true}
-                                            onChange={(e) => {
-                                                if (typeof e.value === "string") {
-                                                    // Update the display value to the typed string and reset the selected department
-                                                    setSelectedProductType({ name: e.value });
-                                                    input.onChange("");
-                                                } else if (typeof e.value === "object" && e.value !== null) {
-                                                    // Update the selected department and set the form state with the selected department's ID
-                                                    setSelectedProductType(e.value);
-                                                    input.onChange(e.value.id);
-                                                }
-                                            }}
-                                            id="product_type"
-                                            selectedItemTemplate={(value) => <div>{value ? value.name : "Select a Product Type"}</div>}
-                                        />
-                                        {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
-                                        {getAllProductCategoryBrandsQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
-                                    </div>
-                                )}
-                            </Field>
+                            {!electronicTypeData ? (
+                                <>
+                                    <Field name="category_brand">
+                                        {({ input, meta }) => {
+                                            const productCategoryBrands = getAllProductCategoryBrandsQuery?.data?.data?.data || [];
+                                            const fetchCategoryBrandSuggestions = (event) => {
+                                                let query = event.query.toLowerCase();
+                                                let filtered = productCategoryBrands.filter((brand) => brand?.name?.toLowerCase().includes(query));
+                                                setFilteredProductCategoryBrand(filtered);
+                                            };
+
+                                            return (
+                                                <div className="p-field m-4">
+                                                    <label htmlFor="category_brand">Product Category</label>
+                                                    <AutoComplete
+                                                        {...input}
+                                                        multiple={false}
+                                                        suggestions={filteredProductCategoryBrand}
+                                                        completeMethod={fetchCategoryBrandSuggestions}
+                                                        field="name"
+                                                        value={selectedProductCategoryBrand}
+                                                        onChange={(e) => {
+                                                            setSelectedProductCategoryBrand(e.value);
+                                                            input.onChange(e.value);
+
+                                                            // Reset dependent fields
+                                                            setSelectedProductType(null);
+                                                            setFilteredProductType([]);
+                                                            form.change("product_type", null);
+                                                        }}
+                                                        dropdown
+                                                        disabled={getAllProductCategoryBrandsQuery?.isLoading}
+                                                        placeholder="Select product category"
+                                                        className={classNames({ "p-invalid": meta.touched && meta.error })}
+                                                    />
+                                                    {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                                    {getAllProductCategoryBrandsQuery?.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
+                                                </div>
+                                            );
+                                        }}
+                                    </Field>
+
+                                    <Field name="product_type">
+                                        {({ input, meta }) => {
+                                            const productTypes = getAllProductTypesQuery?.data?.data?.data || [];
+                                            const fetchProductTypeSuggestions = (event) => {
+                                                let query = event.query.toLowerCase();
+                                                let filtered = productTypes.filter((type) => type?.name?.toLowerCase().includes(query));
+                                                setFilteredProductType(filtered);
+                                            };
+
+                                            return (
+                                                <div className="p-field m-4">
+                                                    <label htmlFor="product_type">Product Type</label>
+                                                    <AutoComplete
+                                                        {...input}
+                                                        multiple={false}
+                                                        suggestions={filteredProductType}
+                                                        completeMethod={fetchProductTypeSuggestions}
+                                                        field="name"
+                                                        value={selectedProductType}
+                                                        onChange={(e) => {
+                                                            setSelectedProductType(e.value);
+                                                            input.onChange(e.value);
+                                                        }}
+                                                        dropdown
+                                                        disabled={getAllProductTypesQuery?.isLoading}
+                                                        placeholder="Select product type"
+                                                        className={classNames({ "p-invalid": meta.touched && meta.error })}
+                                                    />
+                                                    {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                                    {getAllProductTypesQuery?.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
+                                                </div>
+                                            );
+                                        }}
+                                    </Field>
+                                </>
+                            ) : (
+                                <>
+                                    {/* ====================================  electronics=============================== */}
+                                    <Field name="electronic_category">
+                                        {({ input, meta }) => {
+                                            const electronicCategories = getAllElectronicCategoriesQuery?.data?.data?.data || [];
+                                            const fetchElectronicCategorySuggestions = (event) => {
+                                                let query = event.query.toLowerCase();
+                                                let filtered = electronicCategories.filter((category) => category?.name?.toLowerCase().includes(query));
+                                                setFilteredElectronicCategories(filtered);
+                                            };
+
+                                            return (
+                                                <div className="p-field m-4">
+                                                    <label htmlFor="electronic_category">Electronic Category</label>
+                                                    <AutoComplete
+                                                        {...input}
+                                                        multiple={false}
+                                                        suggestions={filteredElectronicCategories}
+                                                        completeMethod={fetchElectronicCategorySuggestions}
+                                                        field="name"
+                                                        value={selectedElectronicCategory}
+                                                        onChange={(e) => {
+                                                            setSelectedElectronicCategory(e.value);
+                                                            input.onChange(e.value);
+
+                                                            // Reset dependent fields
+                                                            setSelectedElectronicBrand(null);
+                                                            setFilteredElectronicBrands([]);
+                                                            setSelectedElectronicType(null);
+                                                            setFilteredElectronicTypes([]);
+                                                            form.change("electronic_brand", null);
+                                                            form.change("electronic_type", null);
+                                                        }}
+                                                        dropdown
+                                                        disabled={getAllElectronicCategoriesQuery?.isLoading}
+                                                        placeholder="Select electronic category"
+                                                        className={classNames({ "p-invalid": meta.touched && meta.error })}
+                                                    />
+                                                    {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                                    {getAllElectronicCategoriesQuery?.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
+                                                </div>
+                                            );
+                                        }}
+                                    </Field>
+
+                                    <Field name="electronic_brand">
+                                        {({ input, meta }) => {
+                                            const electronicBrands = getAllElectronicBrandsQuery?.data?.data?.data || [];
+                                            const fetchElectronicBrandSuggestions = (event) => {
+                                                let query = event.query.toLowerCase();
+                                                let filtered = electronicBrands.filter((brand) => brand?.name?.toLowerCase().includes(query));
+                                                setFilteredElectronicBrands(filtered);
+                                            };
+
+                                            return (
+                                                <div className="p-field m-4">
+                                                    <label htmlFor="electronic_brand">Electronic Brand</label>
+                                                    <AutoComplete
+                                                        {...input}
+                                                        multiple={false}
+                                                        suggestions={filteredElectronicBrands}
+                                                        completeMethod={fetchElectronicBrandSuggestions}
+                                                        field="name"
+                                                        value={selectedElectronicBrand}
+                                                        onChange={(e) => {
+                                                            setSelectedElectronicBrand(e.value);
+                                                            input.onChange(e.value);
+
+                                                            // Reset dependent field
+                                                            setSelectedElectronicType(null);
+                                                            setFilteredElectronicTypes([]);
+                                                            form.change("electronic_type", null);
+                                                        }}
+                                                        dropdown
+                                                        disabled={getAllElectronicBrandsQuery?.isLoading || !selectedElectronicCategory}
+                                                        placeholder="Select electronic brand"
+                                                        className={classNames({ "p-invalid": meta.touched && meta.error })}
+                                                    />
+                                                    {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                                    {getAllElectronicBrandsQuery?.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
+                                                </div>
+                                            );
+                                        }}
+                                    </Field>
+
+                                    <Field name="electronic_type">
+                                        {({ input, meta }) => {
+                                            const electronicTypes = getAllElectronicTypesQuery?.data?.data?.data || [];
+                                            const fetchElectronicTypeSuggestions = (event) => {
+                                                let query = event.query.toLowerCase();
+                                                let filtered = electronicTypes.filter((type) => type?.name?.toLowerCase().includes(query));
+                                                setFilteredElectronicTypes(filtered);
+                                            };
+
+                                            return (
+                                                <div className="p-field m-4">
+                                                    <label htmlFor="electronic_type">Electronic Type</label>
+                                                    <AutoComplete
+                                                        {...input}
+                                                        multiple={false}
+                                                        suggestions={filteredElectronicTypes}
+                                                        completeMethod={fetchElectronicTypeSuggestions}
+                                                        field="name"
+                                                        value={selectedElectronicType}
+                                                        onChange={(e) => {
+                                                            setSelectedElectronicType(e.value);
+                                                            input.onChange(e.value);
+                                                        }}
+                                                        dropdown
+                                                        disabled={getAllElectronicTypesQuery?.isLoading || !selectedElectronicBrand}
+                                                        placeholder="Select electronic type"
+                                                        className={classNames({ "p-invalid": meta.touched && meta.error })}
+                                                    />
+                                                    {meta.touched && meta.error && <small className="p-error">{meta.error}</small>}
+                                                    {getAllElectronicTypesQuery?.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
+                                                </div>
+                                            );
+                                        }}
+                                    </Field>
+                                </>
+                            )}
 
                             <Field name="details">
                                 {({ input, meta }) => (
@@ -322,7 +525,6 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
                                     </div>
                                 )}
                             </Field>
-
                             {/* FileUpload for photo with validation */}
                             <div className="p-field m-4">
                                 <label htmlFor="photo">Photo</label>
@@ -339,7 +541,6 @@ function RowForm({ handleSubmit, productCategoryBrandData, initialData, ...props
                     header="Confirmation"
                     visible={showConfirmDialog}
                     maximizable
-                    style={{ minWidth: "30vw" }}
                     onHide={onCancel}
                     footer={
                         <div>

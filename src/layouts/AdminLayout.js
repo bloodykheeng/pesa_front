@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect, useRef } from "react";
+import React, { Suspense, useState, useEffect, useRef, useMemo } from "react";
 
 import classNames from "classnames";
 import { Route, useLocation, Routes } from "react-router-dom";
@@ -50,7 +50,11 @@ import useAuthContext from "../context/AuthContext";
 
 const AdminLayout = () => {
     const { user, getUserQuery, isLoading } = useAuthContext();
-    const [layoutMode, setLayoutMode] = useState("overlay");
+    // Memoize the loggedInUserData to prevent unnecessary rerenders
+    const loggedInUserData = useMemo(() => getUserQuery?.data?.data, [getUserQuery?.data?.data]);
+    console.log("🚀 ~ AdminLayout ~ loggedInUserData:", loggedInUserData);
+
+    const [layoutMode, setLayoutMode] = useState("static");
     const [layoutColorMode, setLayoutColorMode] = useState("light");
     const [inputStyle, setInputStyle] = useState("outlined");
     const [ripple, setRipple] = useState(true);
@@ -74,9 +78,10 @@ const AdminLayout = () => {
         }
     }, [mobileMenuActive]);
 
+    const memorisedLocation = useMemo(() => location, [location]);
     useEffect(() => {
         copyTooltipRef && copyTooltipRef.current && copyTooltipRef.current.updateTargetEvents();
-    }, [location]);
+    }, [memorisedLocation]);
 
     const onInputStyleChange = (inputStyle) => {
         setInputStyle(inputStyle);
@@ -164,12 +169,17 @@ const AdminLayout = () => {
                 {
                     label: "Dashboard",
                     icon: "pi pi-fw pi-home",
-                    to: "/",
+                    to: "/dashboard",
                 },
                 {
                     label: "Product Categories",
                     icon: "pi pi-fw pi-tags",
                     to: "/product-categories",
+                },
+                {
+                    label: "Electronic Categories",
+                    icon: "pi pi-fw pi-bolt",
+                    to: "/electronic-categories",
                 },
                 {
                     label: "Orders",
@@ -192,6 +202,17 @@ const AdminLayout = () => {
                     icon: "pi pi-fw pi-share-alt", // or you can use "pi-send"
                     to: "/referrals",
                 },
+                {
+                    label: "faqs",
+                    icon: "pi pi-fw pi-comments",
+                    to: "/faqs",
+                },
+
+                {
+                    label: "Notifications",
+                    icon: "pi pi-fw pi-megaphone",
+                    to: "/notifications",
+                },
 
                 // {
                 //     label: "vendors",
@@ -200,10 +221,7 @@ const AdminLayout = () => {
                 // },
             ],
         },
-        {
-            label: "User Management",
-            items: [{ label: "Users", icon: "pi pi-fw pi-user-edit", to: "/users" }],
-        },
+
         {
             label: "Settings",
             icon: "pi pi-fw pi-cog",
@@ -213,12 +231,22 @@ const AdminLayout = () => {
                     icon: "pi pi-fw pi-sliders-h",
                     to: "/product-types",
                 },
+                {
+                    label: "Inventory Types",
+                    icon: "pi pi-fw pi-box",
+                    to: "/inventory-types",
+                },
+
                 // {
                 //     label: "Service Types",
                 //     icon: "pi pi-fw pi-sliders-v",
                 //     to: "/service_types",
                 // },
             ],
+        },
+        {
+            label: "Users Mgt",
+            items: [{ label: "Users", icon: "pi pi-fw pi-user-edit", to: "/users" }],
         },
         // {
         //     label: "Configurations",
@@ -384,13 +412,13 @@ const AdminLayout = () => {
         "layout-theme-light": layoutColorMode === "light",
     });
 
-    // ===========  App routes ===========
-    let myroutes = AppRoutes();
-    const [defaultRoutes, setDefaultRoutes] = useState(myroutes);
+    // // ===========  App routes ===========
+    // let myroutes = AppRoutes();
+    // const [defaultRoutes, setDefaultRoutes] = useState(myroutes);
 
-    useEffect(() => {
-        setDefaultRoutes(myroutes);
-    }, [myroutes]);
+    // useEffect(() => {
+    //     setDefaultRoutes(myroutes);
+    // }, [myroutes]);
 
     return (
         <div className={wrapperClass} onClick={onWrapperClick}>
@@ -404,7 +432,8 @@ const AdminLayout = () => {
 
             <div className="layout-main-container">
                 <div className="layout-main">
-                    <Suspense
+                    {AppRoutes()} {/* Automatically returns and renders the route elements */}
+                    {/* <Suspense
                         fallback={
                             <div
                                 style={{
@@ -427,10 +456,10 @@ const AdminLayout = () => {
                                 }
                             })}
 
-                            {/* <Route path="/login" element={<NewLoginPage getUserLoggedInUserDataQuery={getUserLoggedInUserDataQuery} setUserId={setUserId} setAuthUserProfile={setAuthUserProfile} authUserProfile={authUserProfile} />} />
+                            <Route path="/login" element={<NewLoginPage getUserLoggedInUserDataQuery={getUserLoggedInUserDataQuery} setUserId={setUserId} setAuthUserProfile={setAuthUserProfile} authUserProfile={authUserProfile} />} />
                             <Route path="/signup" element={<RegistrationPage />} />
                             <Route path="403" element={<NotAuthorised />} />
-                            <Route path="*" element={<PageNotFound />} /> */}
+                            <Route path="*" element={<PageNotFound />} />
                             <Route
                                 path="*"
                                 element={
@@ -440,7 +469,7 @@ const AdminLayout = () => {
                                 }
                             />
                         </Routes>
-                    </Suspense>
+                    </Suspense> */}
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />

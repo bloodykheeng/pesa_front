@@ -23,15 +23,15 @@ import { ProgressSpinner } from "primereact/progressspinner";
 
 import useHandleQueryError from "../../hooks/useHandleQueryError";
 import handleMutationError from "../../hooks/handleMutationError";
-function ListPage({ loggedInUserData, productCategoryBrandData, ...props }) {
+function ListPage({ loggedInUserData, electronicTypeData, productCategoryBrandData, ...props }) {
     const navigate = useNavigate();
 
     const [selectedProductType, setSelectedProductType] = useState(null);
 
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["products", "by_category_brands_id", productCategoryBrandData?.id, "by_product_type_id", selectedProductType?.id],
-        queryFn: () => getAllProducts({ category_brands_id: productCategoryBrandData?.id, product_types_id: selectedProductType?.id }),
+        queryKey: ["products", "by_category_brands_id", productCategoryBrandData?.id, "by_product_type_id", selectedProductType?.id, "by_electronic_type_id", electronicTypeData?.id],
+        queryFn: () => getAllProducts({ category_brands_id: productCategoryBrandData?.id, product_types_id: selectedProductType?.id, electronic_type_id: electronicTypeData?.id }),
     });
     console.log("🚀 ~product sub categories ListPage ~ data:", data);
     // useEffect(() => {
@@ -134,13 +134,35 @@ function ListPage({ loggedInUserData, productCategoryBrandData, ...props }) {
             title: "Name",
             field: "name",
         },
+
+        ...(!electronicTypeData
+            ? [
+                  {
+                      title: "Brand",
+                      field: "category_brand.name",
+                  },
+                  {
+                      title: "Type",
+                      field: "product_type.name",
+                  },
+              ]
+            : [
+                  {
+                      title: "Electronic Category",
+                      field: "electronic_category.name",
+                  },
+                  {
+                      title: "Electronic Brand",
+                      field: "electronic_brand.name",
+                  },
+                  {
+                      title: "Electronic Type",
+                      field: "electronic_type.name",
+                  },
+              ]),
         {
-            title: "Brand",
-            field: "category_brand.name",
-        },
-        {
-            title: "Type",
-            field: "product_type.name",
+            title: "Inventory Type",
+            field: "inventory_type.name",
         },
 
         {
@@ -225,20 +247,22 @@ function ListPage({ loggedInUserData, productCategoryBrandData, ...props }) {
             <Panel header="Products" style={{ marginBottom: "20px" }} toggleable>
                 <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
                     {activeUser?.permissions.includes("create") && <Button label="Add Product" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
-                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} productCategoryBrandData={productCategoryBrandData} />
+                    <CreateForm show={showAddForm} onHide={() => setShowAddForm(false)} onClose={onFormClose} electronicTypeData={electronicTypeData} productCategoryBrandData={productCategoryBrandData} />
                 </div>
 
-                <div className="p-field m-4">
-                    {/* <label htmlFor="role">Role</label> */}
-                    <Dropdown
-                        value={selectedProductType}
-                        options={[{ label: "All", value: null }, ...(getAllProductTypesQuery?.data?.data?.data?.map((type) => ({ label: type?.name, value: type })) || [])]}
-                        onChange={handleProductTypeChange}
-                        placeholder="Filter By Type"
-                        disabled={getAllProductTypesQuery?.isLoading}
-                    />
-                    {getAllProductTypesQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
-                </div>
+                {!electronicTypeData && (
+                    <div className="p-field m-4">
+                        {/* <label htmlFor="role">Role</label> */}
+                        <Dropdown
+                            value={selectedProductType}
+                            options={[{ label: "All", value: null }, ...(getAllProductTypesQuery?.data?.data?.data?.map((type) => ({ label: type?.name, value: type })) || [])]}
+                            onChange={handleProductTypeChange}
+                            placeholder="Filter By Type"
+                            disabled={getAllProductTypesQuery?.isLoading}
+                        />
+                        {getAllProductTypesQuery.isLoading && <ProgressSpinner style={{ width: "10px", height: "10px" }} strokeWidth="4" />}
+                    </div>
+                )}
 
                 <MuiTable
                     tableTitle="Products"

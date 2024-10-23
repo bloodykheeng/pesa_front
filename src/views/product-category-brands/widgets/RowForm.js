@@ -262,7 +262,6 @@ function RowForm({ handleSubmit, initialData, productCategoryData, ...props }) {
                     header="Confirmation"
                     visible={showConfirmDialog}
                     maximizable
-                    style={{ minWidth: "30vw" }}
                     onHide={onCancel}
                     footer={
                         <div>

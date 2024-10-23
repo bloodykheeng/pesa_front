@@ -37,20 +37,56 @@ function EditForm(props) {
 
     const handleSubmit = async (data) => {
         setEditMutationIsLoading(true);
-        console.log("Data we are submitting: ", data);
+        console.log("product sdbfsd Data we are submitting: ", data);
 
         const formData = new FormData();
         formData.append("_method", "PUT");
-        formData.append("name", data.name);
-        formData.append("price", data.price);
-        formData.append("quantity", data.quantity);
-        formData.append("product_types_id", data.product_types_id);
+        formData.append("name", data?.name);
+        formData.append("price", data?.price);
+        formData.append("quantity", data?.quantity);
+        // formData.append("product_types_id", data?.product_types?.id);
 
         // formData.append("code", data.code);
-        formData.append("details", data.details);
-        formData.append("status", data.status);
-        formData.append("photo", data.photo); // Assuming 'photo' is the field name for the file upload
-        formData.append("category_brands_id", data.category_brands_id);
+        formData.append("details", data?.details);
+        formData.append("status", data?.status);
+        formData.append("photo", data?.photo); // Assuming 'photo' is the field name for the file upload
+        // formData.append("category_brands_id", data?.category_brand?.id); // Existing one
+
+        // Add the other fields with optional chaining
+        // formData.append("inventory_types_id", data?.inventory_type?.id);
+        // formData.append("electronic_category_id", data?.electronic_category?.id);
+        // formData.append("electronic_brand_id", data?.electronic_brand?.id);
+        // formData.append("electronic_type_id", data?.electronic_type?.id);
+
+        // Append 'product_types_id' only if it exists
+        if (data?.product_type?.id !== undefined) {
+            formData.append("product_types_id", data.product_type.id);
+        }
+
+        // Append 'category_brands_id' only if it exists
+        if (data?.category_brand?.id !== undefined) {
+            formData.append("category_brands_id", data.category_brand.id);
+        }
+
+        // Append 'inventory_types_id' only if it exists
+        if (data?.inventory_type?.id !== undefined) {
+            formData.append("inventory_types_id", data.inventory_type.id);
+        }
+
+        // Append 'electronic_category_id' only if it exists
+        if (data?.electronic_category?.id !== undefined) {
+            formData.append("electronic_category_id", data.electronic_category.id);
+        }
+
+        // Append 'electronic_brand_id' only if it exists
+        if (data?.electronic_brand?.id !== undefined) {
+            formData.append("electronic_brand_id", data.electronic_brand.id);
+        }
+
+        // Append 'electronic_type_id' only if it exists
+        if (data?.electronic_type?.id !== undefined) {
+            formData.append("electronic_type_id", data.electronic_type.id);
+        }
 
         // Log formData keys and values for debugging
         // formData.forEach((value, key) => {

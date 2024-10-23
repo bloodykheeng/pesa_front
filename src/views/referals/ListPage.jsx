@@ -47,6 +47,7 @@ function ListPage({ ...props }) {
         onSuccess: (data) => {
             queryClient.invalidateQueries(["referals"]);
             setDeleteMutationIsLoading(false);
+            toast.success("deleted Successfully");
         },
         onError: (error) => {
             // setDeleteMutationIsLoading(false);

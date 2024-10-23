@@ -135,7 +135,7 @@ const LoginPage = () => {
                     `}
                 ></div> */}
                 <div className="flex justify-content-center" style={{ zIndex: 2, position: "relative" }}>
-                    <div className="card p-fluid">
+                    <div className="card p-fluid" style={{ minWidth: "400px" }}>
                         <div style={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
                             <img src="assets/pesa_photos/pesa_with_green_bg.jpg" alt="logo" style={{ height: "100px" }} />
                         </div>
@@ -198,7 +198,7 @@ const LoginPage = () => {
                             )}
                         />
                         {/* Google login */}
-                        <Fieldset legend="Or Continue With">
+                        {/* <Fieldset legend="Or Continue With">
                             <div className="m-1 p-field">
                                 <GoogleLogin
                                     onSuccess={async (response) => {
@@ -218,32 +218,24 @@ const LoginPage = () => {
                                         console.log("Login Failed");
                                     }}
                                 />
-
-                                {/* <Button
-                  type="button"
-                  label={
-                    googleLoginIsLoading ? (
-                      <ProgressSpinner
-                        style={{ width: "20px", height: "20px" }}
-                        strokeWidth="8"
-                      />
-                    ) : (
-                      "Google"
-                    )
-                  }
-                  icon={<FaGoogle />}
-                  className="p-mt-2"
-                  severity="warning"
-                  text
-                  raised
-                  onClick={() => {
-                    setGoogleLoginIsLoading(true);
-                    handleLoginWithGoogle();
-                  }}
-                  disabled={googleLoginIsLoading}
-                /> */}
+                                //-------------HAD BEEN COMMENTED ---------------
+                                <Button
+                                    type="button"
+                                    label={googleLoginIsLoading ? <ProgressSpinner style={{ width: "20px", height: "20px" }} strokeWidth="8" /> : "Google"}
+                                    icon={<FaGoogle />}
+                                    className="p-mt-2"
+                                    severity="warning"
+                                    text
+                                    raised
+                                    onClick={() => {
+                                        setGoogleLoginIsLoading(true);
+                                        handleLoginWithGoogle();
+                                    }}
+                                    disabled={googleLoginIsLoading}
+                                />
+                                //-------------HAD BEEN COMMENTED ---------------
                             </div>
-                        </Fieldset>
+                        </Fieldset> */}
                     </div>
                 </div>
             </div>

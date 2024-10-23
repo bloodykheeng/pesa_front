@@ -51,17 +51,18 @@ const CardsFiltersFormWithStatustesDialog = ({ onSubmit, filtersFormInitialDataV
     ];
 
     const deliveryStatusesOptions = [
-        { label: "Pending", value: "pending" },
-        { label: "Processing", value: "processing" },
-        { label: "Transit", value: "transit" },
-        { label: "Delivered", value: "delivered" },
-        { label: "Cancelled", value: "cancelled" },
+        { id: 1, label: "Pending", value: "pending" },
+        { id: 2, label: "Processing", value: "processing" },
+        { id: 3, label: "Transit", value: "transit" },
+        { id: 4, label: "Delivered", value: "delivered" },
+        { id: 5, label: "Received", value: "received" },
+        { id: 6, label: "Cancelled", value: "cancelled" },
     ];
 
     const paymentStatusesOptions = [
-        { label: "Pending", value: "pending" },
-        { label: "Paid", value: "Paid" },
-        { label: "Cancelled", value: "cancelled" },
+        { id: 1, label: "Pending", value: "pending" },
+        { id: 2, label: "Paid", value: "Paid" },
+        { id: 3, label: "Cancelled", value: "cancelled" },
     ];
 
     //-=========== handle reset ===============
@@ -70,12 +71,16 @@ const CardsFiltersFormWithStatustesDialog = ({ onSubmit, filtersFormInitialDataV
 
         resetForm();
         setFiltersFormInitialDataValues({
-            // startDate: filters?.startDate,
-            // endDate: filters?.endDate,
-
+            startDate: moment().startOf("month").format("YYYY-MM-DD"),
+            endDate: moment().format("YYYY-MM-DD"), // Set to now
             // statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
-            deliveryStatuses: [{ label: "Delivered", value: "delivered" }],
-            paymentStatuses: [{ label: "Paid", value: "Paid" }],
+            deliveryStatuses: [{ id: 1, label: "Pending", value: "pending" }],
+            paymentStatuses: [],
+            // dataLimitNumber: null,
+            productTypes: [],
+            productCategories: [],
+            productCategoryBrands: [],
+            products: [],
         });
         // setShowResetConfirmDialog(false);
     };
@@ -83,11 +88,15 @@ const CardsFiltersFormWithStatustesDialog = ({ onSubmit, filtersFormInitialDataV
     const handleConfirmReset = (resetForm) => {
         resetForm();
         setFiltersFormInitialDataValues({
-            startDate: null,
-            endDate: null,
+            startDate: moment().startOf("month").format("YYYY-MM-DD"),
+            endDate: moment().format("YYYY-MM-DD"), // Set to now
             // statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
-            deliveryStatuses: [{ label: "Delivered", value: "delivered" }],
-            paymentStatuses: [{ label: "Paid", value: "Paid" }],
+            deliveryStatuses: [],
+            paymentStatuses: [{ id: 1, label: "Pending", value: "pending" }],
+            productTypes: [],
+            productCategories: [],
+            productCategoryBrands: [],
+            products: [],
         });
         setShowResetConfirmDialog(false);
     };

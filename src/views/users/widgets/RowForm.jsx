@@ -301,7 +301,7 @@ function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
             <Dialog
                 header="Confirm Submission"
                 visible={showConfirmDialog}
-                style={{ width: "30vw" }}
+                maximizable
                 onHide={onCancelSubmit}
                 footer={
                     <div>

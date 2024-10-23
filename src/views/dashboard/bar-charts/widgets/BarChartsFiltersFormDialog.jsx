@@ -26,9 +26,9 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
     const [pendingData, setPendingData] = useState(null);
 
     //product
-    const [selectedProductTypes, setselectedProductTypes] = useState(filtersFormInitialDataValues?.productTypes);
-    const [selectedProductCategories, setSelectedProductCategories] = useState(filtersFormInitialDataValues?.productCategories);
-    const [selectedProductCategoryBrands, setSelectedProductCategoryBrands] = useState(filtersFormInitialDataValues?.productCategoryBrands);
+    const [selectedProductTypes, setselectedProductTypes] = useState(filtersFormInitialDataValues?.productTypes ?? []);
+    const [selectedProductCategories, setSelectedProductCategories] = useState(filtersFormInitialDataValues?.productCategories ?? []);
+    const [selectedProductCategoryBrands, setSelectedProductCategoryBrands] = useState(filtersFormInitialDataValues?.productCategoryBrands ?? []);
     const memoizedFiltersFormInitialDataValues = useMemo(() => filtersFormInitialDataValues, [filtersFormInitialDataValues]);
 
     useEffect(() => {
@@ -106,17 +106,18 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
     ];
 
     const deliveryStatusesOptions = [
-        { label: "Pending", value: "pending" },
-        { label: "Processing", value: "processing" },
-        { label: "Transit", value: "transit" },
-        { label: "Delivered", value: "delivered" },
-        { label: "Cancelled", value: "cancelled" },
+        { id: 1, label: "Pending", value: "pending" },
+        { id: 2, label: "Processing", value: "processing" },
+        { id: 3, label: "Transit", value: "transit" },
+        { id: 4, label: "Delivered", value: "delivered" },
+        { id: 5, label: "Received", value: "received" },
+        { id: 6, label: "Cancelled", value: "cancelled" },
     ];
 
     const paymentStatusesOptions = [
-        { label: "Pending", value: "pending" },
-        { label: "Paid", value: "Paid" },
-        { label: "Cancelled", value: "cancelled" },
+        { id: 1, label: "Pending", value: "pending" },
+        { id: 2, label: "Paid", value: "Paid" },
+        { id: 3, label: "Cancelled", value: "cancelled" },
     ];
 
     //
@@ -143,20 +144,23 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
         setSelectedProductCategoryBrands([]);
         resetForm();
         setFiltersFormInitialDataValues({
-            // startDate: filters?.startDate,
-            // endDate: filters?.endDate,
-            agents: [],
-            salesAssociates: [],
-            regions: [],
-            routes: [],
-            // statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
-            deliveryStatuses: [{ label: "Delivered", value: "delivered" }],
-            paymentStatuses: [{ label: "Paid", value: "Paid" }],
+            startDate: moment().startOf("month").format("YYYY-MM-DD"),
+            endDate: moment().format("YYYY-MM-DD"), // Set to now
+            // statuses: [
+            //     { id: 1, label: "Pending", value: "PENDING" },
+            //     { id: 2, label: "Processing", value: "PROCESSING" },
+            //     { id: 3, label: "Transit", value: "TRANSIT" },
+            //     { id: 4, label: "Delivered", value: "DELIVERED" },
+            //     { id: 5, label: "Cancelled", value: "CANCELLED" },
+            // ],
+            deliveryStatuses: [],
+            paymentStatuses: [],
             orderBy: { id: 3, label: "Descending", value: "desc" },
             dataLimit: { id: 2, label: "5", value: 5 },
+            // dataLimitNumber: null,
             productTypes: [],
             productCategories: [],
-            productCategoryBrand: [],
+            productCategoryBrands: [],
             products: [],
         });
         // setShowResetConfirmDialog(false);
@@ -167,16 +171,23 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
         setSelectedProductCategoryBrands([]);
         resetForm();
         setFiltersFormInitialDataValues({
-            startDate: null,
-            endDate: null,
-            // statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
-            deliveryStatuses: [{ label: "Delivered", value: "delivered" }],
-            paymentStatuses: [{ label: "Paid", value: "Paid" }],
+            startDate: moment().startOf("month").format("YYYY-MM-DD"),
+            endDate: moment().format("YYYY-MM-DD"), // Set to now
+            // statuses: [
+            //     { id: 1, label: "Pending", value: "PENDING" },
+            //     { id: 2, label: "Processing", value: "PROCESSING" },
+            //     { id: 3, label: "Transit", value: "TRANSIT" },
+            //     { id: 4, label: "Delivered", value: "DELIVERED" },
+            //     { id: 5, label: "Cancelled", value: "CANCELLED" },
+            // ],
+            deliveryStatuses: [],
+            paymentStatuses: [],
             orderBy: { id: 3, label: "Descending", value: "desc" },
             dataLimit: { id: 2, label: "5", value: 5 },
+            // dataLimitNumber: null,
             productTypes: [],
             productCategories: [],
-            productCategoryBrand: [],
+            productCategoryBrands: [],
             products: [],
         });
         setShowResetConfirmDialog(false);
@@ -223,10 +234,9 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
             (!Array.isArray(values.deliveryStatuses) || values.deliveryStatuses.length === 0) &&
             (!Array.isArray(values.productCategories) || values.productCategories.length === 0) &&
             (!Array.isArray(values.productCategoryBrand) || values.productCategoryBrand.length === 0) &&
-            (!Array.isArray(values.products) || values.products.length === 0)
-            // &&
-            // !values.startDate &&
-            // !values.endDate
+            (!Array.isArray(values.products) || values.products.length === 0) &&
+            !values.startDate &&
+            !values.endDate
         ) {
             errors.form = "At least one field must be filled";
         }
