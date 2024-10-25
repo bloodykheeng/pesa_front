@@ -21,7 +21,6 @@ import { Password } from "primereact/password";
 import { FileUpload } from "primereact/fileupload";
 
 function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
-    const [showProjectField, setShowProjectField] = useState(false);
     console.log("loggedInUserData on user list page : ", loggedInUserData);
 
     console.log("testing lll fdgdsgsdf : ", initialData);
@@ -30,13 +29,6 @@ function RowForm({ loggedInUserData, handleSubmit, initialData, ...props }) {
     const [photoError, setPhotoError] = useState(null);
     const [photoTouched, setPhotoTouched] = useState(false);
     const [uploadedFile, setUploadedFile] = useState(null);
-
-    useEffect(() => {
-        // Reset project field when the form is closed
-        if (!props.show) {
-            setShowProjectField(false);
-        }
-    }, [props.show]);
 
     // const onSubmit = (values) => {
     //     createUserMutation.mutate(values);

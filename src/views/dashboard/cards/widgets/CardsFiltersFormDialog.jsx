@@ -12,10 +12,18 @@ import { Button } from "primereact/button";
 import * as Yup from "yup";
 
 //
-import { getAllProductCategories, getProductCategorieById, postProductCategorie, updateProductCategorie, deleteProductCategorieById } from "../../../../services/products/product-categories-service";
-import { getAllProductCategoryBrands, getProductCategoryBrandById, postProductCategoryBrand, updateProductCategoryBrand, deleteProductCategoryBrandById } from "../../../../services/products/product-category-brands-service";
-import { getAllProducts, getProductById, postProduct, updateProduct, deleteProductById } from "../../../../services/products/products-service";
-import { getAllProductTypes, getProductTypeById, postProductType, updateProductType, deleteProductTypeById } from "../../../../services/products/product-types-service";
+import { getAllProductCategories } from "../../../../services/products/product-categories-service";
+import { getAllProductCategoryBrands } from "../../../../services/products/product-category-brands-service";
+import { getAllProducts } from "../../../../services/products/products-service";
+import { getAllProductTypes } from "../../../../services/products/product-types-service";
+
+//
+
+import { getAllElectronicCategories } from "../../../../services/electronics/electronic-categories-service";
+import { getAllElectronicBrands } from "../../../../services/electronics/electronic-brands-service";
+import { getAllElectronicTypes } from "../../../../services/electronics/electronic-types-service.js";
+
+import { getAllInventoryTypes } from "../../../../services/products/inventory_types-service";
 
 //
 import useHandleQueryError from "../../../../hooks/useHandleQueryError";
@@ -72,6 +80,36 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
     });
 
     useHandleQueryError(productsQuery?.isError, productsQuery?.error);
+
+    //========== electronics ====================
+
+    const electronicCategoriesQuery = useQuery({
+        queryKey: ["electronic-categories"],
+        queryFn: () => getAllElectronicCategories({}),
+    });
+
+    useHandleQueryError(electronicCategoriesQuery?.isError, electronicCategoriesQuery?.error);
+
+    const electronicBrandsQuery = useQuery({
+        queryKey: ["electronic-brands"],
+        queryFn: () => getAllElectronicBrands({}),
+    });
+
+    useHandleQueryError(electronicBrandsQuery?.isError, electronicBrandsQuery?.error);
+
+    const electronicTypesQuery = useQuery({
+        queryKey: ["electronic-types"],
+        queryFn: () => getAllElectronicTypes({}),
+    });
+
+    useHandleQueryError(electronicTypesQuery?.isError, electronicTypesQuery?.error);
+
+    const inventoryTypesQuery = useQuery({
+        queryKey: ["inventory-types"],
+        queryFn: () => getAllInventoryTypes({}),
+    });
+
+    useHandleQueryError(inventoryTypesQuery?.isError, inventoryTypesQuery?.error);
 
     //hndle form submit
     const handleFormSubmit = (values) => {

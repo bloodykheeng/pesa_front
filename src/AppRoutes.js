@@ -24,6 +24,7 @@ import DashboardPage from "./views/dashboard/DashboardPage";
 
 import FaqsPage from "./views/faqs/FaqsPage";
 import NotificationsPage from "./views/notifications/NotificationsPage";
+import AdvertsPage from "./views/adverts/AdvertsPage";
 
 //
 import NotFoundPage from "./components/not_found/NotFoundPage";
@@ -323,6 +324,12 @@ function AppRoutes() {
             path: "/electronic-categories/category/brand/type",
             name: "type",
             element: <ElectronicTypesViewPage />,
+            layout: "/admin",
+        },
+        {
+            path: "/adverts",
+            name: "adverts",
+            element: <AdvertsPage />,
             layout: "/admin",
         },
     ];

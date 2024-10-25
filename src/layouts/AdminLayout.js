@@ -213,6 +213,11 @@ const AdminLayout = () => {
                     icon: "pi pi-fw pi-megaphone",
                     to: "/notifications",
                 },
+                {
+                    label: "Advertisements",
+                    icon: "pi pi-fw pi-globe",
+                    to: "/adverts",
+                },
 
                 // {
                 //     label: "vendors",
