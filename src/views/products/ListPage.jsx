@@ -285,7 +285,7 @@ function ListPage({ loggedInUserData, electronicTypeData, productCategoryBrandDa
                     csvExportTitle="Products"
                 />
 
-                {selectedItem && <EditForm rowData={selectedItem} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}
+                {selectedItem && <EditForm rowData={selectedItem} electronicTypeData={electronicTypeData} show={showEditForm} onHide={handleCloseEditForm} onClose={handleCloseEditForm} />}
             </Panel>
         </div>
     );

@@ -39,10 +39,29 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
     const [selectedProductCategoryBrands, setSelectedProductCategoryBrands] = useState(filtersFormInitialDataValues?.productCategoryBrands ?? []);
     const memoizedFiltersFormInitialDataValues = useMemo(() => filtersFormInitialDataValues, [filtersFormInitialDataValues]);
 
+    //
+    // State management
+    const [selectedElectronicCategories, setSelectedElectronicCategories] = useState(filtersFormInitialDataValues?.electronicCategories ?? []);
+    const [selectedElectronicBrands, setSelectedElectronicBrands] = useState(filtersFormInitialDataValues?.electronicBrands ?? []);
+    const [selectedElectronicTypes, setSelectedElectronicTypes] = useState(filtersFormInitialDataValues?.electronicCategories ?? []);
+
+    const [selectedInventoryTypes, setSelectedInventoryTypes] = useState(filtersFormInitialDataValues?.inventoryTypes ?? []);
+    const hasProductType = filtersFormInitialDataValues?.inventoryTypes.some((type) => type.code === "01");
+    const hasElectronicType = filtersFormInitialDataValues?.inventoryTypes.some((type) => type.code === "02");
+
+    const [showProductFields, setShowProductFields] = useState(hasProductType);
+    const [showElectronicFields, setShowElectronicFields] = useState(hasElectronicType);
+
     useEffect(() => {
         setselectedProductTypes(filtersFormInitialDataValues?.productTypes);
         setSelectedProductCategories(filtersFormInitialDataValues?.productCategories);
         setSelectedProductCategoryBrands(filtersFormInitialDataValues?.productCategoryBrands);
+
+        // Set selected values for inventoryTypes, electronicCategories, and electronicBrands
+        setSelectedInventoryTypes(filtersFormInitialDataValues?.inventoryTypes);
+        setSelectedElectronicCategories(filtersFormInitialDataValues?.electronicCategories);
+        setSelectedElectronicBrands(filtersFormInitialDataValues?.electronicBrands);
+        setSelectedElectronicTypes(filtersFormInitialDataValues?.electronicTypes);
     }, [memoizedFiltersFormInitialDataValues]);
 
     // Queries and useEffects
@@ -83,6 +102,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
 
     //========== electronics ====================
 
+    // Query to get electronic categories
     const electronicCategoriesQuery = useQuery({
         queryKey: ["electronic-categories"],
         queryFn: () => getAllElectronicCategories({}),
@@ -90,16 +110,23 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
 
     useHandleQueryError(electronicCategoriesQuery?.isError, electronicCategoriesQuery?.error);
 
+    // Query to get electronic brands, enabled only if there is at least one selected category
     const electronicBrandsQuery = useQuery({
-        queryKey: ["electronic-brands"],
-        queryFn: () => getAllElectronicBrands({}),
+        queryKey: ["electronic-brands", selectedElectronicCategories],
+        queryFn: () => getAllElectronicBrands({ electronic_categories: selectedElectronicCategories }), // Use the first selected category
+        enabled: Array.isArray(selectedElectronicCategories) && selectedElectronicCategories.length > 0,
     });
 
     useHandleQueryError(electronicBrandsQuery?.isError, electronicBrandsQuery?.error);
 
+    // Query to get electronic types, enabled only if there is at least one selected category and brand
     const electronicTypesQuery = useQuery({
-        queryKey: ["electronic-types"],
-        queryFn: () => getAllElectronicTypes({}),
+        queryKey: ["electronic-types", selectedElectronicBrands],
+        queryFn: () =>
+            getAllElectronicTypes({
+                electronic_brands: selectedElectronicBrands, // Use the first selected brand
+            }),
+        enabled: Array.isArray(selectedElectronicBrands) && selectedElectronicBrands.length > 0,
     });
 
     useHandleQueryError(electronicTypesQuery?.isError, electronicTypesQuery?.error);
@@ -175,6 +202,10 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
             productCategories: [],
             productCategoryBrands: [],
             products: [],
+            inventoryTypes: [], // Add inventoryTypes here
+            electronicCategories: [], // Add electronicCategories here
+            electronicBrands: [], // Add electronicBrands here
+            electronicTypes: [], // Add electronicTypes here
         });
         // setShowResetConfirmDialog(false);
     };
@@ -193,6 +224,10 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
             productCategories: [],
             productCategoryBrands: [],
             products: [],
+            inventoryTypes: [], // Add inventoryTypes here
+            electronicCategories: [], // Add electronicCategories here
+            electronicBrands: [], // Add electronicBrands here
+            electronicTypes: [], // Add electronicTypes here
         });
         setShowResetConfirmDialog(false);
     };
@@ -233,6 +268,36 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
         // if (values.startDate) errors.agents = "start date  is required";
 
         // if (!Array.isArray(values.agents) || values.agents.length === 0) errors.agents = "Agent is required";
+
+        // Check for inventory types
+        if (!Array.isArray(values.inventoryTypes) || values.inventoryTypes.length === 0) {
+            errors.inventoryTypes = "At least one inventory type must be selected";
+        } else {
+            // Specific validations based on selected inventory types
+            const hasProductType = values.inventoryTypes.some((type) => type.code === "01");
+            const hasElectronicType = values.inventoryTypes.some((type) => type.code === "02");
+
+            if (hasProductType) {
+                // Validate product-related fields if product type is selected
+                if (!Array.isArray(values.productCategories) || values.productCategories.length === 0) {
+                    errors.productCategories = "Product categories are required when product inventory type is selected";
+                }
+                if (!Array.isArray(values.productCategoryBrand) || values.productCategoryBrand.length === 0) {
+                    errors.productCategoryBrand = "Product category brand is required when product inventory type is selected";
+                }
+            }
+
+            if (hasElectronicType) {
+                // Validate electronic-related fields if electronic type is selected
+                if (!Array.isArray(values.electronicCategories) || values.electronicCategories.length === 0) {
+                    errors.electronicCategories = "Electronic categories are required when electronic inventory type is selected";
+                }
+                if (!Array.isArray(values.electronicBrands) || values.electronicBrands.length === 0) {
+                    errors.electronicBrands = "Electronic brand is required when electronic inventory type is selected";
+                }
+            }
+        }
+
         // Ensure at least one field is filled and check if fields are arrays
         if (
             (!Array.isArray(values.deliveryStatuses) || values.deliveryStatuses.length === 0) &&
@@ -334,34 +399,60 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
 
                             <Grid item xs={12} md={6} lg={4}>
                                 <Stack spacing={1}>
-                                    <InputLabel htmlFor="productCategories">Product Categories</InputLabel>
-                                    <Field name="productCategories">
+                                    <InputLabel htmlFor="inventoryTypes">Inventory Types</InputLabel>
+                                    <Field name="inventoryTypes">
                                         {({ field }) => (
                                             <Autocomplete
-                                                //isOptionEqualToValue helps to define how comparison is gonna be made
-                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
                                                 multiple
-                                                options={productCategoriesQuery?.data?.data?.data || []}
+                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                options={inventoryTypesQuery?.data?.data?.data || []}
                                                 getOptionLabel={(option) => option.name}
-                                                value={selectedProductCategories}
+                                                value={selectedInventoryTypes}
                                                 onChange={(event, newValue) => {
-                                                    setSelectedProductCategories(newValue);
-                                                    setSelectedProductCategoryBrands([]);
-                                                    setFieldValue("productCategories", newValue);
-                                                    setFieldValue("productCategoryBrands", []);
-                                                    setFieldValue("products", []);
+                                                    setSelectedInventoryTypes(newValue);
+                                                    setFieldValue("inventoryTypes", newValue);
+
+                                                    // Determine visibility of related fields
+                                                    const hasProductType = newValue.some((type) => type.code === "01");
+                                                    const hasElectronicType = newValue.some((type) => type.code === "02");
+
+                                                    setShowProductFields(hasProductType);
+                                                    setShowElectronicFields(hasElectronicType);
+
+                                                    // Clear non-dependent fields from local state
+                                                    if (!hasProductType) {
+                                                        setSelectedProductCategories([]);
+                                                        setSelectedProductCategoryBrands([]);
+                                                    }
+                                                    if (!hasElectronicType) {
+                                                        setSelectedElectronicCategories([]);
+                                                        setSelectedElectronicBrands([]);
+                                                        setSelectedElectronicTypes([]);
+                                                    }
+
+                                                    // Clear non-dependent fields from Formik state
+                                                    if (!hasProductType) {
+                                                        setFieldValue("productCategories", []);
+                                                        setFieldValue("productCategoryBrands", []);
+                                                        setFieldValue("productTypes", []);
+                                                    }
+                                                    if (!hasElectronicType) {
+                                                        setFieldValue("electronicCategories", []);
+                                                        setFieldValue("electronicBrands", []);
+                                                        setFieldValue("electronicTypes", []);
+                                                    }
                                                 }}
                                                 renderInput={(params) => (
                                                     <TextField
                                                         {...params}
                                                         variant="outlined"
-                                                        placeholder="Select product categories"
-                                                        error={Boolean(touched.productCategories && errors.productCategories)}
+                                                        placeholder="Select inventory types"
+                                                        error={Boolean(touched.inventoryTypes && errors.inventoryTypes)}
                                                         InputProps={{
                                                             ...params.InputProps,
                                                             endAdornment: (
                                                                 <>
-                                                                    {productCategoriesQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                                    {inventoryTypesQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
                                                                     {params.InputProps.endAdornment}
                                                                 </>
                                                             ),
@@ -371,92 +462,268 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
                                             />
                                         )}
                                     </Field>
-                                    <ErrorMessage name="productCategories" component="div" />
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={12} md={6} lg={4}>
-                                <Stack spacing={1}>
-                                    <InputLabel htmlFor="productCategoryBrands">Product Category Brands</InputLabel>
-                                    <Field name="productCategoryBrands">
-                                        {({ field }) => (
-                                            <Autocomplete
-                                                //isOptionEqualToValue helps to define how comparison is gonna be made
-                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
-                                                multiple
-                                                options={productCategoryBrandsQuery?.data?.data?.data || []}
-                                                getOptionLabel={(option) => option.name}
-                                                value={selectedProductCategoryBrands}
-                                                onChange={(event, newValue) => {
-                                                    setSelectedProductCategoryBrands(newValue);
-                                                    setFieldValue("productCategoryBrands", newValue);
-                                                    setFieldValue("products", []);
-                                                }}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        variant="outlined"
-                                                        placeholder="Select product category brands"
-                                                        error={Boolean(touched.productCategoryBrand && errors.productCategoryBrand)}
-                                                        InputProps={{
-                                                            ...params.InputProps,
-                                                            endAdornment: (
-                                                                <>
-                                                                    {productCategoryBrandsQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
-                                                                    {params.InputProps.endAdornment}
-                                                                </>
-                                                            ),
-                                                        }}
-                                                    />
-                                                )}
-                                            />
-                                        )}
-                                    </Field>
-                                    <ErrorMessage name="productCategoryBrands" component="div" style={{ color: "red" }} />
+                                    <ErrorMessage name="inventoryTypes" component="div" />
                                 </Stack>
                             </Grid>
 
-                            <Grid item xs={12} md={6} lg={4}>
-                                <Stack spacing={1}>
-                                    <InputLabel htmlFor="productTypes">Product Types</InputLabel>
-                                    <Field name="productTypes">
-                                        {({ field }) => (
-                                            <Autocomplete
-                                                //isOptionEqualToValue helps to define how comparison is gonna be made
-                                                isOptionEqualToValue={(option, value) => option?.id === value?.id}
-                                                multiple
-                                                options={productTypesQuery?.data?.data?.data || []}
-                                                getOptionLabel={(option) => option.name}
-                                                value={selectedProductTypes}
-                                                onChange={(event, newValue) => {
-                                                    setselectedProductTypes(newValue);
-                                                    setFieldValue("productTypes", newValue);
-
-                                                    //
-                                                    setFieldValue("products", []);
-                                                }}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        variant="outlined"
-                                                        placeholder="Select product types"
-                                                        error={Boolean(touched.productTypes && errors.productTypes)}
-                                                        InputProps={{
-                                                            ...params.InputProps,
-                                                            endAdornment: (
-                                                                <>
-                                                                    {productTypesQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
-                                                                    {params.InputProps.endAdornment}
-                                                                </>
-                                                            ),
+                            {showProductFields && (
+                                <>
+                                    {/* Product-related fields */}
+                                    <Grid item xs={12} md={6} lg={4}>
+                                        <Stack spacing={1}>
+                                            <InputLabel htmlFor="productCategories">Product Categories</InputLabel>
+                                            <Field name="productCategories">
+                                                {({ field }) => (
+                                                    <Autocomplete
+                                                        //isOptionEqualToValue helps to define how comparison is gonna be made
+                                                        isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                        multiple
+                                                        options={productCategoriesQuery?.data?.data?.data || []}
+                                                        getOptionLabel={(option) => option.name}
+                                                        value={selectedProductCategories}
+                                                        onChange={(event, newValue) => {
+                                                            setSelectedProductCategories(newValue);
+                                                            setSelectedProductCategoryBrands([]);
+                                                            setFieldValue("productCategories", newValue);
+                                                            setFieldValue("productCategoryBrands", []);
+                                                            setFieldValue("products", []);
                                                         }}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                variant="outlined"
+                                                                placeholder="Select product categories"
+                                                                error={Boolean(touched.productCategories && errors.productCategories)}
+                                                                InputProps={{
+                                                                    ...params.InputProps,
+                                                                    endAdornment: (
+                                                                        <>
+                                                                            {productCategoriesQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                                            {params.InputProps.endAdornment}
+                                                                        </>
+                                                                    ),
+                                                                }}
+                                                            />
+                                                        )}
                                                     />
                                                 )}
-                                            />
-                                        )}
-                                    </Field>
-                                    <ErrorMessage name="productTypes" component="div" />
-                                </Stack>
-                            </Grid>
+                                            </Field>
+                                            <ErrorMessage name="productCategories" component="div" />
+                                        </Stack>
+                                    </Grid>
+                                    <Grid item xs={12} md={6} lg={4}>
+                                        <Stack spacing={1}>
+                                            <InputLabel htmlFor="productCategoryBrands">Product Category Brands</InputLabel>
+                                            <Field name="productCategoryBrands">
+                                                {({ field }) => (
+                                                    <Autocomplete
+                                                        //isOptionEqualToValue helps to define how comparison is gonna be made
+                                                        isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                        multiple
+                                                        options={productCategoryBrandsQuery?.data?.data?.data || []}
+                                                        getOptionLabel={(option) => option.name}
+                                                        value={selectedProductCategoryBrands}
+                                                        onChange={(event, newValue) => {
+                                                            setSelectedProductCategoryBrands(newValue);
+                                                            setFieldValue("productCategoryBrands", newValue);
+                                                            setFieldValue("products", []);
+                                                        }}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                variant="outlined"
+                                                                placeholder="Select product category brands"
+                                                                error={Boolean(touched.productCategoryBrand && errors.productCategoryBrand)}
+                                                                InputProps={{
+                                                                    ...params.InputProps,
+                                                                    endAdornment: (
+                                                                        <>
+                                                                            {productCategoryBrandsQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                                            {params.InputProps.endAdornment}
+                                                                        </>
+                                                                    ),
+                                                                }}
+                                                            />
+                                                        )}
+                                                    />
+                                                )}
+                                            </Field>
+                                            <ErrorMessage name="productCategoryBrands" component="div" style={{ color: "red" }} />
+                                        </Stack>
+                                    </Grid>
+
+                                    <Grid item xs={12} md={6} lg={4}>
+                                        <Stack spacing={1}>
+                                            <InputLabel htmlFor="productTypes">Product Types</InputLabel>
+                                            <Field name="productTypes">
+                                                {({ field }) => (
+                                                    <Autocomplete
+                                                        //isOptionEqualToValue helps to define how comparison is gonna be made
+                                                        isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                        multiple
+                                                        options={productTypesQuery?.data?.data?.data || []}
+                                                        getOptionLabel={(option) => option.name}
+                                                        value={selectedProductTypes}
+                                                        onChange={(event, newValue) => {
+                                                            setselectedProductTypes(newValue);
+                                                            setFieldValue("productTypes", newValue);
+
+                                                            //
+                                                            setFieldValue("products", []);
+                                                        }}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                variant="outlined"
+                                                                placeholder="Select product types"
+                                                                error={Boolean(touched.productTypes && errors.productTypes)}
+                                                                InputProps={{
+                                                                    ...params.InputProps,
+                                                                    endAdornment: (
+                                                                        <>
+                                                                            {productTypesQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                                            {params.InputProps.endAdornment}
+                                                                        </>
+                                                                    ),
+                                                                }}
+                                                            />
+                                                        )}
+                                                    />
+                                                )}
+                                            </Field>
+                                            <ErrorMessage name="productTypes" component="div" />
+                                        </Stack>
+                                    </Grid>
+                                </>
+                            )}
+
+                            {showElectronicFields && (
+                                <>
+                                    {/* Electronic-related fields */}
+                                    <Grid item xs={12} md={6} lg={4}>
+                                        <Stack spacing={1}>
+                                            <InputLabel htmlFor="electronicCategories">Electronic Categories</InputLabel>
+                                            <Field name="electronicCategories">
+                                                {({ field }) => (
+                                                    <Autocomplete
+                                                        isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                        multiple
+                                                        options={electronicCategoriesQuery?.data?.data?.data || []}
+                                                        getOptionLabel={(option) => option.name}
+                                                        value={selectedElectronicCategories}
+                                                        onChange={(event, newValue) => {
+                                                            setSelectedElectronicCategories(newValue);
+                                                            setSelectedElectronicBrands([]);
+                                                            setSelectedElectronicTypes([]);
+                                                            setFieldValue("electronicCategories", newValue);
+                                                            setFieldValue("electronicBrands", []);
+                                                            setFieldValue("electronicTypes", []);
+                                                        }}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                variant="outlined"
+                                                                placeholder="Select electronic categories"
+                                                                error={Boolean(touched.electronicCategories && errors.electronicCategories)}
+                                                                InputProps={{
+                                                                    ...params.InputProps,
+                                                                    endAdornment: (
+                                                                        <>
+                                                                            {electronicCategoriesQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                                            {params.InputProps.endAdornment}
+                                                                        </>
+                                                                    ),
+                                                                }}
+                                                            />
+                                                        )}
+                                                    />
+                                                )}
+                                            </Field>
+                                            <ErrorMessage name="electronicCategories" component="div" />
+                                        </Stack>
+                                    </Grid>
+
+                                    <Grid item xs={12} md={6} lg={4}>
+                                        <Stack spacing={1}>
+                                            <InputLabel htmlFor="electronicBrands">Electronic Brands</InputLabel>
+                                            <Field name="electronicBrands">
+                                                {({ field }) => (
+                                                    <Autocomplete
+                                                        isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                        multiple
+                                                        options={electronicBrandsQuery?.data?.data?.data || []}
+                                                        getOptionLabel={(option) => option.name}
+                                                        value={selectedElectronicBrands}
+                                                        onChange={(event, newValue) => {
+                                                            setSelectedElectronicBrands(newValue);
+                                                            setSelectedElectronicTypes([]);
+                                                            setFieldValue("electronicBrands", newValue);
+                                                            setFieldValue("electronicTypes", []);
+                                                        }}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                variant="outlined"
+                                                                placeholder="Select electronic brands"
+                                                                error={Boolean(touched.electronicBrands && errors.electronicBrands)}
+                                                                InputProps={{
+                                                                    ...params.InputProps,
+                                                                    endAdornment: (
+                                                                        <>
+                                                                            {electronicBrandsQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                                            {params.InputProps.endAdornment}
+                                                                        </>
+                                                                    ),
+                                                                }}
+                                                            />
+                                                        )}
+                                                    />
+                                                )}
+                                            </Field>
+                                            <ErrorMessage name="electronicBrands" component="div" />
+                                        </Stack>
+                                    </Grid>
+
+                                    <Grid item xs={12} md={6} lg={4}>
+                                        <Stack spacing={1}>
+                                            <InputLabel htmlFor="electronicTypes">Electronic Types</InputLabel>
+                                            <Field name="electronicTypes">
+                                                {({ field }) => (
+                                                    <Autocomplete
+                                                        isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                                                        multiple
+                                                        options={electronicTypesQuery?.data?.data?.data || []}
+                                                        getOptionLabel={(option) => option.name}
+                                                        value={selectedElectronicTypes}
+                                                        onChange={(event, newValue) => {
+                                                            setSelectedElectronicTypes(newValue);
+                                                            setFieldValue("electronicTypes", newValue);
+                                                        }}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                variant="outlined"
+                                                                placeholder="Select electronic types"
+                                                                error={Boolean(touched.electronicTypes && errors.electronicTypes)}
+                                                                InputProps={{
+                                                                    ...params.InputProps,
+                                                                    endAdornment: (
+                                                                        <>
+                                                                            {electronicTypesQuery?.isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                                            {params.InputProps.endAdornment}
+                                                                        </>
+                                                                    ),
+                                                                }}
+                                                            />
+                                                        )}
+                                                    />
+                                                )}
+                                            </Field>
+                                            <ErrorMessage name="electronicTypes" component="div" />
+                                        </Stack>
+                                    </Grid>
+                                </>
+                            )}
 
                             <Grid item xs={12} md={6} lg={4}>
                                 <Stack spacing={1}>

@@ -71,16 +71,27 @@ const getChartOptions = (data, dataFilters) => {
         const productCategoryBrands = formatArray(dataFilters?.productCategoryBrands, "name");
         const products = formatArray(dataFilters?.products, "name");
 
+        // New filters for inventoryTypes, electronicCategories, electronicBrands, and electronicTypes
+        const inventoryTypes = formatArray(dataFilters?.inventoryTypes, "name");
+        const electronicCategories = formatArray(dataFilters?.electronicCategories, "name");
+        const electronicBrands = formatArray(dataFilters?.electronicBrands, "name");
+        const electronicTypes = formatArray(dataFilters?.electronicTypes, "name");
+
         // Constructing the sentence
         let sentence = "Filters: ";
+        if (startDate) sentence += `Start Date: ${startDate}. `;
+        if (endDate) sentence += `End Date: ${endDate}.`;
         if (statuses) sentence += `Statuses: ${statuses}. `;
         if (orderBy) sentence += `Order By: ${orderBy}. `;
         if (dataLimit) sentence += `Data Limit: ${dataLimit}. `;
+        if (inventoryTypes) sentence += `Inventory Types: ${inventoryTypes}. `;
         if (productCategories) sentence += `Product Categories: ${productCategories}. `;
         if (productCategoryBrands) sentence += `Product Category Brands: ${productCategoryBrands}. `;
+
+        if (electronicCategories) sentence += `Electronic Categories: ${electronicCategories}. `;
+        if (electronicBrands) sentence += `Electronic Brands: ${electronicBrands}. `;
+        if (electronicTypes) sentence += `Electronic Types: ${electronicTypes}. `;
         if (products) sentence += `Products: ${products}. `;
-        if (startDate) sentence += `Start Date: ${startDate}. `;
-        if (endDate) sentence += `End Date: ${endDate}.`;
 
         return sentence.trim();
     }
@@ -172,6 +183,10 @@ const ProductsBarChart = () => {
         productCategories: [],
         productCategoryBrands: [],
         products: [],
+        inventoryTypes: [], // Add inventoryTypes here
+        electronicCategories: [], // Add electronicCategories here
+        electronicBrands: [], // Add electronicBrands here
+        electronicTypes: [], // Add electronicTypes here
     });
 
     console.log("testing ProductsBarChart such that it doesnt go into infinite due to useEffect dependancy array : ", filtersFormInitialDataValues);

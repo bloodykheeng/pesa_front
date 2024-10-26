@@ -174,6 +174,10 @@ const CustomersBarChart = () => {
         productCategories: [],
         productCategoryBrands: [],
         products: [],
+        inventoryTypes: [], // Add inventoryTypes here
+        electronicCategories: [], // Add electronicCategories here
+        electronicBrands: [], // Add electronicBrands here
+        electronicTypes: [], // Add electronicTypes here
     });
 
     console.log("testing CustomersBarChart such that it doesnt go into infinite due to useEffect dependancy array : ", filtersFormInitialDataValues);

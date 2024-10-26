@@ -41,6 +41,10 @@ const OrdersCard = () => {
         productCategories: [],
         productCategoryBrands: [],
         products: [],
+        inventoryTypes: [], // Add inventoryTypes here
+        electronicCategories: [], // Add electronicCategories here
+        electronicBrands: [], // Add electronicBrands here
+        electronicTypes: [], // Add electronicTypes here
     });
 
     const toggleFiltersFormDialog = () => {

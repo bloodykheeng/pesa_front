@@ -99,7 +99,7 @@ function EditForm(props) {
         <Dialog header="Product Form" visible={props.show} maximizable style={{ minWidth: "50vw" }} onHide={() => props.onHide()}>
             {/* <h3>Programs Edit Form</h3> */}
             <p>Edit Data Below</p>
-            <RowForm initialData={props.rowData} handleSubmit={handleSubmit} />
+            <RowForm initialData={props.rowData} electronicTypeData={props?.electronicTypeData} handleSubmit={handleSubmit} />
             {/* <h4>{creactProgramsMutation.status}</h4> */}
 
             {editMutationIsLoading && (
