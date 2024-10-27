@@ -6,11 +6,15 @@ import Typography from "@mui/material/Typography";
 // project import
 
 import ListPage from "./ListPage";
+import BreadcrumbNav from "../../components/general_components/BreadcrumbNav";
 
 function ReferalsPage() {
     return (
-        <div className="card">
-            <ListPage />
+        <div>
+            <BreadcrumbNav />
+            <div className="card">
+                <ListPage />
+            </div>
         </div>
     );
 }

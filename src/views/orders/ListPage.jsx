@@ -218,6 +218,21 @@ function ListPage({ customerData, ...props }) {
                 return rowData.charged_amount ? parseFloat(rowData.charged_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "No charged amount";
             },
         },
+        {
+            title: "Amount Paid",
+            field: "amount_paid",
+            render: (rowData) => {
+                return rowData.amount_paid ? parseFloat(rowData.amount_paid).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "No amount paid";
+            },
+        },
+        {
+            title: "Balance Due",
+            field: "balance_due",
+            render: (rowData) => {
+                return rowData.balance_due ? parseFloat(rowData.balance_due).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "No Balance Due";
+            },
+        },
+
         // {
         //     title: "Quantity",
         //     field: "quantity",

@@ -185,6 +185,7 @@ const CardsFiltersFormWithStatustesDialog = ({ onSubmit, filtersFormInitialDataV
                                             {({ field }) => (
                                                 <DatePicker
                                                     label="Start Date"
+                                                    format="DD/MM/YYYY"
                                                     views={["year", "month", "day"]}
                                                     value={field.value ? moment(field.value, "YYYY-MM-DD") : null}
                                                     onChange={(value) => setFieldValue("startDate", value ? moment(value).format("YYYY-MM-DD") : null)}
@@ -210,6 +211,7 @@ const CardsFiltersFormWithStatustesDialog = ({ onSubmit, filtersFormInitialDataV
                                             {({ field }) => (
                                                 <DatePicker
                                                     label="End Date"
+                                                    format="DD/MM/YYYY"
                                                     views={["year", "month", "day"]}
                                                     value={field.value ? moment(field.value, "YYYY-MM-DD") : null}
                                                     onChange={(value) => setFieldValue("endDate", value ? moment(value).format("YYYY-MM-DD") : null)}

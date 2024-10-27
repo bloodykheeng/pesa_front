@@ -7,10 +7,15 @@ import Typography from "@mui/material/Typography";
 
 import ListPage from "./ListPage";
 
+import BreadcrumbNav from "../../components/general_components/BreadcrumbNav";
+
 function ElectronicCategoriesPage() {
     return (
-        <div className="card">
-            <ListPage />
+        <div>
+            <BreadcrumbNav />
+            <div className="card">
+                <ListPage />
+            </div>
         </div>
     );
 }

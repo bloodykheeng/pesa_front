@@ -17,6 +17,11 @@ export async function postOrder(data) {
     return response;
 }
 
+export async function postToGetOrderExcelExportData(data) {
+    const response = await axiosAPI.post(`orders-excel-exports`, data);
+    return response;
+}
+
 export async function updateOrder(id, data) {
     const response = await axiosAPI.post(`orders/${id}`, data, {
         headers: { "Content-Type": "multipart/form-data" },

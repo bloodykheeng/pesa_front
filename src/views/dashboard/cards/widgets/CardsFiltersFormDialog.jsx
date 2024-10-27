@@ -85,7 +85,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
     // Product Subcategories Query (depends on selected product category)
     const productCategoryBrandsQuery = useQuery({
         queryKey: ["category_brands", selectedProductCategories],
-        queryFn: () => getAllProductCategoryBrands({ categories: selectedProductCategories }),
+        queryFn: () => getAllProductCategoryBrands({ productCategories: selectedProductCategories }),
         enabled: selectedProductCategories.length > 0,
     });
 
@@ -353,6 +353,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
                                             {({ field }) => (
                                                 <DatePicker
                                                     label="Start Date"
+                                                    format="DD/MM/YYYY"
                                                     views={["year", "month", "day"]}
                                                     value={field.value ? moment(field.value, "YYYY-MM-DD") : null}
                                                     onChange={(value) => setFieldValue("startDate", value ? moment(value).format("YYYY-MM-DD") : null)}
@@ -378,6 +379,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
                                             {({ field }) => (
                                                 <DatePicker
                                                     label="End Date"
+                                                    format="DD/MM/YYYY"
                                                     views={["year", "month", "day"]}
                                                     value={field.value ? moment(field.value, "YYYY-MM-DD") : null}
                                                     onChange={(value) => setFieldValue("endDate", value ? moment(value).format("YYYY-MM-DD") : null)}

@@ -12,23 +12,23 @@ import { Button } from "primereact/button";
 import * as Yup from "yup";
 
 //
-import { getAllProductCategories } from "../../../../services/products/product-categories-service";
-import { getAllProductCategoryBrands } from "../../../../services/products/product-category-brands-service";
-import { getAllProducts } from "../../../../services/products/products-service";
-import { getAllProductTypes } from "../../../../services/products/product-types-service";
+import { getAllProductCategories } from "../../../services/products/product-categories-service";
+import { getAllProductCategoryBrands } from "../../../services/products/product-category-brands-service";
+import { getAllProducts } from "../../../services/products/products-service";
+import { getAllProductTypes } from "../../../services/products/product-types-service";
 
 //
-import { getAllElectronicCategories } from "../../../../services/electronics/electronic-categories-service";
-import { getAllElectronicBrands } from "../../../../services/electronics/electronic-brands-service";
-import { getAllElectronicTypes } from "../../../../services/electronics/electronic-types-service.js";
+import { getAllElectronicCategories } from "../../../services/electronics/electronic-categories-service";
+import { getAllElectronicBrands } from "../../../services/electronics/electronic-brands-service";
+import { getAllElectronicTypes } from "../../../services/electronics/electronic-types-service.js";
 
-import { getAllInventoryTypes } from "../../../../services/products/inventory_types-service";
+import { getAllInventoryTypes } from "../../../services/products/inventory_types-service";
 
 //
-import useHandleQueryError from "../../../../hooks/useHandleQueryError";
+import useHandleQueryError from "../../../hooks/useHandleQueryError";
 
-const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, setFiltersFormInitialDataValues, showFiltersFormDialog, setShowFiltersFormDialog }) => {
-    console.log("🚀 ~ BarChartsFiltersFormDialog ~ filtersFormInitialDataValues:", filtersFormInitialDataValues);
+const OrdersFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, setFiltersFormInitialDataValues, showFiltersFormDialog, setShowFiltersFormDialog }) => {
+    console.log("🚀 ~ OrdersFiltersFormDialog ~ filtersFormInitialDataValues:", filtersFormInitialDataValues);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [showResetConfirmDialog, setShowResetConfirmDialog] = useState(false);
     const [pendingData, setPendingData] = useState(null);
@@ -36,13 +36,13 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
     //product
     const [selectedProductTypes, setselectedProductTypes] = useState(filtersFormInitialDataValues?.productTypes ?? []);
     const [selectedProductCategories, setSelectedProductCategories] = useState(filtersFormInitialDataValues?.productCategories ?? []);
-    console.log("🚀 ~ BarChartsFiltersFormDialog ~ selectedProductCategories:", selectedProductCategories);
+    console.log("🚀 ~ OrdersFiltersFormDialog ~ selectedProductCategories:", selectedProductCategories);
     const [selectedProductCategoryBrands, setSelectedProductCategoryBrands] = useState(filtersFormInitialDataValues?.productCategoryBrands ?? []);
     const memoizedFiltersFormInitialDataValues = useMemo(() => filtersFormInitialDataValues, [filtersFormInitialDataValues]);
 
     // State management
     const [selectedElectronicCategories, setSelectedElectronicCategories] = useState(filtersFormInitialDataValues?.electronicCategories ?? []);
-    console.log("🚀 ~ BarChartsFiltersFormDialog ~ selectedElectronicCategories:", selectedElectronicCategories);
+    console.log("🚀 ~ OrdersFiltersFormDialog ~ selectedElectronicCategories:", selectedElectronicCategories);
     const [selectedElectronicBrands, setSelectedElectronicBrands] = useState(filtersFormInitialDataValues?.electronicBrands ?? []);
     const [selectedElectronicTypes, setSelectedElectronicTypes] = useState(filtersFormInitialDataValues?.electronicCategories ?? []);
 
@@ -994,4 +994,4 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
     );
 };
 
-export default BarChartsFiltersFormDialog;
+export default OrdersFiltersFormDialog;
