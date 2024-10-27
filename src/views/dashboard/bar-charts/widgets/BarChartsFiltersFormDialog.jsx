@@ -313,7 +313,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
         if (
             (!Array.isArray(values.deliveryStatuses) || values.deliveryStatuses.length === 0) &&
             (!Array.isArray(values.productCategories) || values.productCategories.length === 0) &&
-            (!Array.isArray(values.productCategoryBrand) || values.productCategoryBrand.length === 0) &&
+            (!Array.isArray(values.productCategoryBrands) || values.productCategoryBrands.length === 0) &&
             (!Array.isArray(values.products) || values.products.length === 0) &&
             !values.startDate &&
             !values.endDate

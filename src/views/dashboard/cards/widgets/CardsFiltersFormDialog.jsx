@@ -269,40 +269,40 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
 
         // if (!Array.isArray(values.agents) || values.agents.length === 0) errors.agents = "Agent is required";
 
-        // Check for inventory types
-        if (!Array.isArray(values.inventoryTypes) || values.inventoryTypes.length === 0) {
-            errors.inventoryTypes = "At least one inventory type must be selected";
-        } else {
-            // Specific validations based on selected inventory types
-            const hasProductType = values.inventoryTypes.some((type) => type.code === "01");
-            const hasElectronicType = values.inventoryTypes.some((type) => type.code === "02");
+        // // Check for inventory types
+        // if (!Array.isArray(values.inventoryTypes) || values.inventoryTypes.length === 0) {
+        //     errors.inventoryTypes = "At least one inventory type must be selected";
+        // } else {
+        //     // Specific validations based on selected inventory types
+        //     const hasProductType = values.inventoryTypes.some((type) => type.code === "01");
+        //     const hasElectronicType = values.inventoryTypes.some((type) => type.code === "02");
 
-            if (hasProductType) {
-                // Validate product-related fields if product type is selected
-                if (!Array.isArray(values.productCategories) || values.productCategories.length === 0) {
-                    errors.productCategories = "Product categories are required when product inventory type is selected";
-                }
-                if (!Array.isArray(values.productCategoryBrand) || values.productCategoryBrand.length === 0) {
-                    errors.productCategoryBrand = "Product category brand is required when product inventory type is selected";
-                }
-            }
+        //     if (hasProductType) {
+        //         // Validate product-related fields if product type is selected
+        //         if (!Array.isArray(values.productCategories) || values.productCategories.length === 0) {
+        //             errors.productCategories = "Product categories are required when product inventory type is selected";
+        //         }
+        //         if (!Array.isArray(values.productCategoryBrands) || values.productCategoryBrands.length === 0) {
+        //             errors.productCategoryBrands = "Product category brands are required when product inventory type is selected";
+        //         }
+        //     }
 
-            if (hasElectronicType) {
-                // Validate electronic-related fields if electronic type is selected
-                if (!Array.isArray(values.electronicCategories) || values.electronicCategories.length === 0) {
-                    errors.electronicCategories = "Electronic categories are required when electronic inventory type is selected";
-                }
-                if (!Array.isArray(values.electronicBrands) || values.electronicBrands.length === 0) {
-                    errors.electronicBrands = "Electronic brand is required when electronic inventory type is selected";
-                }
-            }
-        }
+        //     if (hasElectronicType) {
+        //         // Validate electronic-related fields if electronic type is selected
+        //         if (!Array.isArray(values.electronicCategories) || values.electronicCategories.length === 0) {
+        //             errors.electronicCategories = "Electronic categories are required when electronic inventory type is selected";
+        //         }
+        //         if (!Array.isArray(values.electronicBrands) || values.electronicBrands.length === 0) {
+        //             errors.electronicBrands = "Electronic brand is required when electronic inventory type is selected";
+        //         }
+        //     }
+        // }
 
         // Ensure at least one field is filled and check if fields are arrays
         if (
             (!Array.isArray(values.deliveryStatuses) || values.deliveryStatuses.length === 0) &&
             (!Array.isArray(values.productCategories) || values.productCategories.length === 0) &&
-            (!Array.isArray(values.productCategoryBrand) || values.productCategoryBrand.length === 0) &&
+            (!Array.isArray(values.productCategoryBrands) || values.productCategoryBrands.length === 0) &&
             (!Array.isArray(values.products) || values.products.length === 0) &&
             !values.startDate &&
             !values.endDate
