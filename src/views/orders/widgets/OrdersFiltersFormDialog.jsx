@@ -222,8 +222,8 @@ const OrdersFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, setFi
             // ],
             deliveryStatuses: [],
             paymentStatuses: [],
-            orderBy: { id: 3, label: "Descending", value: "desc" },
-            dataLimit: { id: 2, label: "5", value: 5 },
+            // orderBy: { id: 3, label: "Descending", value: "desc" },
+            // dataLimit: { id: 2, label: "5", value: 5 },
             // dataLimitNumber: null,
             productTypes: [],
             productCategories: [],
@@ -255,8 +255,8 @@ const OrdersFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, setFi
             // ],
             deliveryStatuses: [],
             paymentStatuses: [],
-            orderBy: { id: 3, label: "Descending", value: "desc" },
-            dataLimit: { id: 2, label: "5", value: 5 },
+            // orderBy: { id: 3, label: "Descending", value: "desc" },
+            // dataLimit: { id: 2, label: "5", value: 5 },
             // dataLimitNumber: null,
             productTypes: [],
             productCategories: [],
@@ -779,7 +779,7 @@ const OrdersFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, setFi
                             {/* Multi-select fields */}
 
                             {/* orderBy Single Select */}
-                            <Grid item xs={12} md={6} lg={4}>
+                            {/* <Grid item xs={12} md={6} lg={4}>
                                 <Stack spacing={1}>
                                     <InputLabel htmlFor="orderBy">Order By</InputLabel>
                                     <Field name="orderBy">
@@ -808,7 +808,7 @@ const OrdersFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, setFi
                                     </Field>
                                     <ErrorMessage name="orderBy" component="div" style={{ color: "red" }} />
                                 </Stack>
-                            </Grid>
+                            </Grid> */}
 
                             {/* <Grid item xs={12} md={6} lg={3}>
                                 <Stack spacing={1}>
@@ -820,7 +820,7 @@ const OrdersFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, setFi
                                 </Stack>
                             </Grid> */}
 
-                            <Grid item xs={12} md={6} lg={4}>
+                            {/* <Grid item xs={12} md={6} lg={4}>
                                 <Stack spacing={1}>
                                     <InputLabel htmlFor="dataLimit">Data Limit</InputLabel>
                                     <Field name="dataLimit">
@@ -848,7 +848,7 @@ const OrdersFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, setFi
                                     </Field>
                                     <ErrorMessage name="dataLimit" component="div" style={{ color: "red" }} />
                                 </Stack>
-                            </Grid>
+                            </Grid> */}
 
                             {/* Status Multiple Select */}
                             {/* <Grid item xs={12} md={6} lg={4}>
