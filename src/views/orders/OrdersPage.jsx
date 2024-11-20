@@ -1,21 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 
 // material-ui
 import Typography from "@mui/material/Typography";
-import OrdersExport from "./OrdersExport";
 
 // project import
 
 import ListPage from "./ListPage";
 import BreadcrumbNav from "../../components/general_components/BreadcrumbNav";
 
+import moment from "moment";
+
 function OrdersPage() {
     return (
         <div>
             <BreadcrumbNav />
-            <div>
-                <OrdersExport />
-            </div>
+
             <div className="card">
                 <ListPage />
             </div>

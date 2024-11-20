@@ -16,7 +16,7 @@ import moment from "moment";
 //
 import handleMutationError from "../../hooks/handleMutationError";
 
-const OrdersExport = () => {
+const OrdersExport = ({ filtersFormInitialDataValues, setFiltersFormInitialDataValues }) => {
     // Sample data array of JSON objects
     const sampleOrders = [
         { id: 1, orderNumber: "ORD001", customer: "Customer A", amount: 100, date: "2023-10-01" },
@@ -28,31 +28,6 @@ const OrdersExport = () => {
     const [showFiltersFormDialog, setShowFiltersFormDialog] = useState(false);
     const [accordionActiveIndex, setAccordionActiveIndex] = useState(null);
 
-    //chart filters initial data state
-    const [filtersFormInitialDataValues, setFiltersFormInitialDataValues] = useState({
-        startDate: moment().startOf("month").format("YYYY-MM-DD"),
-        endDate: moment().format("YYYY-MM-DD"), // Set to now
-        // statuses: [
-        //     { id: 1, label: "Pending", value: "PENDING" },
-        //     { id: 2, label: "Processing", value: "PROCESSING" },
-        //     { id: 3, label: "Transit", value: "TRANSIT" },
-        //     { id: 4, label: "Delivered", value: "DELIVERED" },
-        //     { id: 5, label: "Cancelled", value: "CANCELLED" },
-        // ],
-        deliveryStatuses: [],
-        paymentStatuses: [],
-        // orderBy: { id: 3, label: "Descending", value: "desc" },
-        // dataLimit: { id: 2, label: "5", value: 5 },
-        // dataLimitNumber: null,
-        productTypes: [],
-        productCategories: [],
-        productCategoryBrands: [],
-        products: [],
-        inventoryTypes: [], // Add inventoryTypes here
-        electronicCategories: [], // Add electronicCategories here
-        electronicBrands: [], // Add electronicBrands here
-        electronicTypes: [], // Add electronicTypes here
-    });
     console.log("🚀 ~ OrdersExport ~ filtersFormInitialDataValues:", filtersFormInitialDataValues);
 
     console.log("testing ProductsBarChart such that it doesnt go into infinite due to useEffect dependancy array : ", filtersFormInitialDataValues);
@@ -121,7 +96,7 @@ const OrdersExport = () => {
     return (
         <div>
             <Accordion activeIndex={accordionActiveIndex} onTabChange={(e) => setAccordionActiveIndex(e.index)}>
-                <AccordionTab header="Order Data Excel Exports">
+                <AccordionTab header="Export Orders Data">
                     <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}>
                         <Button label="Filter" icon="pi pi-filter" onClick={() => setShowFiltersFormDialog(true)} className="p-button-outlined p-m-3" />
 

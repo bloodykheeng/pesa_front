@@ -26,13 +26,42 @@ import moment from "moment";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
+//
+import OrdersExport from "./OrdersExport";
+
 function ListPage({ customerData, ...props }) {
+    //chart filters initial data state
+    const [filtersFormInitialDataValues, setFiltersFormInitialDataValues] = useState({
+        startDate: moment().subtract(30, "days").startOf("day").format("YYYY-MM-DD"),
+        endDate: moment().format("YYYY-MM-DD"), // Set to now
+        // statuses: [
+        //     { id: 1, label: "Pending", value: "PENDING" },
+        //     { id: 2, label: "Processing", value: "PROCESSING" },
+        //     { id: 3, label: "Transit", value: "TRANSIT" },
+        //     { id: 4, label: "Delivered", value: "DELIVERED" },
+        //     { id: 5, label: "Cancelled", value: "CANCELLED" },
+        // ],
+        deliveryStatuses: [],
+        paymentStatuses: [],
+        // orderBy: { id: 3, label: "Descending", value: "desc" },
+        // dataLimit: { id: 2, label: "5", value: 5 },
+        // dataLimitNumber: null,
+        productTypes: [],
+        productCategories: [],
+        productCategoryBrands: [],
+        products: [],
+        inventoryTypes: [], // Add inventoryTypes here
+        electronicCategories: [], // Add electronicCategories here
+        electronicBrands: [], // Add electronicBrands here
+        electronicTypes: [], // Add electronicTypes here
+    });
+
     const { getUserQuery } = useAuthContext();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { data, isLoading, isError, error, status } = useQuery({
-        queryKey: ["orders", "by_customer_id", customerData?.id],
-        queryFn: () => getAllOrders({ created_by: customerData?.id }),
+        queryKey: ["orders", "by_customer_id", customerData?.id, filtersFormInitialDataValues],
+        queryFn: () => getAllOrders({ created_by: customerData?.id, ...filtersFormInitialDataValues }),
     });
     console.log("🚀Orders ~ ListPage ~ data:", data);
     // useEffect(() => {
@@ -291,6 +320,11 @@ function ListPage({ customerData, ...props }) {
                     <p>Funders Are Attched onto subprojects</p>
                 </div>
             </div> */}
+
+            <div>
+                <OrdersExport filtersFormInitialDataValues={filtersFormInitialDataValues} setFiltersFormInitialDataValues={setFiltersFormInitialDataValues} />
+            </div>
+
             <Panel header="Orders" style={{ marginBottom: "20px" }} toggleable>
                 {/* <div style={{ height: "3rem", margin: "1rem", display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
                     {activeUser?.permissions.includes("create") && <Button label="Add Order" className="p-button-primary" onClick={() => setShowAddForm(true)} />}
@@ -327,12 +361,12 @@ function ListPage({ customerData, ...props }) {
                 <Dialog header="Products in Order" maximizable visible={isDialogVisible} style={{ minWidth: "50vw" }} onHide={() => setIsDialogVisible(false)}>
                     <DataTable value={selectedProducts} responsiveLayout="scroll">
                         {/* <Column field="image" header="Image" body={(rowData) => <Image src={rowData.product.cloudinary_photo_url || rowData.product.photo_url} alt={rowData.product.name} height="30" preview />} /> */}
-                        <Column field="image" header="Image" body={(rowData) => <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData?.product?.photo_url}`} alt={rowData.product.name} height="30" preview />} />
-                        <Column field="name" header="Name" sortable body={(rowData) => rowData.product.name} />
-                        <Column field="price" header="Price" sortable body={(rowData) => `(UGX) ${rowData.price}`} />
+                        <Column field="image" header="Image" body={(rowData) => <Image src={`${process.env.REACT_APP_IMAGE_BASE_URL}${rowData?.product?.photo_url}`} alt={rowData?.name} height="30" preview />} />
+                        <Column field="name" header="Name" sortable body={(rowData) => rowData?.name} />
+                        <Column field="price" header="Price" sortable body={(rowData) => `(UGX) ${rowData?.price}`} />
                         <Column field="quantity" header="Quantity" sortable body={(rowData) => rowData.quantity} />
-                        <Column field="created_at" header="Created At" sortable body={(rowData) => moment(rowData.created_at).format("YYYY-MM-DD HH:mm:ss")} />
-                        <Column field="updated_at" header="Updated At" sortable body={(rowData) => moment(rowData.updated_at).format("YYYY-MM-DD HH:mm:ss")} />
+                        <Column field="created_at" header="Created At" sortable body={(rowData) => moment(rowData?.created_at).format("YYYY-MM-DD HH:mm:ss")} />
+                        <Column field="updated_at" header="Updated At" sortable body={(rowData) => moment(rowData?.updated_at).format("YYYY-MM-DD HH:mm:ss")} />
                     </DataTable>
                 </Dialog>
             </Panel>

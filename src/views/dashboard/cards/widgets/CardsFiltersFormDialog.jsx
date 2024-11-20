@@ -193,7 +193,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
         setSelectedProductCategoryBrands([]);
         resetForm();
         setFiltersFormInitialDataValues({
-            startDate: moment().startOf("month").format("YYYY-MM-DD"),
+            startDate: moment().subtract(30, "days").startOf("day").format("YYYY-MM-DD"),
             endDate: moment().format("YYYY-MM-DD"), // Set to now
             // statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
             deliveryStatuses: [{ id: 1, label: "Pending", value: "pending" }],
@@ -215,7 +215,7 @@ const BarChartsFiltersFormDialog = ({ onSubmit, filtersFormInitialDataValues, se
         setSelectedProductCategoryBrands([]);
         resetForm();
         setFiltersFormInitialDataValues({
-            startDate: moment().startOf("month").format("YYYY-MM-DD"),
+            startDate: moment().subtract(30, "days").startOf("day").format("YYYY-MM-DD"),
             endDate: moment().format("YYYY-MM-DD"), // Set to now
             // statuses: [{ id: 1, label: "Pending", value: "PENDING" }],
             deliveryStatuses: [{ id: 1, label: "Pending", value: "pending" }],
